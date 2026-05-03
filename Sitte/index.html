@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal AnalitysVSS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de Entrada -->
+    <div id="auth-screen">
+        <h1>AnalitysVSS</h1>
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="password" id="pass" placeholder="Senha">
+        <button id="btn-login">Entrar</button>
+        <button id="btn-cadastro">Cadastrar</button>
+    </div>
+
+    <!-- Site Principal -->
+    <div id="main-site" style="display:none;">
+        <nav class="sidebar">
+            <button onclick="mudarAba('chat')">💬 Chat</button>
+            <button onclick="mudarAba('anuncios')">📢 Anúncios</button>
+            <button onclick="mudarAba('missoes')">🎯 Missões</button>
+            <button onclick="mudarAba('membros')">👥 Membros</button>
+            <button onclick="mudarAba('perfil')">👤 Perfil</button>
+            <button id="btn-admin" style="display:none;" onclick="mudarAba('cargos')">🎖️ Cargos</button>
+            <button id="btn-sair">Sair</button>
+        </nav>
+
+        <main class="content">
+            <div id="aba-display">
+                <h2>Selecione uma aba</h2>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

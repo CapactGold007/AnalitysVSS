@@ -1,0 +1,7 @@
+body { background: #0b0e14; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
+#auth-screen { margin: auto; text-align: center; background: #1a1f29; padding: 40px; border-radius: 10px; }
+input { display: block; margin: 10px auto; padding: 10px; width: 250px; border-radius: 5px; border: none; }
+button { padding: 10px 20px; cursor: pointer; background: #5865f2; color: white; border: none; border-radius: 5px; margin: 5px; }
+.sidebar { width: 200px; background: #1a1f29; display: flex; flex-direction: column; padding: 20px; gap: 10px; }
+.content { flex: 1; padding: 40px; }
+.game-card { background: #2f3542; padding: 20px; border-radius: 10px; border-left: 5px solid #5865f2; }
