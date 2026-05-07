@@ -4,26 +4,25 @@
     <meta charset="UTF-8">
     <title>VSS SYSTEM - OFICIAL</title>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
+        body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* Telas */
-        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .auth-box { background: #111; padding: 30px; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; width: 300px; }
-        
-        /* Sidebar */
-        .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.2s; }
-        .sidebar button:hover { background: #333; border-color: #5865f2; }
+        /* ALERTA DE NOTÍCIAS NO TOPO */
+        #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
+        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
+        .sidebar button:hover { background: #333; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
 
-        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
-        #chat-messages { height: 60vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
-        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; }
-
-        /* Estilo da Árvore (Cargos) */
-        .tree-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        /* CONTEÚDO */
+        .content { flex: 1; padding: 80px 30px 30px 30px; overflow-y: auto; background: #0d0d0d; }
+        #chat-messages { height: 50vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
+        
+        /* ÁRVORE DE CARGOS */
+        .tree-container { display: flex; justify-content: center; min-width: 1000px; }
         .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
-        .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
+        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
         .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
         .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
         .tree li:only-child::after, .tree li:only-child::before { display: none; }
@@ -32,24 +31,26 @@
         .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
         .tree li:first-child::after { border-radius: 5px 0 0 0; }
         .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
-        .tree b { border: 2px solid #444; padding: 8px 15px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; }
+        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; white-space: nowrap; }
 
-        /* Cartões e Listas */
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
-        .membro-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #222; align-items: center; }
-        .badge-cargo { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
+        
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
+    <div id="top-news-bar">📢 <span id="news-text">Aviso importante para todos!</span></div>
+
     <div id="auth-screen">
-        <div class="auth-box">
-            <h2 style="text-align:center; color:#5865f2">VSS SYSTEM</h2>
-            <input type="text" id="reg-nome" placeholder="Seu Nome">
-            <input type="email" id="auth-email" placeholder="E-mail">
-            <input type="password" id="auth-senha" placeholder="Senha">
-            <button id="btn-login" style="background:#5865f2; border:none; color:white">ENTRAR</button>
-            <button id="btn-cadastrar" style="background:#333; color:white">CRIAR CONTA</button>
+        <div class="auth-box" style="background:#111; padding:30px; border-radius:10px; width:300px">
+            <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
+            <input type="text" id="reg-nome" placeholder="Seu Nome" style="margin-bottom:10px">
+            <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
+            <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
+            <button id="btn-login" style="width:100%; background:#5865f2; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer">ENTRAR</button>
+            <button id="btn-cadastrar" style="width:100%; background:transparent; color:#888; border:none; margin-top:10px; cursor:pointer">Criar Conta</button>
         </div>
     </div>
 
@@ -57,9 +58,11 @@
         <aside class="sidebar">
             <div id="status-bar"></div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="aba('aba-cargos')">🎖️ CARGOS</button>
+            <button onclick="aba('aba-cargos')">🎖️ CARGOS (ÁRVORE)</button>
             <button onclick="aba('aba-membros')">👥 MEMBROS</button>
-            <button onclick="aba('aba-regras')">📜 REGRAS VSS</button>
+            <button onclick="aba('aba-noticias')">📢 NOTÍCIAS (ADM)</button>
+            <button onclick="aba('aba-perfil')">👤 PERFIL</button>
+            <button onclick="aba('aba-regras')">📜 REGRAS</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
 
@@ -67,8 +70,8 @@
             <section id="aba-chat">
                 <div id="chat-messages"></div>
                 <div style="display:flex; gap:10px">
-                    <input type="text" id="chat-input" style="flex:1" placeholder="Mensagem...">
-                    <button id="chat-send" style="background:#5865f2; color:white; padding:10px 20px; border:none; border-radius:5px">ENVIAR</button>
+                    <input type="text" id="chat-input" placeholder="Conversar...">
+                    <button id="chat-send" style="background:#5865f2; color:white; border:none; padding:0 20px; border-radius:6px">ENVIAR</button>
                 </div>
             </section>
 
@@ -77,20 +80,27 @@
             </section>
 
             <section id="aba-membros" style="display:none">
-                <h2>👥 Membros Registrados</h2>
+                <h2>👥 Membros do Sistema</h2>
                 <div id="lista-membros" class="card"></div>
+            </section>
+
+            <section id="aba-noticias" style="display:none">
+                <h2>📢 Escrever Notícia Global</h2>
+                <div class="card">
+                    <p>Apenas cargos **superiores ao Marechal** podem enviar notícias.</p>
+                    <textarea id="noticia-input" rows="4" placeholder="O que deseja anunciar para todos?"></textarea>
+                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight:bold">ENVIAR AGORA</button>
+                </div>
+            </section>
+
+            <section id="aba-perfil" style="display:none">
+                <div id="perfil-card" class="card"></div>
             </section>
 
             <section id="aba-regras" style="display:none">
                 <div class="card">
-                    <h2 style="color:#ff4444; border-bottom: 1px solid #333; padding-bottom: 10px;">REGRAS DO SISTEMA</h2>
-                    <ul style="font-size: 18px; line-height: 2.5; list-style: none; padding: 0;">
-                        <li>🚫 <b>NÃO MENTIR</b></li>
-                        <li>🙏 <b>CRER EM DEUS</b></li>
-                        <li>🫡 <b>RESPEITAR SEU SUPERIOR</b></li>
-                        <li>🤬 <b>NÃO XINGAR</b></li>
-                        <li>🤝 <b>ACEITAR QUE PERDEU</b></li>
-                    </ul>
+                    <h2>📜 Regras VSS</h2>
+                    <p>🚫 NÃO MENTIR | 🙏 CRER EM DEUS | 🫡 RESPEITAR SUPERIOR | 🤬 NÃO XINGAR</p>
                 </div>
             </section>
         </main>
@@ -122,51 +132,58 @@
             "10b": {n:"BRAÇO ESQUERDO", c:"#9400d3"}, "11b": {n:"ESPECIAL STAFF", c:"#a29bfe"}, "12b": {n:"SOCIO", c:"#e84118"}, "15": {n:"FUNDADOR", c:"#ff0000"}
         };
 
-        function renderTree() {
-            return `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b style="color:${CARGOS[9].c}">${CARGOS[9].n}</b>
-            <ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li>
-            <li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul>
-            </li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
-        }
-
-        let userD = null;
-        window.aba = (id) => { ['aba-chat','aba-cargos','aba-membros','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none'); };
+        let uD = null;
+        window.aba = (id) => {
+            if(id === 'aba-noticias' && (!uD || (uD.nivel !== "10a" && uD.nivel !== "10b" && uD.nivel !== "11a" && uD.nivel !== "11b" && uD.nivel !== "12a" && uD.nivel !== "12b" && uD.nivel !== "13a" && uD.nivel !== "15"))) {
+                alert("Bloqueado: Apenas cargos depois de Marechal podem escrever notícias.");
+                return;
+            }
+            ['aba-chat','aba-cargos','aba-membros','aba-noticias','aba-perfil','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none');
+        };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    userD = s.data();
+                    uD = s.data();
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[userD.nivel] || CARGOS[1];
-                    document.getElementById('status-bar').innerHTML = `Logado: <b>${userD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('tree-root').innerHTML = renderTree();
+                    const c = CARGOS[uD.nivel] || CARGOS[1];
+                    document.getElementById('status-bar').innerHTML = `Logado: <b>${uD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('perfil-card').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: ${c.n}</p>`;
                 });
-                
+
+                // Monitorar Notícia no Topo
+                onSnapshot(doc(db, "sistema", "news"), s => {
+                    if(s.exists()){
+                        document.getElementById('news-text').innerText = s.data().t;
+                        document.getElementById('top-news-bar').style.display = 'block';
+                    }
+                });
+
                 onSnapshot(collection(db, "usuarios"), s => {
-                    const list = document.getElementById('lista-membros'); list.innerHTML = "";
-                    s.forEach(d => {
-                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS[1];
-                        list.innerHTML += `<div class="membro-item">
-                            <span><b>${m.nome}</b></span>
-                            <span class="badge-cargo" style="border: 1px solid ${c.c}; color: ${c.c}">${c.n}</span>
-                        </div>`;
-                    });
+                    const l = document.getElementById('lista-membros'); l.innerHTML = "";
+                    s.forEach(d => { l.innerHTML += `<p><b>${d.data().nome}</b> - ${CARGOS[d.data().nivel].n}</p>`; });
                 });
 
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                    const box = document.getElementById('chat-messages'); box.innerHTML = "";
-                    s.forEach(d => {
-                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS[1];
-                        box.innerHTML += `<p><b style="color:${c.c}">[${c.n}] ${m.u}:</b> ${m.t}</p>`;
-                    });
-                    box.scrollTop = box.scrollHeight;
+                    const b = document.getElementById('chat-messages'); b.innerHTML = "";
+                    s.forEach(d => { b.innerHTML += `<p><b>[${CARGOS[d.data().nivel].n}] ${d.data().u}:</b> ${d.data().t}</p>`; });
+                    b.scrollTop = b.scrollHeight;
                 });
-            } else {
-                document.getElementById('auth-screen').style.display = 'flex';
-                document.getElementById('main-app').style.display = 'none';
             }
         });
+
+        document.getElementById('btn-postar').onclick = async () => {
+            const t = document.getElementById('noticia-input').value;
+            if(t.trim()) {
+                await setDoc(doc(db, "sistema", "news"), { t: t });
+                document.getElementById('noticia-input').value = "";
+                alert("Notícia enviada!");
+            }
+        };
+
+        // Árvore Geo
+        document.getElementById('tree-root').innerHTML = `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b>${CARGOS[9].n}</b><ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li><li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
 
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
         document.getElementById('btn-cadastrar').onclick = async () => {
@@ -175,7 +192,7 @@
         };
         document.getElementById('chat-send').onclick = async () => {
             const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: userD.nome, nivel: String(userD.nivel), data: serverTimestamp() });
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: uD.nome, nivel: String(uD.nivel), data: serverTimestamp() });
             i.value = "";
         };
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
