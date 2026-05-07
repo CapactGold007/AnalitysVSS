@@ -2,29 +2,21 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - HIERARQUIA COMPLETA</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar */
         .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
         .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
         .sidebar button:hover { background: #333; border-color: #5865f2; }
         .btn-staff-aba { background: #440000 !important; border: 1px solid #ff4444 !important; margin-top: 10px; color: #ffcccc !important; text-align: center !important; }
-        
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #5865f2; font-size: 13px; }
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
-
-        /* Auth Screen */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .auth-box { background: #111; padding: 30px; border-radius: 10px; width: 320px; border: 1px solid #333; }
         .btn-auth { width: 100%; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; border: none; }
-
-        /* Membros */
         .membro-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; margin-bottom: 8px; }
         .adm-btn { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; margin-left: 2px; }
-
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
@@ -77,11 +69,11 @@
                     <h2 style="color:red; text-align:center">HIERARQUIA VSS</h2>
                     <p style="text-align:center"><b>FUNDADOR</b></p>
                     <div style="display:flex; justify-content:space-around; border-top:1px solid #333; padding-top:10px">
-                        <div><b>BRAÇO A</b><br>Anality (A)<br>Cesar (A)<br>Autoridades</div>
-                        <div><b>BRAÇO B</b><br>Staff Especial (B)<br>Sócio (B)</div>
+                        <div><b>BRAÇO A</b><br>Anality (A) | Cesar (A)<br>Autoridades</div>
+                        <div><b>BRAÇO B</b><br>Staff Especial (B) | Sócio (B)</div>
                     </div>
                     <hr border="0" style="border-top:1px solid #333; margin:15px 0">
-                    <p>X - MARECHAL | IX - MAJOR | VIII - TENENTE | VII - CAPITÃO | VI - 1º SARGENTO | V - 2º SARGENTO | IV - 3º SARGENTO | III - CABO | II - SOLDADO | I - INICIANTE</p>
+                    <p>X-MARECHAL | IX-MAJOR | VIII-TENENTE | VII-CAPITÃO | VI-1º SARGENTO | V-2º SARGENTO | IV-3º SARGENTO | III-CABO | II-SOLDADO | I-INICIANTE</p>
                 </div>
             </section>
 
@@ -91,26 +83,30 @@
 
             <section id="aba-noticias" style="display:none">
                 <div class="card">
-                    <h2>📢 Mural</h2>
-                    <textarea id="news-input" placeholder="Escreva e aperte Enter para postar..."></textarea>
+                    <h2>📢 Mural de Notícias</h2>
+                    <textarea id="news-input" placeholder="Escreva a notícia e aperte Enter para postar..."></textarea>
+                    <div id="mural-lista" style="margin-top:20px"></div>
                 </div>
             </section>
 
             <section id="aba-regras" style="display:none">
                 <div class="card">
                     <h2 style="color:red">REGRAS OFICIAIS</h2>
-                    <ul style="line-height:2">
-                        <li>NÃO MENTIR</li>
-                        <li>CRER EM DEUS</li>
-                        <li>RESPEITAR SEU SUPERIOR</li>
-                        <li>NÃO XINGAR</li>
-                        <li>ACEITAR QUE PERDEU</li>
-                    </ul>
+                    <ul><li>NÃO MENTIR</li><li>CRER EM DEUS</li><li>RESPEITAR SEU SUPERIOR</li><li>NÃO XINGAR</li><li>ACEITAR QUE PERDEU</li></ul>
                 </div>
             </section>
 
             <section id="aba-prova" style="display:none">
-                <div id="prova-area" class="card">Aguardando liberação do Fundador...</div>
+                <div id="prova-lock-msg" class="card">
+                    <h2>🔒 ÁREA RESTRITA</h2>
+                    <p id="status-texto">Aguardando o Fundador liberar a prova.</p>
+                    <button id="btn-liberar-prova" style="display:none; background:green; color:white; border:none; padding:12px; cursor:pointer; border-radius:5px">LIBERAR PROVA (FUNDADOR)</button>
+                </div>
+                <div id="prova-container" style="display:none" class="card">
+                    <h2 style="color:#ff4444">📝 TESTE STAFF - 100 QUESTÕES</h2>
+                    <div id="questoes-lista" style="max-height:450px; overflow-y:auto; background:#050505; padding:10px"></div>
+                    <button onclick="finalizarProva()" style="width:100%; padding:20px; background:#5865f2; color:white; border:none; cursor:pointer; margin-top:10px">ENVIAR PROVA</button>
+                </div>
             </section>
         </main>
     </div>
@@ -123,27 +119,14 @@
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        let uD = null;
-        const CARGOS = {
-            "1":"I - INICIANTE", "2":"II - SOLDADO", "3":"III - CABO", "4":"IV - 3º SARGENTO", 
-            "5":"V - 2º SARGENTO", "6":"VI - 1º SARGENTO", "7":"VII - CAPITÃO", "8":"VIII - TENENTE", 
-            "9":"IX - MAJOR", "10":"X - MARECHAL", "11":"3º AUTORIDADE", "12":"2º AUTORIDADE", 
-            "13":"CESAR (A)", "14":"ANALITY (A)", "20":"SÓCIO (B)", "21":"STAFF ESPECIAL (B)", "15":"FUNDADOR"
-        };
+        let uD = null; let emProva = false;
+        const CARGOS = {"1":"I-INICIANTE","2":"II-SOLDADO","3":"III-CABO","4":"IV-3º SARGENTO","5":"V-2º SARGENTO","6":"VI-1º SARGENTO","7":"VII-CAPITÃO","8":"VIII-TENENTE","9":"IX-MAJOR","10":"X-MARECHAL","11":"3º AUTORIDADE","12":"2º AUTORIDADE","13":"CESAR (A)","14":"ANALITY (A)","20":"SÓCIO (B)","21":"STAFF ESPECIAL (B)","15":"FUNDADOR"};
 
-        window.toggleAuth = (reg) => {
-            document.getElementById('login-fields').style.display = reg ? 'none' : 'block';
-            document.getElementById('reg-fields').style.display = reg ? 'block' : 'none';
-        };
-
-        window.aba = (id) => {
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-        };
+        window.toggleAuth = (reg) => { document.getElementById('login-fields').style.display = reg ? 'none' : 'block'; document.getElementById('reg-fields').style.display = reg ? 'block' : 'none'; };
+        window.aba = (id) => { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'block'; };
 
         window.admAction = async (uid, act) => {
             const ref = doc(db, "usuarios", uid); const s = await getDoc(ref);
-            if(act==='xp') await updateDoc(ref, {xp: (s.data().xp||0)+50});
             if(act==='up') await updateDoc(ref, {nivel: String(parseInt(s.data().nivel)+1)});
             if(act==='down') await updateDoc(ref, {nivel: String(parseInt(s.data().nivel)-1)});
             if(act==='ban') await deleteDoc(ref);
@@ -156,21 +139,15 @@
                     document.getElementById('auth-screen').style.display='none';
                     document.getElementById('main-app').style.display='flex';
                     document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel]}`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${CARGOS[uD.nivel]}</p><p>XP: ${uD.xp||0}</p>`;
+                    if(uD.nivel == "15") document.getElementById('btn-liberar-prova').style.display = 'block';
                 });
 
                 onSnapshot(collection(db, "usuarios"), s => {
                     const list = document.getElementById('lista-membros'); list.innerHTML = "<h3>Membros</h3>";
                     s.forEach(ds => {
                         const m = ds.data(); const isF = uD.nivel == "15";
-                        list.innerHTML += `<div class="membro-item">
-                            <span><b>${m.nome}</b> (${CARGOS[m.nivel]})</span>
-                            ${isF && ds.id !== uD.uid ? `<div>
-                                <button class="adm-btn" style="background:blue" onclick="admAction('${ds.id}','xp')">+XP</button>
-                                <button class="adm-btn" style="background:green" onclick="admAction('${ds.id}','up')">↑</button>
-                                <button class="adm-btn" style="background:red" onclick="admAction('${ds.id}','ban')">X</button>
-                            </div>` : ''}
-                        </div>`;
+                        list.innerHTML += `<div class="membro-item"><span><b>${m.nome}</b> (${CARGOS[m.nivel]})</span>
+                        ${isF && ds.id !== uD.uid ? `<div><button class="adm-btn" style="background:green" onclick="admAction('${ds.id}','up')">↑</button><button class="adm-btn" style="background:red" onclick="admAction('${ds.id}','ban')">X</button></div>` : ''}</div>`;
                     });
                 });
 
@@ -179,9 +156,23 @@
                     s.forEach(d => { box.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
                     box.scrollTop = box.scrollHeight;
                 });
+
+                onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
+                    const ml = document.getElementById('mural-lista'); ml.innerHTML = "";
+                    s.forEach(d => { ml.innerHTML += `<div class="card" style="border-left:4px solid #5865f2"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
+                });
+
+                onSnapshot(doc(db, "sistema", "config"), s => {
+                    if(s.exists() && s.data().provaAberta) {
+                        document.getElementById('prova-lock-msg').style.display = 'none';
+                        document.getElementById('prova-container').style.display = 'block';
+                        if(!emProva) { gerarProva(); emProva = true; }
+                    }
+                });
             }
         });
 
+        // ENTER NO CHAT
         document.getElementById('chat-input').onkeypress = async (e) => {
             if(e.key === 'Enter' && e.target.value.trim()) {
                 await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
@@ -189,14 +180,38 @@
             }
         };
 
+        // ENTER NO MURAL
+        document.getElementById('news-input').onkeypress = async (e) => {
+            if(e.key === 'Enter' && !e.shiftKey && e.target.value.trim()) {
+                e.preventDefault();
+                if(uD.nivel < 10) return alert("Apenas Staff ou Superior!");
+                await addDoc(collection(db, "mural"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
+                e.target.value = "";
+            }
+        };
+
+        function gerarProva() {
+            const l = document.getElementById('questoes-lista'); l.innerHTML = "";
+            for(let i=1; i<=100; i++) {
+                const n1 = Math.floor(Math.random()*100); const n2 = Math.floor(Math.random()*50);
+                l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #222">Q${i}: ${n1}+${n2}? <input type="number" class="res-p" data-c="${n1+n2}"></div>`;
+            }
+        }
+
+        window.finalizarProva = async () => {
+            let acertos = 0; document.querySelectorAll('.res-p').forEach(i => { if(i.value == i.dataset.c) acertos++; });
+            if(acertos >= 70) { alert("APROVADO!"); await updateDoc(doc(db, "usuarios", uD.uid), { nivel: "10" }); }
+            else alert("REPROVADO! Acertos: " + acertos);
+            location.reload();
+        };
+
+        document.getElementById('btn-liberar-prova').onclick = async () => { await setDoc(doc(db, "sistema", "config"), { provaAberta: true }); alert("Liberado!"); };
         document.getElementById('btn-entrar').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
-        
         document.getElementById('btn-registrar').onclick = async () => {
             const r = await createUserWithEmailAndPassword(auth, document.getElementById('r-email').value, document.getElementById('r-senha').value);
             await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('r-nome').value, nivel: "1", xp: 0 });
-            alert("Conta Criada!");
+            location.reload();
         };
-
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
     </script>
 </body>
