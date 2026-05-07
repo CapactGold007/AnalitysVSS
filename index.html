@@ -2,52 +2,49 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - MEMBROS ATUALIZADO</title>
+    <title>VSS SYSTEM - HIERARQUIA COMPLETA</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
         /* Sidebar */
-        .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
+        .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
         .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
         .sidebar button:hover { background: #333; border-color: #5865f2; }
-        .btn-staff { background: #440000 !important; border: 1px solid #ff4444 !important; margin-top: 10px; color: #ffcccc !important; text-align: center !important; }
+        .btn-staff-aba { background: #440000 !important; border: 1px solid #ff4444 !important; margin-top: 10px; color: #ffcccc !important; text-align: center !important; }
         
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #5865f2; font-size: 13px; }
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
 
-        /* LISTA DE MEMBROS ESTILIZADA */
-        .membro-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #161616; border: 1px solid #222; border-radius: 8px; margin-bottom: 10px; }
-        .membro-info b { font-size: 16px; }
-        .membro-info span { font-size: 12px; display: block; opacity: 0.8; }
-        .adm-controls { display: flex; gap: 5px; }
-        .adm-controls button { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; }
-
-        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+        /* Auth Screen */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .auth-box { background: #111; padding: 30px; border-radius: 10px; width: 320px; border: 1px solid #333; }
-        
-        .btn-primary { background: #5865f2; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
-        .btn-secondary { background: #333; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; }
+        .btn-auth { width: 100%; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; border: none; }
+
+        /* Membros */
+        .membro-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; margin-bottom: 8px; }
+        .adm-btn { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; margin-left: 2px; }
+
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="text-align:center; color:#5865f2">VSS SYSTEM</h2>
+            <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
             <div id="login-fields">
-                <input type="email" id="auth-email" placeholder="E-mail">
-                <input type="password" id="auth-senha" placeholder="Senha">
-                <button class="btn-primary" id="btn-entrar">ENTRAR</button>
-                <button class="btn-secondary" onclick="document.getElementById('login-fields').style.display='none'; document.getElementById('register-fields').style.display='block';">CRIAR CONTA</button>
+                <input type="email" id="l-email" placeholder="E-mail">
+                <input type="password" id="l-senha" placeholder="Senha">
+                <button class="btn-auth" style="background:#5865f2; color:white" id="btn-entrar">ENTRAR</button>
+                <button class="btn-auth" style="background:#333; color:white" onclick="toggleAuth(true)">CRIAR CONTA</button>
             </div>
-            <div id="register-fields" style="display:none">
-                <input type="text" id="reg-nome" placeholder="Seu Nome">
-                <input type="email" id="reg-email" placeholder="E-mail">
-                <input type="password" id="reg-senha" placeholder="Senha">
-                <button class="btn-primary" id="btn-registrar" style="background:#2ecc71">REGISTRAR</button>
-                <button class="btn-secondary" onclick="location.reload()">VOLTAR</button>
+            <div id="reg-fields" style="display:none">
+                <input type="text" id="r-nome" placeholder="Nome Completo">
+                <input type="email" id="r-email" placeholder="E-mail">
+                <input type="password" id="r-senha" placeholder="Senha">
+                <button class="btn-auth" style="background:#2ecc71; color:white" id="btn-registrar">REGISTRAR AGORA</button>
+                <button class="btn-auth" style="background:#333; color:white" onclick="toggleAuth(false)">VOLTAR</button>
             </div>
         </div>
     </div>
@@ -61,26 +58,60 @@
             <button onclick="aba('aba-membros')">👥 MEMBROS & ADM</button>
             <button onclick="aba('aba-noticias')">📢 NOTÍCIAS</button>
             <button onclick="aba('aba-regras')">📜 REGRAS</button>
-            <button onclick="aba('aba-prova')" class="btn-staff">🔒 PROVA STAFF (IA)</button>
-            <button id="btn-sair" style="color:#ff4444; margin-top:auto; background:none; border:none; cursor:pointer">SAIR</button>
+            <button onclick="aba('aba-prova')" class="btn-staff-aba">🔒 PROVA STAFF (IA)</button>
+            <button id="btn-sair" style="color:#ff4444; margin-top:auto; background:none; border:none; cursor:pointer; text-align:left">✖ SAIR DA CONTA</button>
         </aside>
 
         <main class="content">
-            <section id="aba-membros" style="display:none">
-                <h2 style="margin-bottom:20px">👥 Gerenciamento de Membros</h2>
-                <div id="lista-membros-container"></div>
-            </section>
-
             <section id="aba-chat">
-                <div id="chat-messages" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
-                <input type="text" id="chat-input" placeholder="Aperte Enter para enviar...">
+                <div id="chat-box" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
+                <input type="text" id="chat-input" placeholder="Escreva e aperte Enter para enviar...">
             </section>
 
-            <section id="aba-perfil" style="display:none"><div id="perfil-card" class="card"></div></section>
-            <section id="aba-cargos" style="display:none"><div class="card"><h3>Hierarquia</h3><p>Iniciante > Soldado > Cabo > Sargento > Capitão > Major > Marechal > Autoridade > Sócio > Fundador</p></div></section>
-            <section id="aba-noticias" style="display:none"><div class="card"><h2>📢 Mural</h2><textarea id="news-input" placeholder="Aperte Enter para postar..."></textarea></div></section>
-            <section id="aba-regras" style="display:none"><div class="card"><h2>📜 Regras</h2><p>1. Não mentir | 2. Respeitar superior | 3. Crer em Deus</p></div></section>
-            <section id="aba-prova" style="display:none"><div id="prova-container" class="card">Aguardando liberação do Fundador...</div></section>
+            <section id="aba-perfil" style="display:none">
+                <div id="perfil-card" class="card"></div>
+            </section>
+
+            <section id="aba-cargos" style="display:none">
+                <div class="card">
+                    <h2 style="color:red; text-align:center">HIERARQUIA VSS</h2>
+                    <p style="text-align:center"><b>FUNDADOR</b></p>
+                    <div style="display:flex; justify-content:space-around; border-top:1px solid #333; padding-top:10px">
+                        <div><b>BRAÇO A</b><br>Anality (A)<br>Cesar (A)<br>Autoridades</div>
+                        <div><b>BRAÇO B</b><br>Staff Especial (B)<br>Sócio (B)</div>
+                    </div>
+                    <hr border="0" style="border-top:1px solid #333; margin:15px 0">
+                    <p>X - MARECHAL | IX - MAJOR | VIII - TENENTE | VII - CAPITÃO | VI - 1º SARGENTO | V - 2º SARGENTO | IV - 3º SARGENTO | III - CABO | II - SOLDADO | I - INICIANTE</p>
+                </div>
+            </section>
+
+            <section id="aba-membros" style="display:none">
+                <div id="lista-membros" class="card"></div>
+            </section>
+
+            <section id="aba-noticias" style="display:none">
+                <div class="card">
+                    <h2>📢 Mural</h2>
+                    <textarea id="news-input" placeholder="Escreva e aperte Enter para postar..."></textarea>
+                </div>
+            </section>
+
+            <section id="aba-regras" style="display:none">
+                <div class="card">
+                    <h2 style="color:red">REGRAS OFICIAIS</h2>
+                    <ul style="line-height:2">
+                        <li>NÃO MENTIR</li>
+                        <li>CRER EM DEUS</li>
+                        <li>RESPEITAR SEU SUPERIOR</li>
+                        <li>NÃO XINGAR</li>
+                        <li>ACEITAR QUE PERDEU</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="aba-prova" style="display:none">
+                <div id="prova-area" class="card">Aguardando liberação do Fundador...</div>
+            </section>
         </main>
     </div>
 
@@ -94,8 +125,15 @@
 
         let uD = null;
         const CARGOS = {
-            "1":{n:"INICIANTE", c:"#fff"}, "2":{n:"SOLDADO", c:"#2ecc71"}, "3":{n:"CABO", c:"#3498db"}, "4":{n:"SARGENTO", c:"#9b59b6"}, 
-            "5":{n:"CAPITÃO", c:"#f1c40f"}, "8":{n:"MAJOR", c:"#e67e22"}, "9":{n:"MARECHAL", c:"#e74c3c"}, "10":{n:"STAFF", c:"#1abc9c"}, "15":{n:"FUNDADOR", c:"#ff0000"}
+            "1":"I - INICIANTE", "2":"II - SOLDADO", "3":"III - CABO", "4":"IV - 3º SARGENTO", 
+            "5":"V - 2º SARGENTO", "6":"VI - 1º SARGENTO", "7":"VII - CAPITÃO", "8":"VIII - TENENTE", 
+            "9":"IX - MAJOR", "10":"X - MARECHAL", "11":"3º AUTORIDADE", "12":"2º AUTORIDADE", 
+            "13":"CESAR (A)", "14":"ANALITY (A)", "20":"SÓCIO (B)", "21":"STAFF ESPECIAL (B)", "15":"FUNDADOR"
+        };
+
+        window.toggleAuth = (reg) => {
+            document.getElementById('login-fields').style.display = reg ? 'none' : 'block';
+            document.getElementById('reg-fields').style.display = reg ? 'block' : 'none';
         };
 
         window.aba = (id) => {
@@ -103,77 +141,60 @@
             document.getElementById(id).style.display = 'block';
         };
 
-        // FUNÇÕES ADM
-        window.admAction = async (uid, type) => {
-            const ref = doc(db, "usuarios", uid);
-            const snap = await getDoc(ref);
-            const data = snap.data();
-            if(type === 'xp') await updateDoc(ref, { xp: (data.xp || 0) + 50 });
-            if(type === 'up') await updateDoc(ref, { nivel: String(parseInt(data.nivel) + 1) });
-            if(type === 'down') await updateDoc(ref, { nivel: String(parseInt(data.nivel) - 1) });
-            if(type === 'ban') { if(confirm("Banir este membro?")) await deleteDoc(ref); }
+        window.admAction = async (uid, act) => {
+            const ref = doc(db, "usuarios", uid); const s = await getDoc(ref);
+            if(act==='xp') await updateDoc(ref, {xp: (s.data().xp||0)+50});
+            if(act==='up') await updateDoc(ref, {nivel: String(parseInt(s.data().nivel)+1)});
+            if(act==='down') await updateDoc(ref, {nivel: String(parseInt(s.data().nivel)-1)});
+            if(act==='ban') await deleteDoc(ref);
         };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uD = s.data(); uD.uid = u.uid;
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uD.nivel] || {n:"MEMBRO", c:"#eee"};
-                    document.getElementById('status-bar').innerHTML = `<b style="color:${c.c}">${uD.nome}</b><br><small>${c.n} | XP: ${uD.xp||0}</small>`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: <b style="color:${c.c}">${c.n}</b></p><p>XP: ${uD.xp || 0}</p>`;
+                    if(!s.exists()) return; uD = s.data(); uD.uid = u.uid;
+                    document.getElementById('auth-screen').style.display='none';
+                    document.getElementById('main-app').style.display='flex';
+                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel]}`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${CARGOS[uD.nivel]}</p><p>XP: ${uD.xp||0}</p>`;
                 });
 
-                // LISTA DE MEMBROS REALTIME
                 onSnapshot(collection(db, "usuarios"), s => {
-                    const cont = document.getElementById('lista-membros-container');
-                    cont.innerHTML = "";
-                    s.forEach(docSnap => {
-                        const m = docSnap.data();
-                        const c = CARGOS[m.nivel] || {n:"MEMBRO", c:"#eee"};
-                        const isFundador = uD.nivel == "15";
-                        cont.innerHTML += `
-                            <div class="membro-item">
-                                <div class="membro-info">
-                                    <b style="color:${c.c}">${m.nome}</b>
-                                    <span>Cargo: ${c.n} | XP: ${m.xp || 0}</span>
-                                </div>
-                                ${isFundador && docSnap.id !== uD.uid ? `
-                                    <div class="adm-controls">
-                                        <button style="background:blue" onclick="admAction('${docSnap.id}','xp')">+XP</button>
-                                        <button style="background:green" onclick="admAction('${docSnap.id}','up')">↑</button>
-                                        <button style="background:orange" onclick="admAction('${docSnap.id}','down')">↓</button>
-                                        <button style="background:red" onclick="admAction('${docSnap.id}','ban')">X</button>
-                                    </div>
-                                ` : ''}
-                            </div>`;
+                    const list = document.getElementById('lista-membros'); list.innerHTML = "<h3>Membros</h3>";
+                    s.forEach(ds => {
+                        const m = ds.data(); const isF = uD.nivel == "15";
+                        list.innerHTML += `<div class="membro-item">
+                            <span><b>${m.nome}</b> (${CARGOS[m.nivel]})</span>
+                            ${isF && ds.id !== uD.uid ? `<div>
+                                <button class="adm-btn" style="background:blue" onclick="admAction('${ds.id}','xp')">+XP</button>
+                                <button class="adm-btn" style="background:green" onclick="admAction('${ds.id}','up')">↑</button>
+                                <button class="adm-btn" style="background:red" onclick="admAction('${ds.id}','ban')">X</button>
+                            </div>` : ''}
+                        </div>`;
                     });
                 });
 
-                // CHAT ENTER
-                document.getElementById('chat-input').onkeypress = async (e) => {
-                    if(e.key === 'Enter' && e.target.value.trim()) {
-                        await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
-                        e.target.value = "";
-                    }
-                };
-
-                // CHAT REALTIME
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                    const b = document.getElementById('chat-messages'); b.innerHTML = "";
-                    s.forEach(d => { b.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
-                    b.scrollTop = b.scrollHeight;
+                    const box = document.getElementById('chat-box'); box.innerHTML = "";
+                    s.forEach(d => { box.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
+                    box.scrollTop = box.scrollHeight;
                 });
             }
         });
 
-        // LOGIN E REGISTRO
-        document.getElementById('btn-entrar').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value).catch(e => alert("Erro: " + e.message));
+        document.getElementById('chat-input').onkeypress = async (e) => {
+            if(e.key === 'Enter' && e.target.value.trim()) {
+                await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
+                e.target.value = "";
+            }
+        };
+
+        document.getElementById('btn-entrar').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
+        
         document.getElementById('btn-registrar').onclick = async () => {
-            const r = await createUserWithEmailAndPassword(auth, document.getElementById('reg-email').value, document.getElementById('reg-senha').value);
-            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
-            alert("Registrado!"); location.reload();
+            const r = await createUserWithEmailAndPassword(auth, document.getElementById('r-email').value, document.getElementById('r-senha').value);
+            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('r-nome').value, nivel: "1", xp: 0 });
+            alert("Conta Criada!");
         };
 
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
