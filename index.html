@@ -87,7 +87,7 @@
             <section id="aba-noticias" style="display:none">
                 <h2>📢 Escrever Notícia Global</h2>
                 <div class="card">
-                    <p>Apenas cargos **superiores ao Marechal** podem enviar notícias.</p>
+                    <p>Apenas **Fundadores** e cargos superiores ao Marechal podem enviar notícias.</p>
                     <textarea id="noticia-input" rows="4" placeholder="O que deseja anunciar para todos?"></textarea>
                     <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight:bold">ENVIAR AGORA</button>
                 </div>
@@ -134,8 +134,12 @@
 
         let uD = null;
         window.aba = (id) => {
-            if(id === 'aba-noticias' && (!uD || (uD.nivel !== "10a" && uD.nivel !== "10b" && uD.nivel !== "11a" && uD.nivel !== "11b" && uD.nivel !== "12a" && uD.nivel !== "12b" && uD.nivel !== "13a" && uD.nivel !== "15"))) {
-                alert("Bloqueado: Apenas cargos depois de Marechal podem escrever notícias.");
+            // VERIFICAÇÃO: Fundador (15) ou qualquer cargo '10+' (Autoridades, Cesar, etc)
+            const nivelNum = uD.nivel;
+            const temPermissao = (nivelNum === "15" || nivelNum.startsWith("10") || nivelNum.startsWith("11") || nivelNum.startsWith("12") || nivelNum.startsWith("13"));
+            
+            if(id === 'aba-noticias' && !temPermissao) {
+                alert("Bloqueado: Apenas a cúpula (depois do Marechal e Fundador) pode postar notícias.");
                 return;
             }
             ['aba-chat','aba-cargos','aba-membros','aba-noticias','aba-perfil','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none');
@@ -149,10 +153,9 @@
                     document.getElementById('main-app').style.display = 'flex';
                     const c = CARGOS[uD.nivel] || CARGOS[1];
                     document.getElementById('status-bar').innerHTML = `Logado: <b>${uD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('perfil-card').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: ${c.n}</p>`;
+                    document.getElementById('perfil-card').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: <b style="color:${c.c}">${c.n}</b></p>`;
                 });
 
-                // Monitorar Notícia no Topo
                 onSnapshot(doc(db, "sistema", "news"), s => {
                     if(s.exists()){
                         document.getElementById('news-text').innerText = s.data().t;
@@ -162,12 +165,18 @@
 
                 onSnapshot(collection(db, "usuarios"), s => {
                     const l = document.getElementById('lista-membros'); l.innerHTML = "";
-                    s.forEach(d => { l.innerHTML += `<p><b>${d.data().nome}</b> - ${CARGOS[d.data().nivel].n}</p>`; });
+                    s.forEach(d => { 
+                        const m = d.data();
+                        l.innerHTML += `<p><b>${m.nome}</b> - <span style="color:${CARGOS[m.nivel].c}">${CARGOS[m.nivel].n}</span></p>`; 
+                    });
                 });
 
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const b = document.getElementById('chat-messages'); b.innerHTML = "";
-                    s.forEach(d => { b.innerHTML += `<p><b>[${CARGOS[d.data().nivel].n}] ${d.data().u}:</b> ${d.data().t}</p>`; });
+                    s.forEach(d => { 
+                        const msg = d.data();
+                        b.innerHTML += `<p><b>[${CARGOS[msg.nivel].n}] ${msg.u}:</b> ${msg.t}</p>`; 
+                    });
                     b.scrollTop = b.scrollHeight;
                 });
             }
@@ -178,11 +187,10 @@
             if(t.trim()) {
                 await setDoc(doc(db, "sistema", "news"), { t: t });
                 document.getElementById('noticia-input').value = "";
-                alert("Notícia enviada!");
+                alert("Notícia Global Publicada!");
             }
         };
 
-        // Árvore Geo
         document.getElementById('tree-root').innerHTML = `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b>${CARGOS[9].n}</b><ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li><li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
 
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
