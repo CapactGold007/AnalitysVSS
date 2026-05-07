@@ -2,58 +2,203 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS - Árvore Hierárquica Pro</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSS SYSTEM - OFICIAL</title>
+    <style>
+        /* CSS COMPLETO */
+        body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Login */
+        .auth-container { position: fixed; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; z-index: 999; }
+        .auth-box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #333; width: 300px; display: flex; flex-direction: column; gap: 10px; }
+        input { background: #222; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; }
+        button { cursor: pointer; padding: 10px; border-radius: 5px; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background: #5865f2; color: white; }
+        .btn-secondary { background: #333; color: white; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background: #1a1a1a; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #333; }
+        .nav-btn { background: none; color: #ccc; text-align: left; padding: 15px; font-size: 16px; margin-bottom: 5px; }
+        .nav-btn:hover { background: #333; color: white; }
+        #status-bar { font-size: 12px; padding: 10px; background: #222; border-radius: 5px; margin-bottom: 20px; border: 1px solid #333; }
+
+        /* Main Content */
+        .content { flex: 1; padding: 20px; position: relative; overflow-y: auto; }
+        #chat-messages { height: 70vh; background: #050505; border: 1px solid #222; border-radius: 10px; padding: 15px; overflow-y: auto; margin-bottom: 20px; }
+        .input-area { display: flex; gap: 10px; }
+        .input-area input { flex: 1; }
+
+        /* Árvore Hierárquica Visual */
+        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
+        .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
+        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: none; }
+        .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
+        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; }
+    </style>
 </head>
 <body>
 
     <div id="auth-screen" class="auth-container">
-        <h1>VSS SYSTEM</h1>
         <div class="auth-box">
-            <input type="text" id="username" placeholder="Nome de Usuário (Só cadastro)">
-            <input type="email" id="email" placeholder="Seu E-mail">
-            <input type="password" id="pass" placeholder="Sua Senha">
-            <div class="auth-buttons">
-                <button id="btn-login">Entrar</button>
-                <button id="btn-cadastro">Criar Conta</button>
-            </div>
+            <h2 style="text-align:center">VSS LOGIN</h2>
+            <input type="text" id="reg-name" placeholder="Nome de Usuário">
+            <input type="email" id="auth-email" placeholder="E-mail">
+            <input type="password" id="auth-pass" placeholder="Senha">
+            <button id="btn-login" class="btn-primary">ENTRAR</button>
+            <button id="btn-register" class="btn-secondary">CRIAR CONTA</button>
         </div>
     </div>
 
-    <div id="main-site" style="display:none;">
+    <div id="main-site" style="display:none; width: 100%;">
         <aside class="sidebar">
-            <div id="status-bar"></div>
-            <nav>
-                <button onclick="mudarAba('chat')">💬 Chat Global</button>
-                <button onclick="mudarAba('arvore')">🌳 Árvore Genealógica</button>
-                <button onclick="mudarAba('perfil')">👤 Meu Perfil</button>
-                <button id="btn-sair" style="color: #ff4444;">🚪 Sair</button>
+            <div id="status-bar">Carregando...</div>
+            <nav style="display:flex; flex-direction:column">
+                <button class="nav-btn" id="nav-chat">💬 Chat Global</button>
+                <button class="nav-btn" id="nav-tree">🌳 Árvore Geo</button>
+                <button class="nav-btn" id="nav-perfil">👤 Meu Perfil</button>
+                <button class="nav-btn" id="btn-logout" style="color:red; margin-top:20px">🚪 Sair</button>
             </nav>
         </aside>
 
         <main class="content">
             <section id="aba-chat">
                 <div id="chat-messages"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="msg-input" placeholder="Digite uma mensagem...">
-                    <button id="btn-enviar">Enviar</button>
+                <div class="input-area">
+                    <input type="text" id="msg-input" placeholder="Digite sua mensagem...">
+                    <button id="btn-send" class="btn-primary">Enviar</button>
                 </div>
             </section>
 
-            <section id="aba-arvore" style="display:none;">
-                <h2>Árvore Hierárquica VSS</h2>
-                <div class="tree-container">
-                    <div class="tree" id="tree-display"></div>
-                </div>
+            <section id="aba-tree" style="display:none;">
+                <div class="tree" id="tree-display"></div>
             </section>
 
             <section id="aba-perfil" style="display:none;">
-                <h2>Meu Perfil</h2>
-                <div id="perfil-detalhes" class="card"></div>
+                <div id="perfil-info" style="background:#1a1a1a; padding:20px; border-radius:10px; border:1px solid #333;"></div>
             </section>
         </main>
     </div>
 
-    <script type="module" src="app.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I",
+            authDomain: "analitysvss.firebaseapp.com",
+            projectId: "analitysvss",
+            storageBucket: "analitysvss.firebasestorage.app",
+            messagingSenderId: "665486639760",
+            appId: "1:665486639760:web:16dd3ee053cd283f5e4e15"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const CARGOS = {
+            "1": { nome: "I - INICIANTE", cor: "#5865f2" }, "2": { nome: "II - SOLDADO", cor: "#ffffff" },
+            "3": { nome: "III - CABO", cor: "#95a5a6" }, "4": { nome: "IV - 3º SARGENTO", cor: "#bdc3c7" },
+            "5": { nome: "V - 2º SARGENTO", cor: "#1abc9c" }, "6": { nome: "VI - 1º SARGENTO", cor: "#2980b9" },
+            "7": { nome: "VII - CAPITÃO", cor: "#3498db" }, "8": { nome: "IX - MAJOR", cor: "#27ae60" },
+            "9": { nome: "X - MARECHAL", cor: "#2ecc71" }, "10a": { nome: "3º AUTORIDADE", cor: "#daa520" },
+            "11a": { nome: "2º AUTORIDADE MÁXIMA", cor: "#ffd700" }, "12a": { nome: "CESAR", cor: "#ff8c00" },
+            "13a": { nome: "ANALITY", cor: "#ff4500" }, "10b": { nome: "SÓCIO", cor: "#9400d3" },
+            "11b": { nome: "STAFF ESPECIAL", cor: "#a29bfe" }, "15": { nome: "FUNDADOR", cor: "#ff0000" }
+        };
+
+        const ESTRUTURA_ARVORE = [{ id: "15", filhos: [
+            { id: "13a", filhos: [{ id: "12a", filhos: [{ id: "11a", filhos: [{ id: "10a", filhos: [{ id: "9" }] }] }] }] },
+            { id: "11b", filhos: [{ id: "10b", filhos: [{ id: "9" }] }] }
+        ]}];
+
+        const TRONCO_MILITAR = { id: "9", filhos: [{ id: "8", filhos: [{ id: "7", filhos: [{ id: "6", filhos: [{ id: "5", filhos: [{ id: "4", filhos: [{ id: "3", filhos: [{ id: "2", filhos: [{ id: "1" }] }] }] }] }] }] }] }] };
+
+        let userDados = null;
+
+        // Funções de Interface
+        function mudarAba(abaId) {
+            document.getElementById('aba-chat').style.display = abaId === 'chat' ? 'block' : 'none';
+            document.getElementById('aba-tree').style.display = abaId === 'tree' ? 'block' : 'none';
+            document.getElementById('aba-perfil').style.display = abaId === 'perfil' ? 'block' : 'none';
+        }
+
+        function renderArvore(nodos) {
+            let html = "<ul>";
+            nodos.forEach(n => {
+                const c = CARGOS[n.id];
+                html += `<li><b style="color:${c.cor}; border-color:${c.cor}">${c.nome}</b>`;
+                if (n.filhos) html += renderArvore(n.filhos);
+                if (n.id === "9") html += renderArvore([TRONCO_MILITAR.filhos[0]]);
+                html += "</li>";
+            });
+            return html + "</ul>";
+        }
+
+        // Monitoramento de Usuário
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                onSnapshot(doc(db, "usuarios", user.uid), (snap) => {
+                    userDados = snap.data();
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-site').style.display = 'flex';
+                    const c = CARGOS[userDados.nivel] || CARGOS["1"];
+                    document.getElementById('status-bar').innerHTML = `Logado: <b style="color:${c.cor}">${userDados.nome}</b>`;
+                    document.getElementById('perfil-info').innerHTML = `<h2>${userDados.nome}</h2><p>Cargo: ${c.nome}</p><p>Nível: ${userDados.nivel}</p>`;
+                    document.getElementById('tree-display').innerHTML = renderArvore(ESTRUTURA_ARVORE);
+                });
+                
+                // Chat Real-time
+                const q = query(collection(db, "mensagens"), orderBy("data", "asc"));
+                onSnapshot(q, (snap) => {
+                    const box = document.getElementById('chat-messages');
+                    box.innerHTML = "";
+                    snap.forEach(d => {
+                        const m = d.data();
+                        const c = CARGOS[m.nivel] || CARGOS["1"];
+                        box.innerHTML += `<p><b style="color:${c.cor}">[${c.nome}] ${m.nomeUsuario}:</b> ${m.texto}</p>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
+                });
+            } else {
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('main-site').style.display = 'none';
+            }
+        });
+
+        // Eventos de Botão (Versão PC Seguro)
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value);
+        };
+
+        document.getElementById('btn-register').onclick = async () => {
+            const n = document.getElementById('reg-name').value;
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-pass').value;
+            const res = await createUserWithEmailAndPassword(auth, e, p);
+            await setDoc(doc(db, "usuarios", res.user.uid), { nome: n, email: e, nivel: "1", banido: false });
+        };
+
+        document.getElementById('btn-send').onclick = async () => {
+            const input = document.getElementById('msg-input');
+            if (!input.value.trim()) return;
+            await addDoc(collection(db, "mensagens"), {
+                texto: input.value, nomeUsuario: userDados.nome, nivel: String(userDados.nivel), data: serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        document.getElementById('nav-chat').onclick = () => mudarAba('chat');
+        document.getElementById('nav-tree').onclick = () => mudarAba('tree');
+        document.getElementById('nav-perfil').onclick = () => mudarAba('perfil');
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+    </script>
 </body>
 </html>
