@@ -218,13 +218,13 @@
             subAba('noticias');
         };
 
-        function gerarProva() {
+        window.gerarProva = () => {
             const l = document.getElementById('questoes-lista'); l.innerHTML = "";
             for(let i=1; i<=100; i++) {
                 const n1 = Math.floor(Math.random()*100); const n2 = Math.floor(Math.random()*50);
                 l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #222">Q${i}: Quanto é ${n1}+${n2}? <input type="number" class="res-p" data-c="${n1+n2}" style="width:60px"></div>`;
             }
-        }
+        };
 
         window.finalizarProva = async () => {
             let acertos = 0; document.querySelectorAll('.res-p').forEach(i => { if(i.value == i.dataset.c) acertos++; });
@@ -233,13 +233,26 @@
             location.reload();
         };
 
-        document.getElementById('btn-liberar-prova').onclick = async () => { await setDoc(doc(db, "sistema", "config"), { provaAberta: true }); alert("Prova Liberada para todos!"); };
-        window.fLogin = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
-        window.fRegistro = async () => {
-            const r = await createUserWithEmailAndPassword(auth, document.getElementById('r-email').value, document.getElementById('r-senha').value);
-            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('r-nome').value, nivel: "1", xp: 0 });
-            location.reload();
+        // CORREÇÃO DOS BOTÕES DE LOGIN E REGISTRO
+        window.fLogin = () => {
+            const email = document.getElementById('l-email').value;
+            const senha = document.getElementById('l-senha').value;
+            signInWithEmailAndPassword(auth, email, senha).catch(err => alert("Erro: " + err.message));
         };
+
+        window.fRegistro = async () => {
+            const nome = document.getElementById('r-nome').value;
+            const email = document.getElementById('r-email').value;
+            const senha = document.getElementById('r-senha').value;
+            if(!nome) return alert("Digite seu nome!");
+            try {
+                const r = await createUserWithEmailAndPassword(auth, email, senha);
+                await setDoc(doc(db, "usuarios", r.user.uid), { nome: nome, nivel: "1", xp: 0 });
+                location.reload();
+            } catch(err) { alert("Erro ao registrar: " + err.message); }
+        };
+
+        document.getElementById('btn-liberar-prova').onclick = async () => { await setDoc(doc(db, "sistema", "config"), { provaAberta: true }); alert("Prova Liberada para todos!"); };
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
     </script>
 </body>
