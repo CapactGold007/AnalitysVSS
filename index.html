@@ -2,40 +2,36 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS - Desktop Pro</title>
+    <title>VSS - Árvore Hierárquica Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- TELA DE ACESSO -->
     <div id="auth-screen" class="auth-container">
         <h1>VSS SYSTEM</h1>
         <div class="auth-box">
-            <input type="text" id="username" placeholder="Nome de Usuário (Só para cadastro)">
+            <input type="text" id="username" placeholder="Nome de Usuário (Só cadastro)">
             <input type="email" id="email" placeholder="Seu E-mail">
             <input type="password" id="pass" placeholder="Sua Senha">
             <div class="auth-buttons">
                 <button id="btn-login">Entrar</button>
-                <button id="btn-cadastro">Criar Nova Conta</button>
+                <button id="btn-cadastro">Criar Conta</button>
             </div>
         </div>
     </div>
 
-    <!-- SITE PRINCIPAL -->
     <div id="main-site" style="display:none;">
         <aside class="sidebar">
-            <div id="user-mini-profile"></div>
+            <div id="status-bar"></div>
             <nav>
                 <button onclick="mudarAba('chat')">💬 Chat Global</button>
-                <button onclick="mudarAba('membros')">👥 Membros</button>
+                <button onclick="mudarAba('arvore')">🌳 Árvore Genealógica</button>
                 <button onclick="mudarAba('perfil')">👤 Meu Perfil</button>
-                <button onclick="mudarAba('classes')">🛡️ Classes</button>
                 <button id="btn-sair" style="color: #ff4444;">🚪 Sair</button>
             </nav>
         </aside>
 
         <main class="content">
-            <!-- ABA CHAT -->
             <section id="aba-chat">
                 <div id="chat-messages"></div>
                 <div class="chat-input-area">
@@ -44,22 +40,16 @@
                 </div>
             </section>
 
-            <!-- ABA MEMBROS -->
-            <section id="aba-membros" style="display:none;">
-                <h2>Membros do Sistema</h2>
-                <div id="lista-membros"></div>
+            <section id="aba-arvore" style="display:none;">
+                <h2>Árvore Hierárquica VSS</h2>
+                <div class="tree-container">
+                    <div class="tree" id="tree-display"></div>
+                </div>
             </section>
 
-            <!-- ABA PERFIL -->
             <section id="aba-perfil" style="display:none;">
                 <h2>Meu Perfil</h2>
                 <div id="perfil-detalhes" class="card"></div>
-            </section>
-
-            <!-- ABA CLASSES -->
-            <section id="aba-classes" style="display:none;">
-                <h2>Hierarquia de Classes</h2>
-                <div id="lista-classes" class="grid-classes"></div>
             </section>
         </main>
     </div>
