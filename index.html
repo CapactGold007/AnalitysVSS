@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - OFICIAL COMPLETO</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
@@ -16,12 +16,18 @@
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
 
-        /* Estilo da Árvore */
-        .tree-box { text-align: center; border: 1px solid #333; padding: 10px; border-radius: 8px; background: #151515; margin: 5px; min-width: 120px; font-size: 11px; }
-
-        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-        #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; }
+        /* Inputs e Auth */
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .auth-box { background: #111; padding: 30px; border-radius: 10px; width: 320px; border: 1px solid #333; }
+        
+        .btn-primary { background: #5865f2; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+        .btn-secondary { background: #333; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; }
+
+        /* Árvore */
+        .tree-box { text-align: center; border: 1px solid #333; padding: 10px; border-radius: 8px; background: #151515; margin: 5px; min-width: 140px; font-size: 11px; }
+        
+        #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; }
     </style>
 </head>
 <body>
@@ -29,12 +35,24 @@
     <div id="top-news">📢 <span id="news-text">...</span></div>
 
     <div id="auth-screen">
-        <div style="background:#111; padding:30px; border-radius:10px; width:300px; border:1px solid #333">
-            <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
-            <input type="text" id="reg-nome" placeholder="Nome para o Perfil" style="margin-bottom:10px">
-            <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
-            <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
-            <button id="btn-login" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / REGISTRAR</button>
+        <div class="auth-box">
+            <h2 style="text-align:center; color:#5865f2; margin-top:0">VSS SYSTEM</h2>
+            
+            <div id="login-fields">
+                <input type="email" id="auth-email" placeholder="E-mail">
+                <input type="password" id="auth-senha" placeholder="Senha">
+                <button class="btn-primary" id="btn-entrar">ENTRAR</button>
+                <p style="text-align:center; font-size:12px; color:gray">Não tem conta?</p>
+                <button class="btn-secondary" onclick="alternarAuth(true)">CRIAR NOVA CONTA</button>
+            </div>
+
+            <div id="register-fields" style="display:none">
+                <input type="text" id="reg-nome" placeholder="Nome Completo">
+                <input type="email" id="reg-email" placeholder="E-mail">
+                <input type="password" id="reg-senha" placeholder="Senha">
+                <button class="btn-primary" id="btn-registrar" style="background: #2ecc71;">REGISTRAR AGORA</button>
+                <button class="btn-secondary" onclick="alternarAuth(false)">VOLTAR AO LOGIN</button>
+            </div>
         </div>
     </div>
 
@@ -65,57 +83,43 @@
                 <h2>🎖️ Hierarquia Oficial VSS</h2>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <div class="tree-box" style="border-color:red; color:red">FUNDADOR</div>
-                    <div style="height:20px; border-left:2px solid #333"></div>
-                    <div style="display:flex">
-                        <div class="tree-box" style="color:orange">AUTORIDADE (A)</div>
-                        <div class="tree-box" style="color:purple">SÓCIO (B)</div>
-                    </div>
-                    <div style="height:20px; border-left:2px solid #333"></div>
+                    <div class="tree-box" style="color:orange">AUTORIDADE (A) / SÓCIO (B)</div>
                     <div class="tree-box" style="color:#2ecc71">MARECHAL</div>
-                    <div class="tree-box">MAJOR</div>
-                    <div class="tree-box">CAPITÃO</div>
-                    <div class="tree-box">SARGENTO</div>
-                    <div class="tree-box">CABO</div>
-                    <div class="tree-box">SOLDADO</div>
-                    <div class="tree-box">INICIANTE</div>
+                    <div class="tree-box">MAJOR / CAPITÃO</div>
+                    <div class="tree-box">SARGENTO / CABO</div>
+                    <div class="tree-box">SOLDADO / INICIANTE</div>
                 </div>
             </section>
 
             <section id="aba-membros" style="display:none">
-                <h3>👥 Membros no Sistema</h3>
+                <h3>👥 Membros Registrados</h3>
                 <div id="lista-membros" class="card"></div>
             </section>
 
             <section id="aba-noticias" style="display:none">
                 <div class="card">
                     <h2>📢 Mural de Notícias</h2>
-                    <textarea id="news-input" rows="4" placeholder="Escreva e aperte Enter para postar..."></textarea>
+                    <textarea id="news-input" rows="4" placeholder="Escreva o aviso e aperte Enter..."></textarea>
                 </div>
             </section>
 
             <section id="aba-regras" style="display:none">
                 <div class="card">
                     <h2 style="color:red">REGRAS OBRIGATÓRIAS</h2>
-                    <ul>
-                        <li>NÃO MENTIR</li>
-                        <li>RESPEITAR SUPERIORES</li>
-                        <li>CRER EM DEUS</li>
-                        <li>ACEITAR DERROTAS</li>
-                    </ul>
+                    <p>1. NÃO MENTIR | 2. RESPEITAR SUPERIORES | 3. CRER EM DEUS | 4. NÃO XINGAR | 5. ACEITAR DERROTAS</p>
                 </div>
             </section>
 
             <section id="aba-prova" style="display:none">
                 <div id="prova-lock-msg" class="card">
-                    <h2 style="color:red">🔒 PROVA TRANCADA</h2>
-                    <p>A prova só aparece quando o Fundador libera.</p>
-                    <button id="btn-liberar-prova" style="display:none; background:green; color:white; border:none; padding:10px; cursor:pointer">LIBERAR PROVA AGORA</button>
+                    <h2>🔒 PROVA TRANCADA</h2>
+                    <p id="msg-prova-status">Aguardando liberação do Fundador.</p>
+                    <button id="btn-liberar-prova" style="display:none; background:green; color:white; border:none; padding:12px; cursor:pointer; border-radius:5px">LIBERAR PROVA PARA TODOS</button>
                 </div>
                 <div id="prova-container" style="display:none">
-                    <h2>📝 PROVA STAFF IA (100 QUESTÕES)</h2>
-                    <p>Se sair da aba, você será reprovado!</p>
+                    <h2 style="color:#ff4444">📝 PROVA STAFF IA (100 QUESTÕES)</h2>
                     <div id="questoes-lista"></div>
-                    <button onclick="finalizarProva()" style="width:100%; padding:20px; background:blue; color:white; border:none; cursor:pointer">ENTREGAR</button>
+                    <button onclick="finalizarProva()" style="width:100%; padding:20px; background:blue; color:white; border:none; cursor:pointer; font-weight:bold">ENTREGAR RESPOSTAS</button>
                 </div>
             </section>
         </main>
@@ -129,18 +133,19 @@
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        let uD = null;
-        let emProva = false;
-        const CARGOS = {"1":"INICIANTE", "2":"SOLDADO", "3":"CABO", "4":"SARGENTO", "5":"CAPITÃO", "8":"MAJOR", "9":"MARECHAL", "10":"STAFF", "15":"FUNDADOR"};
+        let uD = null; let emProva = false;
+        const CARGOS = {"1":"INICIANTE", "2":"SOLDADO", "3":"CABO", "4":"SARGENTO", "9":"MARECHAL", "10":"STAFF", "15":"FUNDADOR"};
+
+        window.alternarAuth = (registrar) => {
+            document.getElementById('login-fields').style.display = registrar ? 'none' : 'block';
+            document.getElementById('register-fields').style.display = registrar ? 'block' : 'none';
+        };
 
         window.aba = (id) => {
-            if(id === 'aba-prova' && uD.nivel < 2) return alert("Apenas Soldados+!");
+            if(id === 'aba-prova' && uD.nivel < 2) return alert("Somente Soldados (Nivel 2) ou superior!");
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
-
-        // Anti-IA
-        window.onblur = () => { if(emProva){ alert("ABANDONOU A PROVA!"); location.reload(); }};
 
         onAuthStateChanged(auth, u => {
             if(u) {
@@ -150,21 +155,18 @@
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
                     document.getElementById('status-bar').innerText = `${uD.nome} | ${CARGOS[uD.nivel] || 'MEMBRO'}`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>${uD.nome}</h2><p>Cargo: ${CARGOS[uD.nivel] || 'MEMBRO'}</p>`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>${uD.nome}</h2><p>Cargo: ${CARGOS[uD.nivel] || 'MEMBRO'}</p><p>XP: ${uD.xp || 0}</p>`;
                     if(uD.nivel == "15") document.getElementById('btn-liberar-prova').style.display = 'block';
                 });
 
-                // Escutar liberação de prova
                 onSnapshot(doc(db, "sistema", "config"), s => {
-                    if(s.data()?.provaAberta) {
+                    if(s.exists() && s.data().provaAberta) {
                         document.getElementById('prova-lock-msg').style.display = 'none';
                         document.getElementById('prova-container').style.display = 'block';
-                        if(!emProva) gerarQuestoes();
-                        emProva = true;
+                        if(!emProva) gerarQuestoes(); emProva = true;
                     }
                 });
 
-                // Chat e Notícias (Igual aos anteriores mas com Enter)
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const box = document.getElementById('chat-messages'); box.innerHTML = "";
                     s.forEach(d => { box.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
@@ -172,6 +174,26 @@
                 });
             }
         });
+
+        // LOGIN
+        document.getElementById('btn-entrar').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value)
+            .catch(e => alert("Erro ao entrar: Verifique e-mail e senha."));
+        };
+
+        // REGISTRO
+        document.getElementById('btn-registrar').onclick = async () => {
+            const nome = document.getElementById('reg-nome').value;
+            const email = document.getElementById('reg-email').value;
+            const senha = document.getElementById('reg-senha').value;
+            if(!nome) return alert("Digite seu nome!");
+            
+            try {
+                const r = await createUserWithEmailAndPassword(auth, email, senha);
+                await setDoc(doc(db, "usuarios", r.user.uid), { nome: nome, nivel: "1", xp: 0, email: email });
+                alert("Conta criada com sucesso!");
+            } catch (e) { alert("Erro ao registrar: " + e.message); }
+        };
 
         function gerarQuestoes() {
             const l = document.getElementById('questoes-lista'); l.innerHTML = "";
@@ -185,8 +207,8 @@
             let acertos = 0;
             document.querySelectorAll('.q-ia').forEach(i => { if(i.value == i.dataset.c) acertos++; });
             if(acertos >= 69) {
-                alert("APROVADO!"); await updateDoc(doc(db, "usuarios", uD.uid), { nivel: "10" });
-            } else { alert("REPROVADO!"); }
+                alert("APROVADO! Agora você é STAFF."); await updateDoc(doc(db, "usuarios", uD.uid), { nivel: "10" });
+            } else { alert("REPROVADO! Acertos: " + acertos); }
             location.reload();
         };
 
@@ -199,17 +221,6 @@
             if(e.key === 'Enter' && e.target.value.trim()) {
                 await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
                 e.target.value = "";
-            }
-        };
-
-        document.getElementById('btn-login').onclick = async () => {
-            const e = document.getElementById('auth-email').value;
-            const p = document.getElementById('auth-senha').value;
-            try { 
-                await signInWithEmailAndPassword(auth, e, p); 
-            } catch {
-                const r = await createUserWithEmailAndPassword(auth, e, p);
-                await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value || "Recruta", nivel: "1", xp: 0 });
             }
         };
 
