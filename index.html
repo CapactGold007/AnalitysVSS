@@ -2,10 +2,10 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - COMANDO TOTAL</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
         .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
@@ -19,12 +19,11 @@
         .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
         .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 10px; white-space: nowrap; }
 
-        /* LISTA DE MEMBROS */
-        .membro-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #222; }
-        .adm-controls { display: flex; align-items: center; gap: 8px; }
-        .input-xp { width: 50px !important; padding: 5px !important; text-align: center; }
-        .btn-adm { padding: 6px 10px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 11px; }
-        
+        /* MEMBROS */
+        .membro-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
+        .input-xp { width: 60px; background: #000; color: #fff; border: 1px solid #444; padding: 5px; border-radius: 4px; }
+        .btn-adm { padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 10px; }
+
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
@@ -36,20 +35,21 @@
     <div id="auth-screen">
         <div style="background:#111; padding:30px; border-radius:10px; width:300px">
             <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
-            <input type="text" id="reg-nome" placeholder="Seu Nome" style="margin-bottom:10px">
+            <input type="text" id="reg-nome" placeholder="Nome" style="margin-bottom:10px">
             <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
             <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
-            <button id="btn-entrar" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / CRIAR</button>
+            <button id="btn-login" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / CRIAR</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
             <div id="status-bar"></div>
-            <button onclick="mudarAba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="mudarAba('aba-cargos')">🎖️ ÁRVORE DE CARGOS</button>
-            <button onclick="mudarAba('aba-membros')">👥 MEMBROS & ADMIN</button>
-            <button onclick="mudarAba('aba-noticias')">📢 ENVIAR NOTÍCIA</button>
+            <button onclick="mudarAba('aba-chat')">💬 CHAT</button>
+            <button onclick="mudarAba('aba-cargos')">🎖️ CARGOS</button>
+            <button onclick="mudarAba('aba-membros')">👥 MEMBROS</button>
+            <button onclick="mudarAba('aba-noticias')">📢 NOTÍCIAS</button>
+            <button onclick="mudarAba('aba-perfil')">👤 PERFIL</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
 
@@ -67,16 +67,20 @@
             </section>
 
             <section id="aba-membros" style="display:none">
-                <h2>👥 Membros do Sistema</h2>
+                <h2>Gerenciar Membros</h2>
                 <div id="lista-membros" class="card"></div>
             </section>
 
             <section id="aba-noticias" style="display:none">
                 <div class="card">
-                    <h2>📢 Postar Notícia Global</h2>
-                    <textarea id="noticia-input" rows="4" placeholder="Escreva o aviso que aparecerá no topo para todos..."></textarea>
-                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:bold">PUBLICAR AGORA</button>
+                    <h2>📢 Notícia Global</h2>
+                    <textarea id="noticia-input" rows="4" placeholder="O que deseja avisar?"></textarea>
+                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">PUBLICAR (SOMA EM 1 MIN)</button>
                 </div>
+            </section>
+
+            <section id="aba-perfil" style="display:none">
+                <div id="perfil-card" class="card"></div>
             </section>
         </main>
     </div>
@@ -86,89 +90,66 @@
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, updateDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I",
-            authDomain: "analitysvss.firebaseapp.com",
-            projectId: "analitysvss",
-            storageBucket: "analitysvss.firebasestorage.app",
-            messagingSenderId: "665486639760",
-            appId: "1:665486639760:web:16dd3ee053cd283f5e4e15"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const CARGOS = {
-            "1":{n:"INICIANTE",c:"#5865f2"}, "2":{n:"SOLDADO",c:"#fff"}, "9":{n:"MARECHAL",c:"#2ecc71"}, 
-            "10":{n:"AUTORIDADE",c:"#daa520"}, "15":{n:"FUNDADOR",c:"#ff0000"}
+        const CARGOS = { 
+            "1":{n:"INICIANTE",c:"#5865f2"}, "2":{n:"SOLDADO",c:"#fff"}, "3":{n:"CABO",c:"#95a5a6"},
+            "9":{n:"MARECHAL",c:"#2ecc71"}, "10":{n:"AUTORIDADE",c:"#daa520"}, "15":{n:"FUNDADOR",c:"#ff0000"}
         };
 
         let uD = null;
-
         window.mudarAba = (id) => {
-            if(id === 'aba-noticias' && uD.nivel < 9 && uD.nivel != 15) { alert("Acesso negado!"); return; }
+            if(id==='aba-noticias' && uD.nivel < 9 && uD.nivel != 15) return alert("Sem permissão");
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
 
-        // DAR XP MANUALMENTE
+        // DAR XP MANUAL
         window.darXP = async (uid) => {
-            const qtd = parseInt(document.getElementById(`xp-val-${uid}`).value);
-            if(!qtd) return;
+            const val = parseInt(document.getElementById(`xp-in-${uid}`).value);
+            if(!val) return;
             const ref = doc(db, "usuarios", uid);
-            const snap = await getDoc(ref);
-            await updateDoc(ref, { xp: (snap.data().xp || 0) + qtd });
-            alert(`+${qtd} XP adicionado!`);
+            const s = await getDoc(ref);
+            await updateDoc(ref, { xp: (s.data().xp || 0) + val });
+            alert("XP Dado!");
         };
 
-        window.gerenciarMembro = async (acao, uid, nivel) => {
-            if(acao === 'ban') { if(confirm("Banir permanentemente?")) await deleteDoc(doc(db, "usuarios", uid)); }
-            if(acao === 'up') await updateDoc(doc(db, "usuarios", uid), { nivel: String(parseInt(nivel)+1), xp: 0 });
-            if(acao === 'down') await updateDoc(doc(db, "usuarios", uid), { nivel: String(parseInt(nivel)-1), xp: 0 });
+        window.adm = async (t, uid, n) => {
+            if(t==='ban') { if(confirm("Banir?")) await deleteDoc(doc(db,"usuarios",uid)); }
+            else { await updateDoc(doc(db,"usuarios",uid), { nivel: String(t==='up'?parseInt(n)+1:parseInt(n)-1), xp:0 }); }
         };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    if(!s.exists()) return;
-                    uD = s.data(); uD.uid = u.uid;
+                    if(!s.exists()) return; uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uD.nivel] || {n:"MEMBRO", c:"#eee"};
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${c.n} | XP: ${uD.xp || 0}`;
+                    const c = CARGOS[uD.nivel] || {n:"MEMBRO",c:"#eee"};
+                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${c.n} | XP: ${uD.xp||0}`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${c.n}</p><p>XP: ${uD.xp||0}</p>`;
                 });
 
-                // NOTICIAS
+                // NOTÍCIA COM TIMER DE 1 MINUTO
                 onSnapshot(doc(db, "sistema", "news"), s => {
                     if(s.exists()){
                         document.getElementById('news-text').innerText = s.data().t;
                         document.getElementById('top-news-bar').style.display = 'block';
+                        setTimeout(() => { document.getElementById('top-news-bar').style.display = 'none'; }, 60000); // 1 MINUTO
                     }
                 });
 
-                // LISTA DE MEMBROS COM CONTROLE DE XP
                 onSnapshot(collection(db, "usuarios"), s => {
                     const l = document.getElementById('lista-membros'); l.innerHTML = "";
                     s.forEach(d => {
-                        const m = d.data();
-                        const ehAdm = (uD.nivel >= 10 || uD.nivel == 15);
-                        l.innerHTML += `
-                        <div class="membro-row">
-                            <span><b>${m.nome}</b> [XP: ${m.xp || 0}]</span>
-                            ${ehAdm && d.id !== uD.uid ? `
-                                <div class="adm-controls">
-                                    <input type="number" id="xp-val-${d.id}" class="input-xp" placeholder="0">
-                                    <button class="btn-adm" style="background:#5865f2" onclick="darXP('${d.id}')">+ XP</button>
-                                    <button class="btn-adm" style="background:green" onclick="gerenciarMembro('up','${d.id}','${m.nivel}')">↑</button>
-                                    <button class="btn-adm" style="background:red" onclick="gerenciarMembro('ban','${d.id}')">X</button>
-                                </div>
-                            ` : ''}
-                        </div>`;
+                        const m = d.data(); const isA = (uD.nivel >= 10 || uD.nivel == 15);
+                        l.innerHTML += `<div class="membro-row"><span><b>${m.nome}</b> [XP: ${m.xp||0}]</span>
+                        ${isA && d.id!==uD.uid ? `<div><input type="number" id="xp-in-${d.id}" class="input-xp" placeholder="XP"><button onclick="darXP('${d.id}')" class="btn-adm" style="background:blue">+XP</button><button onclick="adm('up','${d.id}','${m.nivel}')" class="btn-adm" style="background:green">↑</button><button onclick="adm('ban','${d.id}')" class="btn-adm" style="background:red">X</button></div>`:''}</div>`;
                     });
                 });
 
-                onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
+                onSnapshot(query(collection(db,"mensagens"),orderBy("data","asc")), s => {
                     const b = document.getElementById('chat-messages'); b.innerHTML = "";
                     s.forEach(d => { b.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
                     b.scrollTop = b.scrollHeight;
@@ -184,22 +165,21 @@
 
         document.getElementById('btn-postar').onclick = async () => {
             const t = document.getElementById('noticia-input').value;
-            if(t.trim()) { await setDoc(doc(db, "sistema", "news"), { t: t }); alert("Notícia Atualizada!"); }
+            if(t.trim()) { await setDoc(doc(db,"sistema","news"), { t: t }); alert("Postado!"); }
         };
 
-        document.getElementById('btn-entrar').onclick = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-senha').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); } catch {
-                const r = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
+        document.getElementById('btn-login').onclick = async () => {
+            const e = document.getElementById('auth-email').value; const p = document.getElementById('auth-senha').value;
+            try { await signInWithEmailAndPassword(auth, e, p); } catch {
+                const r = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db,"usuarios",r.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
             }
         };
 
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
 
-        // ÁRVORE
-        document.getElementById('tree-root').innerHTML = `<ul><li><b>FUNDADOR</b><ul><li><b>AUTORIDADE</b><ul><li><b>MARECHAL</b><ul><li><b>SOLDADO</b><ul><li><b>INICIANTE</b></li></ul></li></ul></li></ul></li></ul></li></ul>`;
+        // ÁRVORE DE CARGOS
+        document.getElementById('tree-root').innerHTML = `<ul><li><b>FUNDADOR</b><ul><li><b>AUTORIDADE</b><ul><li><b>MARECHAL</b><ul><li><b>CABO</b><ul><li><b>SOLDADO</b><ul><li><b>INICIANTE</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
     </script>
 </body>
 </html>
