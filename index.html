@@ -2,33 +2,29 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VSS SYSTEM - OFICIAL</title>
+    <title>VSS - SISTEMA HIERÁRQUICO</title>
     <style>
-        /* CSS COMPLETO */
-        body { background: #0f0f0f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        /* CSS INTEGRADO */
+        body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
         
-        /* Login */
-        .auth-container { position: fixed; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; z-index: 999; }
-        .auth-box { background: #111; padding: 30px; border-radius: 15px; border: 1px solid #333; width: 300px; display: flex; flex-direction: column; gap: 10px; }
-        input { background: #222; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px; }
-        button { cursor: pointer; padding: 10px; border-radius: 5px; border: none; font-weight: bold; transition: 0.3s; }
-        .btn-primary { background: #5865f2; color: white; }
-        .btn-secondary { background: #333; color: white; }
-
+        /* Auth Screen */
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .auth-box { background: #111; padding: 30px; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; width: 300px; }
+        
         /* Sidebar */
-        .sidebar { width: 250px; background: #1a1a1a; padding: 20px; display: flex; flex-direction: column; border-right: 1px solid #333; }
-        .nav-btn { background: none; color: #ccc; text-align: left; padding: 15px; font-size: 16px; margin-bottom: 5px; }
-        .nav-btn:hover { background: #333; color: white; }
-        #status-bar { font-size: 12px; padding: 10px; background: #222; border-radius: 5px; margin-bottom: 20px; border: 1px solid #333; }
+        .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
+        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; }
+        .sidebar button:hover { background: #333; }
+        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; }
 
-        /* Main Content */
-        .content { flex: 1; padding: 20px; position: relative; overflow-y: auto; }
-        #chat-messages { height: 70vh; background: #050505; border: 1px solid #222; border-radius: 10px; padding: 15px; overflow-y: auto; margin-bottom: 20px; }
-        .input-area { display: flex; gap: 10px; }
-        .input-area input { flex: 1; }
+        /* Content Area */
+        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
+        #chat-messages { height: 65vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
+        .input-group { display: flex; gap: 10px; }
+        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; flex: 1; }
 
-        /* Árvore Hierárquica Visual */
+        /* ÁRVORE GEOGRÁFICA (CSS DAS LINHAS) */
+        .tree-wrapper { display: flex; justify-content: center; padding-top: 20px; }
         .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
         .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
         .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
@@ -39,48 +35,49 @@
         .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
         .tree li:first-child::after { border-radius: 5px 0 0 0; }
         .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
-        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; }
+        .tree b { border: 2px solid #444; padding: 10px; display: inline-block; border-radius: 6px; background: #1a1a1a; font-size: 11px; white-space: nowrap; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="auth-container">
+    <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="text-align:center">VSS LOGIN</h2>
-            <input type="text" id="reg-name" placeholder="Nome de Usuário">
-            <input type="email" id="auth-email" placeholder="E-mail">
-            <input type="password" id="auth-pass" placeholder="Senha">
-            <button id="btn-login" class="btn-primary">ENTRAR</button>
-            <button id="btn-register" class="btn-secondary">CRIAR CONTA</button>
+            <h2 style="margin:0 0 10px 0; text-align:center">VSS LOGIN</h2>
+            <input type="text" id="user-n" placeholder="Nome">
+            <input type="email" id="user-e" placeholder="E-mail">
+            <input type="password" id="user-p" placeholder="Senha">
+            <button id="login-go" style="background:#5865f2; border:none">ENTRAR</button>
+            <button id="reg-go">CRIAR CONTA</button>
         </div>
     </div>
 
-    <div id="main-site" style="display:none; width: 100%;">
+    <div id="main-app" style="display:none; width:100%; height:100%">
         <aside class="sidebar">
             <div id="status-bar">Carregando...</div>
-            <nav style="display:flex; flex-direction:column">
-                <button class="nav-btn" id="nav-chat">💬 Chat Global</button>
-                <button class="nav-btn" id="nav-tree">🌳 Árvore Geo</button>
-                <button class="nav-btn" id="nav-perfil">👤 Meu Perfil</button>
-                <button class="nav-btn" id="btn-logout" style="color:red; margin-top:20px">🚪 Sair</button>
-            </nav>
+            <button id="go-chat">💬 CHAT GLOBAL</button>
+            <button id="go-tree">🌳 ÁRVORE HIERÁRQUICA</button>
+            <button id="go-perfil">👤 MEU PERFIL</button>
+            <button id="logout" style="margin-top:auto; color:#ff4444">SAIR</button>
         </aside>
 
         <main class="content">
             <section id="aba-chat">
                 <div id="chat-messages"></div>
-                <div class="input-area">
-                    <input type="text" id="msg-input" placeholder="Digite sua mensagem...">
-                    <button id="btn-send" class="btn-primary">Enviar</button>
+                <div class="input-group">
+                    <input type="text" id="msg-in" placeholder="Sua mensagem...">
+                    <button id="send-btn" style="background:#5865f2; width:100px">ENVIAR</button>
                 </div>
             </section>
 
-            <section id="aba-tree" style="display:none;">
-                <div class="tree" id="tree-display"></div>
+            <section id="aba-tree" style="display:none">
+                <h2 style="text-align:center">Organograma VSS (A/B)</h2>
+                <div class="tree-wrapper">
+                    <div class="tree" id="tree-box"></div>
+                </div>
             </section>
 
-            <section id="aba-perfil" style="display:none;">
-                <div id="perfil-info" style="background:#1a1a1a; padding:20px; border-radius:10px; border:1px solid #333;"></div>
+            <section id="aba-perfil" style="display:none">
+                <div id="perfil-card" style="background:#111; padding:30px; border-radius:12px; border:1px solid #333"></div>
             </section>
         </main>
     </div>
@@ -103,102 +100,87 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // CONFIGURAÇÃO DOS CARGOS (Tronco + Caminhos A e B)
         const CARGOS = {
-            "1": { nome: "I - INICIANTE", cor: "#5865f2" }, "2": { nome: "II - SOLDADO", cor: "#ffffff" },
-            "3": { nome: "III - CABO", cor: "#95a5a6" }, "4": { nome: "IV - 3º SARGENTO", cor: "#bdc3c7" },
-            "5": { nome: "V - 2º SARGENTO", cor: "#1abc9c" }, "6": { nome: "VI - 1º SARGENTO", cor: "#2980b9" },
-            "7": { nome: "VII - CAPITÃO", cor: "#3498db" }, "8": { nome: "IX - MAJOR", cor: "#27ae60" },
-            "9": { nome: "X - MARECHAL", cor: "#2ecc71" }, "10a": { nome: "3º AUTORIDADE", cor: "#daa520" },
-            "11a": { nome: "2º AUTORIDADE MÁXIMA", cor: "#ffd700" }, "12a": { nome: "CESAR", cor: "#ff8c00" },
-            "13a": { nome: "ANALITY", cor: "#ff4500" }, "10b": { nome: "SÓCIO", cor: "#9400d3" },
-            "11b": { nome: "STAFF ESPECIAL", cor: "#a29bfe" }, "15": { nome: "FUNDADOR", cor: "#ff0000" }
+            "1": {n:"I - INICIANTE", c:"#5865f2"}, "2": {n:"II - SOLDADO", c:"#fff"},
+            "3": {n:"III - CABO", c:"#95a5a6"}, "4": {n:"IV - 3º SARGENTO", c:"#bdc3c7"},
+            "5": {n:"V - 2º SARGENTO", c:"#1abc9c"}, "6": {n:"VI - 1º SARGENTO", c:"#2980b9"},
+            "7": {n:"VII - CAPITÃO", c:"#3498db"}, "8": {n:"IX - MAJOR", c:"#27ae60"},
+            "9": {n:"X - MARECHAL", c:"#2ecc71"},
+            "10a": {n:"3º AUTORIDADE (A)", c:"#daa520"}, "11a": {n:"2º AUTORIDADE (A)", c:"#ffd700"},
+            "12a": {n:"CESAR (A)", c:"#ff8c00"}, "13a": {n:"ANALITY (A)", c:"#ff4500"},
+            "10b": {n:"SÓCIO (B)", c:"#9400d3"}, "11b": {n:"STAFF ESPECIAL (B)", c:"#a29bfe"},
+            "15": {n:"FUNDADOR", c:"#f00"}
         };
 
-        const ESTRUTURA_ARVORE = [{ id: "15", filhos: [
-            { id: "13a", filhos: [{ id: "12a", filhos: [{ id: "11a", filhos: [{ id: "10a", filhos: [{ id: "9" }] }] }] }] },
-            { id: "11b", filhos: [{ id: "10b", filhos: [{ id: "9" }] }] }
-        ]}];
+        // ESTRUTURA DA ÁRVORE (Marechal é o nó que divide)
+        const ESTRUTURA = [
+            { id: "15", filhos: [
+                { id: "13a", filhos: [{ id: "12a", filhos: [{ id: "11a", filhos: [{ id: "10a", filhos: [{ id: "9", tronco: true }] }] }] }] },
+                { id: "11b", filhos: [{ id: "10b", filhos: [{ id: "9", tronco: true }] }] }
+            ]}
+        ];
 
-        const TRONCO_MILITAR = { id: "9", filhos: [{ id: "8", filhos: [{ id: "7", filhos: [{ id: "6", filhos: [{ id: "5", filhos: [{ id: "4", filhos: [{ id: "3", filhos: [{ id: "2", filhos: [{ id: "1" }] }] }] }] }] }] }] }] };
+        const TRONCO = [
+            { id: "8", filhos: [{ id: "7", filhos: [{ id: "6", filhos: [{ id: "5", filhos: [{ id: "4", filhos: [{ id: "3", filhos: [{ id: "2", filhos: [{ id: "1" }] }] }] }] }] }] }] }
+        ];
 
-        let userDados = null;
+        let dados = null;
 
-        // Funções de Interface
-        function mudarAba(abaId) {
-            document.getElementById('aba-chat').style.display = abaId === 'chat' ? 'block' : 'none';
-            document.getElementById('aba-tree').style.display = abaId === 'tree' ? 'block' : 'none';
-            document.getElementById('aba-perfil').style.display = abaId === 'perfil' ? 'block' : 'none';
-        }
-
-        function renderArvore(nodos) {
-            let html = "<ul>";
+        function desenhar(nodos) {
+            let h = "<ul>";
             nodos.forEach(n => {
-                const c = CARGOS[n.id];
-                html += `<li><b style="color:${c.cor}; border-color:${c.cor}">${c.nome}</b>`;
-                if (n.filhos) html += renderArvore(n.filhos);
-                if (n.id === "9") html += renderArvore([TRONCO_MILITAR.filhos[0]]);
-                html += "</li>";
+                const info = CARGOS[n.id];
+                h += `<li><b style="color:${info.c}; border-color:${info.c}">${info.n}</b>`;
+                if(n.filhos) h += desenhar(n.filhos);
+                if(n.tronco) h += desenhar(TRONCO);
+                h += "</li>";
             });
-            return html + "</ul>";
+            return h + "</ul>";
         }
 
-        // Monitoramento de Usuário
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                onSnapshot(doc(db, "usuarios", user.uid), (snap) => {
-                    userDados = snap.data();
+        onAuthStateChanged(auth, u => {
+            if(u) {
+                onSnapshot(doc(db, "usuarios", u.uid), s => {
+                    dados = s.data();
                     document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-site').style.display = 'flex';
-                    const c = CARGOS[userDados.nivel] || CARGOS["1"];
-                    document.getElementById('status-bar').innerHTML = `Logado: <b style="color:${c.cor}">${userDados.nome}</b>`;
-                    document.getElementById('perfil-info').innerHTML = `<h2>${userDados.nome}</h2><p>Cargo: ${c.nome}</p><p>Nível: ${userDados.nivel}</p>`;
-                    document.getElementById('tree-display').innerHTML = renderArvore(ESTRUTURA_ARVORE);
+                    document.getElementById('main-app').style.display = 'flex';
+                    const c = CARGOS[dados.nivel] || CARGOS["1"];
+                    document.getElementById('status-bar').innerHTML = `<b>${dados.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>${dados.nome}</h2><p>E-mail: ${dados.email}</p><p>Nível: ${dados.nivel}</p>`;
+                    document.getElementById('tree-box').innerHTML = desenhar(ESTRUTURA);
                 });
-                
-                // Chat Real-time
-                const q = query(collection(db, "mensagens"), orderBy("data", "asc"));
-                onSnapshot(q, (snap) => {
+                onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const box = document.getElementById('chat-messages');
                     box.innerHTML = "";
-                    snap.forEach(d => {
-                        const m = d.data();
-                        const c = CARGOS[m.nivel] || CARGOS["1"];
-                        box.innerHTML += `<p><b style="color:${c.cor}">[${c.nome}] ${m.nomeUsuario}:</b> ${m.texto}</p>`;
+                    s.forEach(d => {
+                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS["1"];
+                        box.innerHTML += `<p><b style="color:${c.c}">[${c.n}] ${m.u}:</b> ${m.t}</p>`;
                     });
                     box.scrollTop = box.scrollHeight;
                 });
             } else {
                 document.getElementById('auth-screen').style.display = 'flex';
-                document.getElementById('main-site').style.display = 'none';
+                document.getElementById('main-app').style.display = 'none';
             }
         });
 
-        // Eventos de Botão (Versão PC Seguro)
-        document.getElementById('btn-login').onclick = () => {
-            signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value);
+        // BOTÕES
+        document.getElementById('login-go').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('user-e').value, document.getElementById('user-p').value);
+        document.getElementById('reg-go').onclick = async () => {
+            const res = await createUserWithEmailAndPassword(auth, document.getElementById('user-e').value, document.getElementById('user-p').value);
+            await setDoc(doc(db, "usuarios", res.user.uid), { nome: document.getElementById('user-n').value, email: document.getElementById('user-e').value, nivel: "1" });
         };
-
-        document.getElementById('btn-register').onclick = async () => {
-            const n = document.getElementById('reg-name').value;
-            const e = document.getElementById('auth-email').value;
-            const p = document.getElementById('auth-pass').value;
-            const res = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "usuarios", res.user.uid), { nome: n, email: e, nivel: "1", banido: false });
+        document.getElementById('send-btn').onclick = async () => {
+            const i = document.getElementById('msg-in');
+            if(!i.value.trim()) return;
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: dados.nome, nivel: String(dados.nivel), data: serverTimestamp() });
+            i.value = "";
         };
-
-        document.getElementById('btn-send').onclick = async () => {
-            const input = document.getElementById('msg-input');
-            if (!input.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), {
-                texto: input.value, nomeUsuario: userDados.nome, nivel: String(userDados.nivel), data: serverTimestamp()
-            });
-            input.value = "";
-        };
-
-        document.getElementById('nav-chat').onclick = () => mudarAba('chat');
-        document.getElementById('nav-tree').onclick = () => mudarAba('tree');
-        document.getElementById('nav-perfil').onclick = () => mudarAba('perfil');
-        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
+        document.getElementById('go-chat').onclick = () => { document.getElementById('aba-chat').style.display='block'; document.getElementById('aba-tree').style.display='none'; document.getElementById('aba-perfil').style.display='none'; };
+        document.getElementById('go-tree').onclick = () => { document.getElementById('aba-chat').style.display='none'; document.getElementById('aba-tree').style.display='block'; document.getElementById('aba-perfil').style.display='none'; };
+        document.getElementById('go-perfil').onclick = () => { document.getElementById('aba-chat').style.display='none'; document.getElementById('aba-tree').style.display='none'; document.getElementById('aba-perfil').style.display='block'; };
+        document.getElementById('logout').onclick = () => signOut(auth).then(()=>location.reload());
     </script>
 </body>
 </html>
