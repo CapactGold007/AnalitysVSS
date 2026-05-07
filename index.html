@@ -2,143 +2,208 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SISTEMA HIERÁRQUICO VSS</title>
+    <title>VSS SYSTEM - RECRUTAMENTO IA</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar lateral */
-        .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; }
-        .sidebar button:hover { background: #333; }
+        .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; z-index: 1001; }
+        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
-
-        /* Área de Conteúdo */
-        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
-        #chat-messages { height: 60vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
-        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-
-        /* ÁRVORE HIERÁRQUICA (Estilo CSS conector) */
-        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
-        .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; }
-        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
-        .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
-        .tree li:only-child::after, .tree li:only-child::before { display: none; }
-        .tree li:only-child { padding-top: 0; }
-        .tree li:first-child::before, .tree li:last-child::after { border: none; }
-        .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
-        .tree li:first-child::after { border-radius: 5px 0 0 0; }
-        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
+        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; position: relative; }
+        .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
         
-        /* Estilo das caixas de cargo */
-        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; white-space: nowrap; transition: 0.3s; }
-        .tree b:hover { background: #333; border-color: #5865f2; transform: scale(1.05); }
+        /* Sistema de Prova */
+        #prova-container { display: none; background: #000; padding: 30px; border: 2px solid #ff4500; border-radius: 12px; }
+        .questao { margin-bottom: 15px; padding: 15px; background: #151515; border-radius: 8px; border-left: 4px solid #5865f2; }
+        .questao p { margin: 0 0 10px 0; font-weight: bold; color: #5865f2; }
+        
+        #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div id="status-bar">Carregando...</div>
-        <button onclick="mudarAba('aba-chat')">💬 CHAT GLOBAL</button>
-        <button onclick="mudarAba('aba-cargos')">🎖️ ÁRVORE DE CARGOS</button>
-        <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
-    </aside>
+    <div id="top-news">📢 <span id="news-text">...</span></div>
 
-    <main class="content">
-        <section id="aba-chat">
-            <div id="chat-messages"></div>
-            <div style="display:flex; gap:10px">
-                <input type="text" id="chat-input" placeholder="Conversar com a equipe...">
-                <button id="chat-send" style="background:#5865f2; color:white; border:none; padding:0 20px; border-radius:6px; cursor:pointer">ENVIAR</button>
-            </div>
-        </section>
+    <div id="auth-screen">
+        <div style="background:#111; padding:40px; border:1px solid #333; width:350px; border-radius:15px; display:flex; flex-direction:column; gap:15px">
+            <h2 style="text-align:center; color:#5865f2; margin:0">VSS LOGIN</h2>
+            <input type="text" id="reg-nome" placeholder="Nome Completo">
+            <input type="email" id="auth-email" placeholder="E-mail">
+            <input type="password" id="auth-senha" placeholder="Senha">
+            <button id="btn-login" style="background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold">ENTRAR NO SISTEMA</button>
+        </div>
+    </div>
 
-        <section id="aba-cargos" style="display:none">
-            <h2 style="text-align:center">Hierarquia da Organização</h2>
-            <div class="tree" id="tree-root"></div>
-        </section>
-    </main>
+    <div id="main-app" style="display:none; width:100%;">
+        <aside class="sidebar">
+            <div id="status-bar"></div>
+            <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
+            <button onclick="aba('aba-prova')" id="btn-aba-prova">🔒 TESTE DE STAFF (IA)</button>
+            <button onclick="aba('aba-noticias')">📢 NOTÍCIAS</button>
+            <button onclick="aba('aba-membros')">👥 MEMBROS / ADM</button>
+            <button id="btn-sair" style="color:#ff4444; margin-top:auto">DESLOGAR</button>
+        </aside>
+
+        <main class="content" style="padding-top: 70px;">
+            <section id="aba-chat">
+                <div id="chat-messages" style="height:65vh; overflow-y:auto; background:#050505; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #222"></div>
+                <div style="display:flex; gap:10px">
+                    <input type="text" id="chat-input" placeholder="Digite aqui...">
+                    <button id="chat-send" style="background:#5865f2; color:white; padding:0 25px; border:none; border-radius:6px; cursor:pointer">ENVIAR</button>
+                </div>
+            </section>
+
+            <section id="aba-prova" style="display:none">
+                <div id="prova-lock-msg" class="card">
+                    <h2 style="color:#ff4500">PROVA DE RECRUTAMENTO TRANCADA</h2>
+                    <p>O formulário só é liberado pelo **Fundador** ou a cada 2 horas pelo sistema.</p>
+                    <div id="fundador-area" style="display:none; margin-top:20px; border-top:1px solid #333; padding-top:20px">
+                        <p style="color:gray">Painel do Fundador:</p>
+                        <button onclick="liberarProva(true)" style="background:#2ecc71; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer">ABRIR FORMULÁRIO AGORA</button>
+                        <button onclick="liberarProva(false)" style="background:#e74c3c; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; margin-left:10px">FECHAR</button>
+                    </div>
+                </div>
+
+                <div id="prova-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ff4500; margin-bottom:20px; padding-bottom:10px">
+                        <h2 style="margin:0">🧠 TESTE DE INTELIGÊNCIA IA (100 QUESTÕES)</h2>
+                        <span id="prova-timer" style="color:red; font-weight:bold; font-size:20px">ANTI-CHEAT ATIVO</span>
+                    </div>
+                    <p style="background:rgba(255,0,0,0.2); border:1px solid red; padding:10px; border-radius:5px"><b>PROIBIDO:</b> Trocar de aba, minimizar ou pesquisar. O sistema detecta e cancela a prova na hora!</p>
+                    <div id="questoes-lista"></div>
+                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; font-size:22px; border:none; border-radius:10px; cursor:pointer; margin-top:20px">ENTREGAR TESTE</button>
+                </div>
+            </section>
+
+            <section id="aba-noticias" style="display:none">
+                <div class="card">
+                    <h2>📢 Mural de Notícias Global</h2>
+                    <textarea id="news-input" rows="5" placeholder="Escreva o comunicado aqui..."></textarea>
+                    <button id="btn-post-news" style="margin-top:15px; background:#ff4500; color:white; padding:12px 30px; border:none; border-radius:6px; cursor:pointer; font-weight:bold">POSTAR NOTÍCIA</button>
+                </div>
+            </section>
+
+            <section id="aba-membros" style="display:none">
+                <div id="lista-membros" class="card"></div>
+            </section>
+        </main>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I",
-            authDomain: "analitysvss.firebaseapp.com",
-            projectId: "analitysvss",
-            storageBucket: "analitysvss.firebasestorage.app",
-            messagingSenderId: "665486639760",
-            appId: "1:665486639760:web:16dd3ee053cd283f5e4e15"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        let uData = null;
+        let emProva = false;
 
-        const CARGOS = {
-            "1": {n:"I - INICIANTE", c:"#5865f2"}, "2": {n:"II - SOLDADO", c:"#fff"}, "3": {n:"III - CABO", c:"#95a5a6"},
-            "4": {n:"IV - 3º SARGENTO", c:"#bdc3c7"}, "5": {n:"V - 2º SARGENTO", c:"#1abc9c"}, "6": {n:"VI - 1º SARGENTO", c:"#2980b9"},
-            "7": {n:"VII - CAPITÃO", c:"#3498db"}, "8": {n:"IX - MAJOR", c:"#27ae60"}, "9": {n:"X - MARECHAL", c:"#2ecc71"},
-            "10a": {n:"3º AUTORIDADE (A)", c:"#daa520"}, "11a": {n:"2º AUTORIDADE MAXIMA (A)", c:"#ffd700"}, "12a": {n:"CESAR (A)", c:"#ff8c00"}, "13a": {n:"ANALITY (A)", c:"#ff4500"},
-            "10b": {n:"SÓCIO (B)", c:"#9400d3"}, "11b": {n:"STAFF ESPECIAL (B)", c:"#a29bfe"}, "15": {n:"FUNDADOR", c:"#ff0000"}
-        };
+        // ANTI-CHEATING: DETECTA TROCA DE ABA
+        window.onblur = () => { if(emProva) { alert("SISTEMA DETECTOU FRAUDE: Troca de aba detectada. Prova cancelada."); location.reload(); } };
 
-        let uD = null;
-        window.mudarAba = (id) => {
-            document.getElementById('aba-chat').style.display = 'none';
-            document.getElementById('aba-cargos').style.display = 'none';
+        window.aba = (id) => {
+            if(id === 'aba-prova' && uData.nivel < 2) return alert("Acesso negado! Apenas Soldados (Nível 2+) podem realizar o teste.");
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uD = s.data(); uD.uid = u.uid;
+                    if(!s.exists()) return;
+                    uData = s.data(); uData.uid = u.uid;
+                    document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uD.nivel] || {n:"MEMBRO", c:"#eee"};
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><small style="color:#5865f2">CARGO: ${uData.nivel == 15 ? 'FUNDADOR' : 'NV '+uData.nivel}</small>`;
+                    if(uData.nivel == 15) document.getElementById('fundador-area').style.display = 'block';
                 });
-                onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                    const b = document.getElementById('chat-messages'); b.innerHTML = "";
-                    s.forEach(d => { b.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
-                    b.scrollTop = b.scrollHeight;
+
+                // STATUS DA PROVA (REALTIME)
+                onSnapshot(doc(db, "sistema", "config"), s => {
+                    const status = s.data()?.provaAberta;
+                    if(status) {
+                        document.getElementById('prova-lock-msg').style.display = 'none';
+                        document.getElementById('prova-container').style.display = 'block';
+                        if(!emProva) gerarQuestoesIA();
+                        emProva = true;
+                    } else {
+                        document.getElementById('prova-lock-msg').style.display = 'block';
+                        document.getElementById('prova-container').style.display = 'none';
+                        emProva = false;
+                    }
+                });
+
+                // NOTICIAS (SUMIR EM 1 MIN)
+                onSnapshot(doc(db, "sistema", "news"), s => {
+                    if(s.exists()) {
+                        document.getElementById('news-text').innerText = s.data().t;
+                        document.getElementById('top-news').style.display = 'block';
+                        setTimeout(() => document.getElementById('top-news').style.display = 'none', 60000);
+                    }
                 });
             }
         });
 
-        document.getElementById('chat-send').onclick = async () => {
-            const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: uD.nome, data: serverTimestamp() });
-            i.value = "";
+        window.liberarProva = async (val) => { await setDoc(doc(db, "sistema", "config"), { provaAberta: val }); };
+
+        // MINI-IA GERADORA DE QUESTÕES
+        function gerarQuestoesIA() {
+            const lista = document.getElementById('questoes-lista');
+            lista.innerHTML = "";
+            for(let i=1; i<=100; i++) {
+                const tipo = Math.floor(Math.random() * 3);
+                let q, resp;
+                const n1 = Math.floor(Math.random() * 50) + 10;
+                const n2 = Math.floor(Math.random() * 20) + 2;
+
+                if(tipo === 0) { q = `Calcule: ${n1} x ${n2}`; resp = n1 * n2; }
+                else if(tipo === 1) { q = `Qual o valor de X em: X + ${n1} = ${n1 + n2}?`; resp = n2; }
+                else { q = `Se um item custa ${n1} e eu compro ${n2}, quanto gasto?`; resp = n1 * n2; }
+
+                lista.innerHTML += `
+                    <div class="questao">
+                        <p>QUESTÃO ${i}: ${q}</p>
+                        <input type="number" class="resp-ia" data-certa="${resp}" placeholder="Resposta...">
+                    </div>
+                `;
+            }
+        }
+
+        window.corrigirProva = async () => {
+            const r = document.querySelectorAll('.resp-ia');
+            let totalAcertos = 0;
+            r.forEach(input => { if(parseInt(input.value) === parseInt(input.getAttribute('data-certa'))) totalAcertos++; });
+
+            if(totalAcertos >= 69) {
+                alert(`EXCELENTE! Você acertou ${totalAcertos}/100 e foi promovido a STAFF.`);
+                await updateDoc(doc(db, "usuarios", uData.uid), { nivel: "10" });
+                location.reload();
+            } else {
+                alert(`REPROVADO! Você acertou ${totalAcertos}/100. O mínimo é 69. Tente novamente em 2 horas.`);
+                location.reload();
+            }
+        };
+
+        document.getElementById('btn-login').onclick = async () => {
+            const e = document.getElementById('auth-email').value;
+            const p = document.getElementById('auth-senha').value;
+            try { await signInWithEmailAndPassword(auth, e, p); } catch {
+                const res = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "usuarios", res.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
+            }
+        };
+
+        document.getElementById('btn-post-news').onclick = async () => {
+            if(uData.nivel < 9 && uData.nivel != 15) return alert("Sem permissão!");
+            await setDoc(doc(db, "sistema", "news"), { t: document.getElementById('news-input').value });
+            alert("Notícia publicada!");
         };
 
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
-
-        // CONSTRUÇÃO DA ÁRVORE (ÚNICA ATÉ MARECHAL)
-        document.getElementById('tree-root').innerHTML = `
-            <ul>
-                <li><b style="color:${CARGOS[15].c}">${CARGOS[15].n}</b>
-                    <ul>
-                        <li><b style="color:${CARGOS[9].c}">${CARGOS[9].n}</b>
-                            <ul>
-                                <li><b style="color:${CARGOS["10a"].c}">${CARGOS["10a"].n}</b><ul><li><b style="color:${CARGOS["11a"].c}">${CARGOS["11a"].n}</b><ul><li><b style="color:${CARGOS["12a"].c}">${CARGOS["12a"].n}</b><ul><li><b style="color:${CARGOS["13a"].c}">${CARGOS["13a"].n}</b></li></ul></li></ul></li></ul></li>
-                                <li><b style="color:${CARGOS["10b"].c}">${CARGOS["10b"].n}</b><ul><li><b style="color:${CARGOS["11b"].c}">${CARGOS["11b"].n}</b></li></ul></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <div style="text-align:center; padding-top:20px;">
-                <b style="color:${CARGOS[8].c}">${CARGOS[8].n}</b><br>
-                <b style="color:${CARGOS[7].c}">${CARGOS[7].n}</b><br>
-                <b style="color:${CARGOS[6].c}">${CARGOS[6].n}</b><br>
-                <b style="color:${CARGOS[5].c}">${CARGOS[5].n}</b><br>
-                <b style="color:${CARGOS[4].c}">${CARGOS[4].n}</b><br>
-                <b style="color:${CARGOS[3].c}">${CARGOS[3].n}</b><br>
-                <b style="color:${CARGOS[2].c}">${CARGOS[2].n}</b><br>
-                <b style="color:${CARGOS[1].c}">${CARGOS[1].n}</b>
-            </div>`;
     </script>
 </body>
 </html>
