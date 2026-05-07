@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - OFICIAL</title>
+    <title>VSS SYSTEM - HIERARQUIA COMPLETA</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
@@ -14,16 +14,16 @@
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; }
         .sub-nav button { background: #222; color: #ccc; border: 1px solid #444; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        .sub-nav button.active { background: #5865f2; color: white; }
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
-        .auth-box { background: #111; padding: 30px; border-radius: 10px; width: 320px; border: 1px solid #333; }
+        .membro-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; margin-bottom: 8px; }
+        .adm-btn { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 10px; margin-left: 2px; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
-        <div class="auth-box">
+        <div style="background:#111; padding:30px; border-radius:10px; width:320px; border:1px solid #333">
             <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
             <div id="login-fields">
                 <input type="email" id="l-email" placeholder="E-mail">
@@ -32,7 +32,7 @@
                 <button onclick="document.getElementById('login-fields').style.display='none';document.getElementById('reg-fields').style.display='block'" style="width:100%; background:#333; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; margin-top:10px">CRIAR CONTA</button>
             </div>
             <div id="reg-fields" style="display:none">
-                <input type="text" id="r-nome" placeholder="Nome Completo">
+                <input type="text" id="r-nome" placeholder="Seu Nome">
                 <input type="email" id="r-email" placeholder="E-mail">
                 <input type="password" id="r-senha" placeholder="Senha">
                 <button onclick="fRegistro()" style="width:100%; background:#2ecc71; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">REGISTRAR</button>
@@ -64,36 +64,57 @@
                 <div id="perfil-card" class="card"></div>
             </section>
 
-            <section id="aba-noticias-master" style="display:none">
-                <div class="sub-nav">
-                    <button onclick="subAba('mural')" id="btn-mural">MURAL</button>
-                    <button onclick="subAba('noticias')" id="btn-noticias">NOTÍCIAS</button>
-                    <button onclick="subAba('criar')" id="btn-criar">CRIAR NOTÍCIA</button>
-                </div>
-                
-                <div id="sub-mural">
-                    <input type="text" id="mural-input" placeholder="Escreva um recado rápido e aperte Enter...">
-                    <div id="mural-lista"></div>
-                </div>
-
-                <div id="sub-noticias" style="display:none">
-                    <div id="noticias-lista"></div>
-                </div>
-
-                <div id="sub-criar" style="display:none">
-                    <div class="card">
-                        <h3>Postar Nova Notícia</h3>
-                        <input type="text" id="news-title" placeholder="Título (Ex: Homem morre)">
-                        <textarea id="news-desc" rows="5" placeholder="Descrição da notícia..."></textarea>
-                        <button id="btn-postar-news" style="background:#5865f2; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer">POSTAR NOTÍCIA</button>
+            <section id="aba-cargos" style="display:none">
+                <div class="card">
+                    <h2 style="color:red; text-align:center">HIERARQUIA OFICIAL VSS</h2>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+                        <div>
+                            <h4 style="color:#5865f2">BASE E OFICIAIS</h4>
+                            <p>I - INICIANTE<br>II - SOLDADO<br>III - CABO<br>IV - 3º SARGENTO<br>V - 2º SARGENTO<br>VI - 1º SARGENTO<br>VII - CAPITÃO<br>VIII - TENENTE<br>IX - MAJOR<br>X - MARECHAL</p>
+                        </div>
+                        <div>
+                            <h4 style="color:orange">BRAÇO A (AUTORIDADE)</h4>
+                            <p>3º AUTORIDADE<br>2º AUTORIDADE MÁXIMA<br>CESAR (A)<br>ANALITY (A)</p>
+                            <h4 style="color:purple">BRAÇO B (ESPECIAL)</h4>
+                            <p>STAFF ESPECIAL (B)<br>SÓCIO (B)</p>
+                            <h4 style="color:red">SUPREMO</h4>
+                            <p>FUNDADOR</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="aba-membros" style="display:none"><div id="lista-membros" class="card"></div></section>
-            <section id="aba-cargos" style="display:none"><div class="card"><h2>HIERARQUIA</h2><p>I ao X + Braços A/B</p></div></section>
-            <section id="aba-regras" style="display:none"><div class="card"><h2>REGRAS</h2><ul><li>NÃO MENTIR</li><li>CRER EM DEUS</li></ul></div></section>
-            <section id="aba-prova" style="display:none"><div id="prova-container" class="card">Aguardando liberação...</div></section>
+            <section id="aba-membros" style="display:none">
+                <div id="lista-membros" class="card"></div>
+            </section>
+
+            <section id="aba-noticias-master" style="display:none">
+                <div class="sub-nav">
+                    <button onclick="subAba('mural')">MURAL</button>
+                    <button onclick="subAba('noticias')">NOTÍCIAS</button>
+                    <button onclick="subAba('criar')">CRIAR NOTÍCIA</button>
+                </div>
+                <div id="sub-mural"><input type="text" id="mural-input" placeholder="Mural: Enter para enviar..."><div id="mural-lista"></div></div>
+                <div id="sub-noticias" style="display:none"><div id="noticias-lista"></div></div>
+                <div id="sub-criar" style="display:none">
+                    <div class="card">
+                        <input type="text" id="news-title" placeholder="Título (Ex: Homem morre)">
+                        <textarea id="news-desc" rows="4" placeholder="Detalhes..."></textarea>
+                        <button id="btn-postar-news" style="background:#5865f2; color:white; border:none; padding:10px; cursor:pointer; width:100%">POSTAR</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="aba-regras" style="display:none">
+                <div class="card">
+                    <h2 style="color:red">REGRAS</h2>
+                    <p>1. NÃO MENTIR<br>2. CRER EM DEUS<br>3. RESPEITAR SUPERIOR<br>4. NÃO XINGAR<br>5. ACEITAR QUE PERDEU</p>
+                </div>
+            </section>
+
+            <section id="aba-prova" style="display:none">
+                <div id="prova-area" class="card">Aguardando liberação do Fundador...</div>
+            </section>
         </main>
     </div>
 
@@ -106,71 +127,65 @@
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         let uD = null;
-        const CARGOS = {"1":"I-INICIANTE","2":"II-SOLDADO","3":"III-CABO","4":"IV-3º SARGENTO","5":"V-2º SARGENTO","6":"VI-1º SARGENTO","7":"VII-CAPITÃO","8":"VIII-TENENTE","9":"IX-MAJOR","10":"X-MARECHAL","15":"FUNDADOR"};
-
-        window.aba = (id) => {
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
+        const CARGOS = {
+            "1":"I-INICIANTE", "2":"II-SOLDADO", "3":"III-CABO", "4":"IV-3º SARGENTO", "5":"V-2º SARGENTO",
+            "6":"VI-1º SARGENTO", "7":"VII-CAPITÃO", "8":"VIII-TENENTE", "9":"IX-MAJOR", "10":"X-MARECHAL",
+            "11":"3º AUTORIDADE", "12":"2º AUTORIDADE MÁXIMA", "13":"CESAR (A)", "14":"ANALITY (A)",
+            "20":"SÓCIO (B)", "21":"STAFF ESPECIAL (B)", "15":"FUNDADOR"
         };
 
-        window.subAba = (id) => {
-            document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none';
-            document.getElementById('sub-noticias').style.display = id === 'noticias' ? 'block' : 'none';
-            document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none';
+        window.aba = (id) => { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'block'; };
+        window.subAba = (id) => { document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none'; document.getElementById('sub-noticias').style.display = id === 'noticias' ? 'block' : 'none'; document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none'; };
+
+        window.admAction = async (uid, act) => {
+            const ref = doc(db, "usuarios", uid); const s = await getDoc(ref);
+            let nv = parseInt(s.data().nivel);
+            if(act==='up') await updateDoc(ref, {nivel: String(nv + 1)});
+            if(act==='down') await updateDoc(ref, {nivel: String(nv - 1)});
+            if(act==='ban') await deleteDoc(ref);
         };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    if(!s.exists()) return; uD = s.data(); uD.uid = u.uid;
+                    uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display='none';
                     document.getElementById('main-app').style.display='flex';
                     document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel] || 'STAFF'}`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${CARGOS[uD.nivel] || 'STAFF'}</p><p>XP: ${uD.xp||0}</p>`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${CARGOS[uD.nivel]}</p><p>XP: ${uD.xp||0}</p>`;
                 });
 
-                // MURAL REALTIME
-                onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
-                    const l = document.getElementById('mural-lista'); l.innerHTML = "";
-                    s.forEach(d => { l.innerHTML += `<div class="card" style="padding:10px; margin-bottom:5px"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
+                onSnapshot(collection(db, "usuarios"), s => {
+                    const l = document.getElementById('lista-membros'); l.innerHTML = "<h3>Membros VSS</h3>";
+                    s.forEach(ds => {
+                        const m = ds.data();
+                        l.innerHTML += `<div class="membro-item"><span><b>${m.nome}</b> - ${CARGOS[m.nivel]}</span>
+                        ${uD.nivel == "15" && ds.id !== uD.uid ? `<div><button class="adm-btn" style="background:green" onclick="admAction('${ds.id}','up')">↑</button><button class="adm-btn" style="background:red" onclick="admAction('${ds.id}','ban')">X</button></div>` : ''}</div>`;
+                    });
                 });
 
-                // NOTICIAS REALTIME
-                onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
-                    const l = document.getElementById('noticias-lista'); l.innerHTML = "";
-                    s.forEach(d => { l.innerHTML += `<div class="card"><h3 style="color:#5865f2;margin:0">${d.data().titulo}</h3><small>Por ${d.data().u}</small><p>${d.data().desc}</p></div>`; });
-                });
-
-                // CHAT REALTIME
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const b = document.getElementById('chat-box'); b.innerHTML = "";
                     s.forEach(d => { b.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
                     b.scrollTop = b.scrollHeight;
                 });
+
+                onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
+                    const b = document.getElementById('mural-lista'); b.innerHTML = "";
+                    s.forEach(d => { b.innerHTML += `<div class="card" style="padding:10px;margin-bottom:5px"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
+                });
+
+                onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
+                    const b = document.getElementById('noticias-lista'); b.innerHTML = "";
+                    s.forEach(d => { b.innerHTML += `<div class="card"><h3 style="color:#5865f2">${d.data().titulo}</h3><p>${d.data().desc}</p><small>Por ${d.data().u}</small></div>`; });
+                });
             }
         });
 
-        // INPUTS ENTER
-        document.getElementById('chat-input').onkeypress = async (e) => {
-            if(e.key === 'Enter' && e.target.value.trim()) {
-                await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
-                e.target.value = "";
-            }
-        };
-
-        document.getElementById('mural-input').onkeypress = async (e) => {
-            if(e.key === 'Enter' && e.target.value.trim()) {
-                await addDoc(collection(db, "mural"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
-                e.target.value = "";
-            }
-        };
-
+        document.getElementById('chat-input').onkeypress = async (e) => { if(e.key==='Enter' && e.target.value.trim()){ await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() }); e.target.value = ""; }};
+        document.getElementById('mural-input').onkeypress = async (e) => { if(e.key==='Enter' && e.target.value.trim()){ await addDoc(collection(db, "mural"), { t: e.target.value, u: uD.nome, data: serverTimestamp() }); e.target.value = ""; }};
         document.getElementById('btn-postar-news').onclick = async () => {
-            const tit = document.getElementById('news-title').value;
-            const desc = document.getElementById('news-desc').value;
-            if(!tit || !desc) return alert("Preencha tudo!");
-            await addDoc(collection(db, "noticias"), { titulo: tit, desc: desc, u: uD.nome, data: serverTimestamp() });
-            document.getElementById('news-title').value = ""; document.getElementById('news-desc').value = "";
+            await addDoc(collection(db, "noticias"), { titulo: document.getElementById('news-title').value, desc: document.getElementById('news-desc').value, u: uD.nome, data: serverTimestamp() });
             subAba('noticias');
         };
 
