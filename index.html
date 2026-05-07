@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - HIERARQUIA COMPLETA</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
@@ -13,7 +13,8 @@
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; }
-        .sub-nav button { background: #222; color: #ccc; border: 1px solid #444; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .sub-nav button { background: #222; color: #ccc; border: 1px solid #444; padding: 8px 15px; border-radius: 5px; cursor: pointer; flex: 1; text-align: center; }
+        .sub-nav button.active { background: #5865f2; color: white; }
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .membro-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; margin-bottom: 8px; }
@@ -66,16 +67,16 @@
 
             <section id="aba-cargos" style="display:none">
                 <div class="card">
-                    <h2 style="color:red; text-align:center">HIERARQUIA OFICIAL VSS</h2>
+                    <h2 style="color:red; text-align:center">HIERARQUIA COMPLETA VSS</h2>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
                         <div>
                             <h4 style="color:#5865f2">BASE E OFICIAIS</h4>
                             <p>I - INICIANTE<br>II - SOLDADO<br>III - CABO<br>IV - 3º SARGENTO<br>V - 2º SARGENTO<br>VI - 1º SARGENTO<br>VII - CAPITÃO<br>VIII - TENENTE<br>IX - MAJOR<br>X - MARECHAL</p>
                         </div>
                         <div>
-                            <h4 style="color:orange">BRAÇO A (AUTORIDADE)</h4>
+                            <h4 style="color:orange">BRAÇO A</h4>
                             <p>3º AUTORIDADE<br>2º AUTORIDADE MÁXIMA<br>CESAR (A)<br>ANALITY (A)</p>
-                            <h4 style="color:purple">BRAÇO B (ESPECIAL)</h4>
+                            <h4 style="color:purple">BRAÇO B</h4>
                             <p>STAFF ESPECIAL (B)<br>SÓCIO (B)</p>
                             <h4 style="color:red">SUPREMO</h4>
                             <p>FUNDADOR</p>
@@ -94,13 +95,16 @@
                     <button onclick="subAba('noticias')">NOTÍCIAS</button>
                     <button onclick="subAba('criar')">CRIAR NOTÍCIA</button>
                 </div>
-                <div id="sub-mural"><input type="text" id="mural-input" placeholder="Mural: Enter para enviar..."><div id="mural-lista"></div></div>
+                <div id="sub-mural">
+                    <input type="text" id="mural-input" placeholder="Mural: Enter para enviar recado...">
+                    <div id="mural-lista"></div>
+                </div>
                 <div id="sub-noticias" style="display:none"><div id="noticias-lista"></div></div>
                 <div id="sub-criar" style="display:none">
                     <div class="card">
                         <input type="text" id="news-title" placeholder="Título (Ex: Homem morre)">
-                        <textarea id="news-desc" rows="4" placeholder="Detalhes..."></textarea>
-                        <button id="btn-postar-news" style="background:#5865f2; color:white; border:none; padding:10px; cursor:pointer; width:100%">POSTAR</button>
+                        <textarea id="news-desc" rows="4" placeholder="Descrição completa..."></textarea>
+                        <button id="btn-postar-news" style="background:#5865f2; color:white; border:none; padding:12px; cursor:pointer; width:100%; border-radius:6px">POSTAR NOTÍCIA</button>
                     </div>
                 </div>
             </section>
@@ -113,7 +117,16 @@
             </section>
 
             <section id="aba-prova" style="display:none">
-                <div id="prova-area" class="card">Aguardando liberação do Fundador...</div>
+                <div id="prova-lock-msg" class="card">
+                    <h2>🔒 ÁREA DA PROVA</h2>
+                    <p>Aguardando liberação do Fundador.</p>
+                    <button id="btn-liberar-prova" style="display:none; background:green; color:white; border:none; padding:12px; cursor:pointer; border-radius:5px; width:100%">LIBERAR PROVA (FUNDADOR)</button>
+                </div>
+                <div id="prova-container" style="display:none" class="card">
+                    <h2 style="color:#ff4444">📝 TESTE STAFF - 100 QUESTÕES</h2>
+                    <div id="questoes-lista" style="max-height:400px; overflow-y:auto; background:#050505; padding:10px; border:1px solid #333"></div>
+                    <button onclick="finalizarProva()" style="width:100%; padding:20px; background:#5865f2; color:white; border:none; cursor:pointer; margin-top:10px; font-weight:bold">ENVIAR PROVA</button>
+                </div>
             </section>
         </main>
     </div>
@@ -126,7 +139,7 @@
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        let uD = null;
+        let uD = null; let emProva = false;
         const CARGOS = {
             "1":"I-INICIANTE", "2":"II-SOLDADO", "3":"III-CABO", "4":"IV-3º SARGENTO", "5":"V-2º SARGENTO",
             "6":"VI-1º SARGENTO", "7":"VII-CAPITÃO", "8":"VIII-TENENTE", "9":"IX-MAJOR", "10":"X-MARECHAL",
@@ -135,24 +148,28 @@
         };
 
         window.aba = (id) => { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'block'; };
-        window.subAba = (id) => { document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none'; document.getElementById('sub-noticias').style.display = id === 'noticias' ? 'block' : 'none'; document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none'; };
+        window.subAba = (id) => { 
+            document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none'; 
+            document.getElementById('sub-noticias').style.display = id === 'noticias' ? 'block' : 'none'; 
+            document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none'; 
+        };
 
         window.admAction = async (uid, act) => {
             const ref = doc(db, "usuarios", uid); const s = await getDoc(ref);
             let nv = parseInt(s.data().nivel);
             if(act==='up') await updateDoc(ref, {nivel: String(nv + 1)});
-            if(act==='down') await updateDoc(ref, {nivel: String(nv - 1)});
             if(act==='ban') await deleteDoc(ref);
         };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uD = s.data(); uD.uid = u.uid;
+                    if(!s.exists()) return; uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display='none';
                     document.getElementById('main-app').style.display='flex';
                     document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel] || 'STAFF'}`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${CARGOS[uD.nivel]}</p><p>XP: ${uD.xp||0}</p>`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p><b>Nome:</b> ${uD.nome}</p><p><b>Cargo:</b> ${CARGOS[uD.nivel]}</p><p><b>XP:</b> ${uD.xp || 0}</p>`;
+                    if(uD.nivel == "15") document.getElementById('btn-liberar-prova').style.display = 'block';
                 });
 
                 onSnapshot(collection(db, "usuarios"), s => {
@@ -172,23 +189,51 @@
 
                 onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
                     const b = document.getElementById('mural-lista'); b.innerHTML = "";
-                    s.forEach(d => { b.innerHTML += `<div class="card" style="padding:10px;margin-bottom:5px"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
+                    s.forEach(d => { b.innerHTML += `<div class="card" style="padding:10px;margin-bottom:5px;border-left:3px solid #5865f2"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
                 });
 
                 onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
                     const b = document.getElementById('noticias-lista'); b.innerHTML = "";
-                    s.forEach(d => { b.innerHTML += `<div class="card"><h3 style="color:#5865f2">${d.data().titulo}</h3><p>${d.data().desc}</p><small>Por ${d.data().u}</small></div>`; });
+                    s.forEach(d => { b.innerHTML += `<div class="card"><h3 style="color:#5865f2;margin-bottom:5px">${d.data().titulo}</h3><p>${d.data().desc}</p><small>Postado por: ${d.data().u}</small></div>`; });
+                });
+
+                onSnapshot(doc(db, "sistema", "config"), s => {
+                    if(s.exists() && s.data().provaAberta) {
+                        document.getElementById('prova-lock-msg').style.display = 'none';
+                        document.getElementById('prova-container').style.display = 'block';
+                        if(!emProva) { gerarProva(); emProva = true; }
+                    }
                 });
             }
         });
 
         document.getElementById('chat-input').onkeypress = async (e) => { if(e.key==='Enter' && e.target.value.trim()){ await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() }); e.target.value = ""; }};
         document.getElementById('mural-input').onkeypress = async (e) => { if(e.key==='Enter' && e.target.value.trim()){ await addDoc(collection(db, "mural"), { t: e.target.value, u: uD.nome, data: serverTimestamp() }); e.target.value = ""; }};
+        
         document.getElementById('btn-postar-news').onclick = async () => {
-            await addDoc(collection(db, "noticias"), { titulo: document.getElementById('news-title').value, desc: document.getElementById('news-desc').value, u: uD.nome, data: serverTimestamp() });
+            const tit = document.getElementById('news-title').value; const desc = document.getElementById('news-desc').value;
+            if(!tit || !desc) return alert("Preencha título e descrição!");
+            await addDoc(collection(db, "noticias"), { titulo: tit, desc: desc, u: uD.nome, data: serverTimestamp() });
+            document.getElementById('news-title').value = ""; document.getElementById('news-desc').value = "";
             subAba('noticias');
         };
 
+        function gerarProva() {
+            const l = document.getElementById('questoes-lista'); l.innerHTML = "";
+            for(let i=1; i<=100; i++) {
+                const n1 = Math.floor(Math.random()*100); const n2 = Math.floor(Math.random()*50);
+                l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #222">Q${i}: Quanto é ${n1}+${n2}? <input type="number" class="res-p" data-c="${n1+n2}" style="width:60px"></div>`;
+            }
+        }
+
+        window.finalizarProva = async () => {
+            let acertos = 0; document.querySelectorAll('.res-p').forEach(i => { if(i.value == i.dataset.c) acertos++; });
+            if(acertos >= 70) { alert("APROVADO!"); await updateDoc(doc(db, "usuarios", uD.uid), { nivel: "10" }); }
+            else alert("REPROVADO! Acertos: " + acertos);
+            location.reload();
+        };
+
+        document.getElementById('btn-liberar-prova').onclick = async () => { await setDoc(doc(db, "sistema", "config"), { provaAberta: true }); alert("Prova Liberada para todos!"); };
         window.fLogin = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
         window.fRegistro = async () => {
             const r = await createUserWithEmailAndPassword(auth, document.getElementById('r-email').value, document.getElementById('r-senha').value);
