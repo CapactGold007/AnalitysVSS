@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - ÁRVORE REAL</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
         
@@ -15,18 +15,14 @@
         .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
 
-        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; display: flex; flex-direction: column; }
-        #chat-messages { flex: 1; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
+        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
+        #chat-messages { height: 60vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
         input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; }
 
-        /* =========================================
-           ESTILO DA ÁRVORE (CONFORME O DESENHO)
-        ========================================= */
-        .tree-container { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 20px; }
+        /* Estilo da Árvore */
+        .tree-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
         .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
-        
-        /* Linhas conectoras */
         .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
         .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
         .tree li:only-child::after, .tree li:only-child::before { display: none; }
@@ -35,31 +31,33 @@
         .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
         .tree li:first-child::after { border-radius: 5px 0 0 0; }
         .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
+        .tree b { border: 2px solid #444; padding: 8px 15px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; }
 
-        /* Caixinhas dos Cargos */
-        .tree b { border: 2px solid #444; padding: 8px 15px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; white-space: nowrap; transition: 0.3s; }
-        .tree b:hover { background: #333; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        /* Tabelas e Listas */
+        .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
+        .membro-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="text-align:center; color:#5865f2">VSS SYSTEM</h2>
-            <input type="text" id="reg-nome" placeholder="Nome de Usuário">
+            <h2 style="text-align:center">VSS SYSTEM</h2>
+            <input type="text" id="reg-nome" placeholder="Seu Nome">
             <input type="email" id="auth-email" placeholder="E-mail">
             <input type="password" id="auth-senha" placeholder="Senha">
-            <button id="btn-login" style="background:#5865f2; border:none">ENTRAR</button>
-            <button id="btn-cadastrar">CRIAR CONTA</button>
+            <button id="btn-login" style="background:#5865f2; border:none; color:white">ENTRAR</button>
+            <button id="btn-cadastrar" style="background:#333; color:white">CRIAR CONTA</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
             <div id="status-bar"></div>
-            <button id="nav-chat">💬 CHAT GLOBAL</button>
-            <button id="nav-tree">🌳 ÁRVORE HIERÁRQUICA</button>
-            <button id="nav-perfil">👤 MEU PERFIL</button>
+            <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
+            <button onclick="aba('aba-tree')">🌳 ÁRVORE GEO</button>
+            <button onclick="aba('aba-cargos')">🎖️ LISTA DE CARGOS</button>
+            <button onclick="aba('aba-regras')">📜 REGRAS VSS</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
 
@@ -67,19 +65,31 @@
             <section id="aba-chat">
                 <div id="chat-messages"></div>
                 <div style="display:flex; gap:10px">
-                    <input type="text" id="chat-input" style="flex:1" placeholder="Escreva aqui...">
-                    <button id="chat-send" style="background:#5865f2; color:white; padding:10px 25px; border:none; border-radius:6px; cursor:pointer">ENVIAR</button>
+                    <input type="text" id="chat-input" style="flex:1" placeholder="Mensagem...">
+                    <button id="chat-send" style="background:#5865f2; color:white; padding:10px 20px; border:none; border-radius:5px">ENVIAR</button>
                 </div>
             </section>
 
             <section id="aba-tree" style="display:none">
-                <div class="tree-container">
-                    <div class="tree" id="tree-root"></div>
-                </div>
+                <div class="tree-container"><div class="tree" id="tree-root"></div></div>
             </section>
 
-            <section id="aba-perfil" style="display:none">
-                <div id="perfil-info" style="background:#111; padding:30px; border-radius:10px; border:1px solid #333"></div>
+            <section id="aba-cargos" style="display:none">
+                <h2>🎖️ Hierarquia de Membros</h2>
+                <div id="lista-membros" class="card"></div>
+            </section>
+
+            <section id="aba-regras" style="display:none">
+                <div class="card">
+                    <h2 style="color:#ff4444">REGRAS DO SISTEMA:</h2>
+                    <ul style="font-size: 18px; line-height: 2;">
+                        <li>❌ NÃO MENTIR.</li>
+                        <li>🙏 CRER EM DEUS.</li>
+                        <li>🫡 RESPEITAR SEU SUPERIOR.</li>
+                        <li>🤬 NÃO XINGAR.</li>
+                        <li>🤝 ACEITAR QUE PERDEU.</li>
+                    </ul>
+                </div>
             </section>
         </main>
     </div>
@@ -107,57 +117,39 @@
             "4": {n:"IV - 3º SARGENTO", c:"#bdc3c7"}, "5": {n:"V - 2º SARGENTO", c:"#1abc9c"}, "6": {n:"VI - 1º SARGENTO", c:"#2980b9"},
             "7": {n:"VII - CAPITÃO", c:"#3498db"}, "8": {n:"IX - MAJOR", c:"#27ae60"}, "9": {n:"X - MARECHAL", c:"#2ecc71"},
             "10a": {n:"3º AUTORIDADE", c:"#daa520"}, "11a": {n:"2º AUTORIDADE MAXIMA", c:"#ffd700"}, "12a": {n:"CESAR", c:"#ff8c00"}, "13a": {n:"ANALITY", c:"#ff4500"},
-            "10b": {n:"BRAÇO ESQUERDO", c:"#9400d3"}, "11b": {n:"ESPECIAL STAFF", c:"#a29bfe"}, "12b": {n:"SOCIO", c:"#e84118"},
-            "15": {n:"FUNDADOR", c:"#ff0000"}
+            "10b": {n:"BRAÇO ESQUERDO", c:"#9400d3"}, "11b": {n:"ESPECIAL STAFF", c:"#a29bfe"}, "12b": {n:"SOCIO", c:"#e84118"}, "15": {n:"FUNDADOR", c:"#ff0000"}
         };
 
-        // GERAÇÃO DA ÁRVORE (Tronco único que sobe para duas pernas)
-        function renderVisualTree() {
-            return `
-            <ul>
-                <li><b style="color:${CARGOS[1].c}">${CARGOS[1].n}</b>
-                <ul><li><b style="color:${CARGOS[2].c}">${CARGOS[2].n}</b>
-                <ul><li><b style="color:${CARGOS[3].c}">${CARGOS[3].n}</b>
-                <ul><li><b style="color:${CARGOS[4].c}">${CARGOS[4].n}</b>
-                <ul><li><b style="color:${CARGOS[5].c}">${CARGOS[5].n}</b>
-                <ul><li><b style="color:${CARGOS[6].c}">${CARGOS[6].n}</b>
-                <ul><li><b style="color:${CARGOS[7].c}">${CARGOS[7].n}</b>
-                <ul><li><b style="color:${CARGOS[8].c}">${CARGOS[8].n}</b>
-                <ul><li><b style="color:${CARGOS[9].c}">${CARGOS[9].n}</b>
-                    
-                    <ul>
-                        <li><b style="color:${CARGOS["10a"].c}">${CARGOS["10a"].n}</b>
-                            <ul><li><b style="color:${CARGOS["11a"].c}">${CARGOS["11a"].n}</b>
-                            <ul><li><b style="color:${CARGOS["12a"].c}">${CARGOS["12a"].n}</b>
-                            <ul><li><b style="color:${CARGOS["13a"].c}">${CARGOS["13a"].n}</b>
-                            <ul><li><b style="color:${CARGOS[15].c}">${CARGOS[15].n}</b></li></ul>
-                            </li></ul></li></ul></li></ul>
-                        </li>
-                        <li><b style="color:${CARGOS["10b"].c}">${CARGOS["10b"].n}</b>
-                            <ul><li><b style="color:${CARGOS["11b"].c}">${CARGOS["11b"].n}</b>
-                            <ul><li><b style="color:${CARGOS["12b"].c}">${CARGOS["12b"].n}</b>
-                            <ul><li><b style="color:${CARGOS[15].c}">${CARGOS[15].n}</b></li></ul>
-                            </li></ul></li></ul>
-                        </li>
-                    </ul>
-
-                </li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li>
-            </ul>`;
+        function renderTree() {
+            return `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b style="color:${CARGOS[9].c}">${CARGOS[9].n}</b>
+            <ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li>
+            <li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul>
+            </li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
         }
 
-        let uData = null;
+        let userD = null;
+        window.aba = (id) => { ['aba-chat','aba-tree','aba-cargos','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none'); };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uData = s.data();
+                    userD = s.data();
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uData.nivel] || CARGOS[1];
-                    document.getElementById('status-bar').innerHTML = `Logado: <b>${uData.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('perfil-info').innerHTML = `<h2>${uData.nome}</h2><p>CARGO ATUAL: <span style="color:${c.c}">${c.n}</span></p>`;
-                    document.getElementById('tree-root').innerHTML = renderVisualTree();
+                    const c = CARGOS[userD.nivel] || CARGOS[1];
+                    document.getElementById('status-bar').innerHTML = `Olá, <b>${userD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('tree-root').innerHTML = renderTree();
                 });
+                
+                // Monitora Membros para a aba Cargos
+                onSnapshot(collection(db, "usuarios"), s => {
+                    const list = document.getElementById('lista-membros'); list.innerHTML = "";
+                    s.forEach(d => {
+                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS[1];
+                        list.innerHTML += `<div class="membro-item"><span>${m.nome}</span><span style="color:${c.c}">${c.n}</span></div>`;
+                    });
+                });
+
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const box = document.getElementById('chat-messages'); box.innerHTML = "";
                     s.forEach(d => {
@@ -172,7 +164,6 @@
             }
         });
 
-        // Eventos
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
         document.getElementById('btn-cadastrar').onclick = async () => {
             const r = await createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
@@ -180,17 +171,10 @@
         };
         document.getElementById('chat-send').onclick = async () => {
             const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: uData.nome, nivel: String(uData.nivel), data: serverTimestamp() });
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: userD.nome, nivel: String(userD.nivel), data: serverTimestamp() });
             i.value = "";
         };
-        document.getElementById('nav-chat').onclick = () => { aba('aba-chat'); };
-        document.getElementById('nav-tree').onclick = () => { aba('aba-tree'); };
-        document.getElementById('nav-perfil').onclick = () => { aba('aba-perfil'); };
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
-
-        function aba(id) {
-            ['aba-chat','aba-tree','aba-perfil'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none');
-        }
     </script>
 </body>
 </html>
