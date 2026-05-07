@@ -2,23 +2,31 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - RECRUTAMENTO IA</title>
+    <title>VSS SYSTEM - COMPLETO</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; z-index: 1001; }
-        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
-        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
+        
+        /* Sidebar Organizada */
+        .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
+        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.2s; }
+        .sidebar button:hover { background: #333; border-color: #5865f2; }
+        .btn-staff { background: #440000 !important; border: 1px solid #ff4444 !important; margin-top: 10px; color: #ffcccc !important; text-align: center !important; }
+        
+        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #5865f2; }
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; position: relative; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
-        
-        /* Sistema de Prova */
-        #prova-container { display: none; background: #000; padding: 30px; border: 2px solid #ff4500; border-radius: 12px; }
-        .questao { margin-bottom: 15px; padding: 15px; background: #151515; border-radius: 8px; border-left: 4px solid #5865f2; }
-        .questao p { margin: 0 0 10px 0; font-weight: bold; color: #5865f2; }
-        
-        #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+
+        /* Árvore de Cargos Visual */
+        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
+        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
+        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; color: #fff; }
+
+        /* Estilo da Prova IA */
+        #prova-container { display: none; background: #000; padding: 30px; border: 2px solid #ff4444; border-radius: 12px; }
+        .questao { margin-bottom: 15px; padding: 15px; background: #151515; border-radius: 8px; border-left: 4px solid #ff4444; }
         
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
+        #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -27,12 +35,12 @@
     <div id="top-news">📢 <span id="news-text">...</span></div>
 
     <div id="auth-screen">
-        <div style="background:#111; padding:40px; border:1px solid #333; width:350px; border-radius:15px; display:flex; flex-direction:column; gap:15px">
-            <h2 style="text-align:center; color:#5865f2; margin:0">VSS LOGIN</h2>
-            <input type="text" id="reg-nome" placeholder="Nome Completo">
-            <input type="email" id="auth-email" placeholder="E-mail">
-            <input type="password" id="auth-senha" placeholder="Senha">
-            <button id="btn-login" style="background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold">ENTRAR NO SISTEMA</button>
+        <div style="background:#111; padding:30px; border-radius:10px; width:300px; border:1px solid #333">
+            <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
+            <input type="text" id="reg-nome" placeholder="Nome" style="margin-bottom:10px">
+            <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
+            <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
+            <button id="btn-login" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / CRIAR</button>
         </div>
     </div>
 
@@ -40,48 +48,53 @@
         <aside class="sidebar">
             <div id="status-bar"></div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="aba('aba-prova')" id="btn-aba-prova">🔒 TESTE DE STAFF (IA)</button>
+            <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
+            <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
             <button onclick="aba('aba-noticias')">📢 NOTÍCIAS</button>
-            <button onclick="aba('aba-membros')">👥 MEMBROS / ADM</button>
-            <button id="btn-sair" style="color:#ff4444; margin-top:auto">DESLOGAR</button>
+            <button onclick="aba('aba-membros')">👥 MEMBROS</button>
+            
+            <!-- Botão Staff no Canto/Separado -->
+            <button onclick="aba('aba-prova')" class="btn-staff">🔒 PROVA STAFF (IA)</button>
+            
+            <button id="btn-sair" style="color:#ff4444; margin-top:auto; border:none; background:none">SAIR</button>
         </aside>
 
-        <main class="content" style="padding-top: 70px;">
-            <section id="aba-chat">
-                <div id="chat-messages" style="height:65vh; overflow-y:auto; background:#050505; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #222"></div>
-                <div style="display:flex; gap:10px">
-                    <input type="text" id="chat-input" placeholder="Digite aqui...">
-                    <button id="chat-send" style="background:#5865f2; color:white; padding:0 25px; border:none; border-radius:6px; cursor:pointer">ENVIAR</button>
-                </div>
+        <main class="content" style="padding-top: 60px;">
+            <!-- ABA PERFIL -->
+            <section id="aba-perfil" style="display:none">
+                <div id="perfil-card" class="card"></div>
             </section>
 
+            <!-- ABA CARGOS -->
+            <section id="aba-cargos" style="display:none">
+                <div class="tree" id="tree-root"></div>
+            </section>
+
+            <!-- ABA CHAT -->
+            <section id="aba-chat">
+                <div id="chat-messages" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
+                <input type="text" id="chat-input" placeholder="Conversar...">
+            </section>
+
+            <!-- ABA PROVA STAFF -->
             <section id="aba-prova" style="display:none">
                 <div id="prova-lock-msg" class="card">
-                    <h2 style="color:#ff4500">PROVA DE RECRUTAMENTO TRANCADA</h2>
-                    <p>O formulário só é liberado pelo **Fundador** ou a cada 2 horas pelo sistema.</p>
-                    <div id="fundador-area" style="display:none; margin-top:20px; border-top:1px solid #333; padding-top:20px">
-                        <p style="color:gray">Painel do Fundador:</p>
-                        <button onclick="liberarProva(true)" style="background:#2ecc71; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer">ABRIR FORMULÁRIO AGORA</button>
-                        <button onclick="liberarProva(false)" style="background:#e74c3c; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; margin-left:10px">FECHAR</button>
-                    </div>
+                    <h2>Formulário Trancado</h2>
+                    <p>Apenas Soldados+ e quando o Fundador liberar.</p>
                 </div>
-
                 <div id="prova-container">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ff4500; margin-bottom:20px; padding-bottom:10px">
-                        <h2 style="margin:0">🧠 TESTE DE INTELIGÊNCIA IA (100 QUESTÕES)</h2>
-                        <span id="prova-timer" style="color:red; font-weight:bold; font-size:20px">ANTI-CHEAT ATIVO</span>
-                    </div>
-                    <p style="background:rgba(255,0,0,0.2); border:1px solid red; padding:10px; border-radius:5px"><b>PROIBIDO:</b> Trocar de aba, minimizar ou pesquisar. O sistema detecta e cancela a prova na hora!</p>
+                    <h2 style="color:#ff4444">TESTE STAFF - 100 QUESTÕES IA</h2>
                     <div id="questoes-lista"></div>
-                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; font-size:22px; border:none; border-radius:10px; cursor:pointer; margin-top:20px">ENTREGAR TESTE</button>
+                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; border:none; cursor:pointer; font-size:18px">FINALIZAR TESTE</button>
                 </div>
             </section>
 
+            <!-- OUTRAS ABAS -->
             <section id="aba-noticias" style="display:none">
                 <div class="card">
-                    <h2>📢 Mural de Notícias Global</h2>
-                    <textarea id="news-input" rows="5" placeholder="Escreva o comunicado aqui..."></textarea>
-                    <button id="btn-post-news" style="margin-top:15px; background:#ff4500; color:white; padding:12px 30px; border:none; border-radius:6px; cursor:pointer; font-weight:bold">POSTAR NOTÍCIA</button>
+                    <h2>📢 Postar Notícia</h2>
+                    <textarea id="news-input" placeholder="Texto da notícia..."></textarea>
+                    <button id="btn-post-news" style="background:#ff4500; color:white; border:none; padding:10px; margin-top:10px; cursor:pointer">PUBLICAR</button>
                 </div>
             </section>
 
@@ -102,90 +115,62 @@
         let uData = null;
         let emProva = false;
 
-        // ANTI-CHEATING: DETECTA TROCA DE ABA
-        window.onblur = () => { if(emProva) { alert("SISTEMA DETECTOU FRAUDE: Troca de aba detectada. Prova cancelada."); location.reload(); } };
+        // Anti-Cheat
+        window.onblur = () => { if(emProva) { alert("Sair da aba cancelou sua prova!"); location.reload(); } };
 
         window.aba = (id) => {
-            if(id === 'aba-prova' && uData.nivel < 2) return alert("Acesso negado! Apenas Soldados (Nível 2+) podem realizar o teste.");
+            if(id === 'aba-prova' && uData.nivel < 2) return alert("Precisa ser SOLDADO!");
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
 
+        const CARGOS = {"1":{n:"INICIANTE",c:"#fff"}, "2":{n:"SOLDADO",c:"#2ecc71"}, "15":{n:"FUNDADOR",c:"#ff0000"}};
+
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    if(!s.exists()) return;
                     uData = s.data(); uData.uid = u.uid;
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><small style="color:#5865f2">CARGO: ${uData.nivel == 15 ? 'FUNDADOR' : 'NV '+uData.nivel}</small>`;
-                    if(uData.nivel == 15) document.getElementById('fundador-area').style.display = 'block';
+                    const cargoInfo = CARGOS[uData.nivel] || {n:"MEMBRO", c:"#fff"};
+                    
+                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><small>${cargoInfo.n}</small>`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uData.nome}</p><p>Cargo: <b style="color:${cargoInfo.c}">${cargoInfo.n}</b></p><p>XP: ${uData.xp || 0}</p>`;
+                    
+                    // Render Árvore Simplificada (Y após Marechal)
+                    document.getElementById('tree-root').innerHTML = `<ul><li><b>FUNDADOR</b><ul><li><b>MARECHAL</b><ul><li><b>AUTORIDADE A</b></li><li><b>SÓCIO B</b></li></ul></li></ul></li></ul>`;
                 });
 
-                // STATUS DA PROVA (REALTIME)
+                // Status Prova
                 onSnapshot(doc(db, "sistema", "config"), s => {
-                    const status = s.data()?.provaAberta;
-                    if(status) {
+                    if(s.data()?.provaAberta) {
                         document.getElementById('prova-lock-msg').style.display = 'none';
                         document.getElementById('prova-container').style.display = 'block';
-                        if(!emProva) gerarQuestoesIA();
+                        if(!emProva) gerarProvaIA();
                         emProva = true;
-                    } else {
-                        document.getElementById('prova-lock-msg').style.display = 'block';
-                        document.getElementById('prova-container').style.display = 'none';
-                        emProva = false;
-                    }
-                });
-
-                // NOTICIAS (SUMIR EM 1 MIN)
-                onSnapshot(doc(db, "sistema", "news"), s => {
-                    if(s.exists()) {
-                        document.getElementById('news-text').innerText = s.data().t;
-                        document.getElementById('top-news').style.display = 'block';
-                        setTimeout(() => document.getElementById('top-news').style.display = 'none', 60000);
                     }
                 });
             }
         });
 
-        window.liberarProva = async (val) => { await setDoc(doc(db, "sistema", "config"), { provaAberta: val }); };
-
-        // MINI-IA GERADORA DE QUESTÕES
-        function gerarQuestoesIA() {
+        function gerarProvaIA() {
             const lista = document.getElementById('questoes-lista');
             lista.innerHTML = "";
             for(let i=1; i<=100; i++) {
-                const tipo = Math.floor(Math.random() * 3);
-                let q, resp;
-                const n1 = Math.floor(Math.random() * 50) + 10;
-                const n2 = Math.floor(Math.random() * 20) + 2;
-
-                if(tipo === 0) { q = `Calcule: ${n1} x ${n2}`; resp = n1 * n2; }
-                else if(tipo === 1) { q = `Qual o valor de X em: X + ${n1} = ${n1 + n2}?`; resp = n2; }
-                else { q = `Se um item custa ${n1} e eu compro ${n2}, quanto gasto?`; resp = n1 * n2; }
-
-                lista.innerHTML += `
-                    <div class="questao">
-                        <p>QUESTÃO ${i}: ${q}</p>
-                        <input type="number" class="resp-ia" data-certa="${resp}" placeholder="Resposta...">
-                    </div>
-                `;
+                const n1 = Math.floor(Math.random()*100);
+                const n2 = Math.floor(Math.random()*50);
+                lista.innerHTML += `<div class="questao"><p>${i}. Quanto é ${n1} + ${n2}?</p><input type="number" class="res-ia" data-certa="${n1+n2}"></div>`;
             }
         }
 
         window.corrigirProva = async () => {
-            const r = document.querySelectorAll('.resp-ia');
-            let totalAcertos = 0;
-            r.forEach(input => { if(parseInt(input.value) === parseInt(input.getAttribute('data-certa'))) totalAcertos++; });
-
-            if(totalAcertos >= 69) {
-                alert(`EXCELENTE! Você acertou ${totalAcertos}/100 e foi promovido a STAFF.`);
+            let acertos = 0;
+            document.querySelectorAll('.res-ia').forEach(inp => { if(inp.value == inp.dataset.certa) acertos++; });
+            if(acertos >= 69) {
+                alert("PROMOVIDO A STAFF!");
                 await updateDoc(doc(db, "usuarios", uData.uid), { nivel: "10" });
                 location.reload();
-            } else {
-                alert(`REPROVADO! Você acertou ${totalAcertos}/100. O mínimo é 69. Tente novamente em 2 horas.`);
-                location.reload();
-            }
+            } else { alert(`Você acertou ${acertos}. Tente de novo.`); location.reload(); }
         };
 
         document.getElementById('btn-login').onclick = async () => {
@@ -195,12 +180,6 @@
                 const res = await createUserWithEmailAndPassword(auth, e, p);
                 await setDoc(doc(db, "usuarios", res.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
             }
-        };
-
-        document.getElementById('btn-post-news').onclick = async () => {
-            if(uData.nivel < 9 && uData.nivel != 15) return alert("Sem permissão!");
-            await setDoc(doc(db, "sistema", "news"), { t: document.getElementById('news-input').value });
-            alert("Notícia publicada!");
         };
 
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
