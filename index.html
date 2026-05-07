@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - OFICIAL</title>
+    <title>VSS SYSTEM - OFICIAL COMPLETO</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
@@ -16,13 +16,8 @@
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
 
-        /* Membros */
-        .membro-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
-        .adm-btn { padding: 5px 8px; border-radius: 4px; border: none; cursor: pointer; margin-left: 3px; color: white; font-size: 10px; }
-
-        /* Prova */
-        #prova-container { display: none; background: #000; padding: 30px; border: 2px solid #ff4444; border-radius: 12px; }
-        .questao { margin-bottom: 15px; padding: 15px; background: #151515; border-radius: 8px; border-left: 4px solid #ff4444; }
+        /* Estilo da Árvore */
+        .tree-box { text-align: center; border: 1px solid #333; padding: 10px; border-radius: 8px; background: #151515; margin: 5px; min-width: 120px; font-size: 11px; }
 
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
         #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; }
@@ -36,16 +31,16 @@
     <div id="auth-screen">
         <div style="background:#111; padding:30px; border-radius:10px; width:300px; border:1px solid #333">
             <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
-            <input type="text" id="reg-nome" placeholder="Nome" style="margin-bottom:10px">
+            <input type="text" id="reg-nome" placeholder="Nome para o Perfil" style="margin-bottom:10px">
             <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
             <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
-            <button id="btn-login" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / CRIAR</button>
+            <button id="btn-login" style="width:100%; background:#5865f2; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer">ENTRAR / REGISTRAR</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
-            <div id="status-bar"></div>
+            <div id="status-bar">Carregando...</div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
             <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
             <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
@@ -59,7 +54,7 @@
         <main class="content">
             <section id="aba-chat">
                 <div id="chat-messages" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
-                <input type="text" id="chat-input" placeholder="Escreva e aperte Enter para enviar...">
+                <input type="text" id="chat-input" placeholder="Escreva e aperte Enter...">
             </section>
 
             <section id="aba-perfil" style="display:none">
@@ -67,40 +62,60 @@
             </section>
 
             <section id="aba-cargos" style="display:none">
-                <div class="card">
-                    <h3>Hierarquia VSS</h3>
-                    <p>Fundador > Autoridade > Marechal > Major > Capitão > Sargento > Cabo > Soldado > Iniciante</p>
+                <h2>🎖️ Hierarquia Oficial VSS</h2>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div class="tree-box" style="border-color:red; color:red">FUNDADOR</div>
+                    <div style="height:20px; border-left:2px solid #333"></div>
+                    <div style="display:flex">
+                        <div class="tree-box" style="color:orange">AUTORIDADE (A)</div>
+                        <div class="tree-box" style="color:purple">SÓCIO (B)</div>
+                    </div>
+                    <div style="height:20px; border-left:2px solid #333"></div>
+                    <div class="tree-box" style="color:#2ecc71">MARECHAL</div>
+                    <div class="tree-box">MAJOR</div>
+                    <div class="tree-box">CAPITÃO</div>
+                    <div class="tree-box">SARGENTO</div>
+                    <div class="tree-box">CABO</div>
+                    <div class="tree-box">SOLDADO</div>
+                    <div class="tree-box">INICIANTE</div>
                 </div>
             </section>
 
             <section id="aba-membros" style="display:none">
-                <h3>👥 Membros Recrutados</h3>
+                <h3>👥 Membros no Sistema</h3>
                 <div id="lista-membros" class="card"></div>
             </section>
 
             <section id="aba-noticias" style="display:none">
                 <div class="card">
-                    <h2>📢 Mural de Avisos</h2>
-                    <textarea id="news-input" rows="4" placeholder="Escreva o aviso e aperte Enter para postar..."></textarea>
+                    <h2>📢 Mural de Notícias</h2>
+                    <textarea id="news-input" rows="4" placeholder="Escreva e aperte Enter para postar..."></textarea>
                 </div>
             </section>
 
             <section id="aba-regras" style="display:none">
                 <div class="card">
-                    <h2 style="color:red">REGRAS VSS</h2>
-                    <p>1. NÃO MENTIR.</p>
-                    <p>2. RESPEITAR SUPERIORES.</p>
-                    <p>3. CRER EM DEUS.</p>
-                    <p>4. NÃO XINGAR NO CHAT.</p>
-                    <p>5. ACEITAR A DERROTA COM HONRA.</p>
+                    <h2 style="color:red">REGRAS OBRIGATÓRIAS</h2>
+                    <ul>
+                        <li>NÃO MENTIR</li>
+                        <li>RESPEITAR SUPERIORES</li>
+                        <li>CRER EM DEUS</li>
+                        <li>ACEITAR DERROTAS</li>
+                    </ul>
                 </div>
             </section>
 
             <section id="aba-prova" style="display:none">
-                <div id="prova-container">
-                    <h2 style="color:red">PROVA IA - ANTI-CHEAT</h2>
+                <div id="prova-lock-msg" class="card">
+                    <h2 style="color:red">🔒 PROVA TRANCADA</h2>
+                    <p>A prova só aparece quando o Fundador libera.</p>
+                    <button id="btn-liberar-prova" style="display:none; background:green; color:white; border:none; padding:10px; cursor:pointer">LIBERAR PROVA AGORA</button>
+                </div>
+                <div id="prova-container" style="display:none">
+                    <h2>📝 PROVA STAFF IA (100 QUESTÕES)</h2>
+                    <p>Se sair da aba, você será reprovado!</p>
                     <div id="questoes-lista"></div>
-                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; border:none; border-radius:8px; cursor:pointer">ENVIAR RESPOSTAS</button>
+                    <button onclick="finalizarProva()" style="width:100%; padding:20px; background:blue; color:white; border:none; cursor:pointer">ENTREGAR</button>
                 </div>
             </section>
         </main>
@@ -109,103 +124,92 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         let uD = null;
-        const CARGOS = {"1":"INICIANTE", "2":"SOLDADO", "3":"CABO", "4":"SARGENTO", "10":"STAFF", "15":"FUNDADOR"};
+        let emProva = false;
+        const CARGOS = {"1":"INICIANTE", "2":"SOLDADO", "3":"CABO", "4":"SARGENTO", "5":"CAPITÃO", "8":"MAJOR", "9":"MARECHAL", "10":"STAFF", "15":"FUNDADOR"};
 
         window.aba = (id) => {
+            if(id === 'aba-prova' && uD.nivel < 2) return alert("Apenas Soldados+!");
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
 
-        // Funções Administrativas
-        window.modificarMembro = async (uid, acao) => {
-            const ref = doc(db, "usuarios", uid);
-            const snap = await getDoc(ref);
-            if(acao === 'ban') await deleteDoc(ref);
-            if(acao === 'up') await updateDoc(ref, { nivel: String(parseInt(snap.data().nivel)+1) });
-            if(acao === 'down') await updateDoc(ref, { nivel: String(parseInt(snap.data().nivel)-1) });
-            if(acao === 'xp') await updateDoc(ref, { xp: (snap.data().xp || 0) + 50 });
-        };
+        // Anti-IA
+        window.onblur = () => { if(emProva){ alert("ABANDONOU A PROVA!"); location.reload(); }};
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
+                    if(!s.exists()) return;
                     uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const cargoNome = CARGOS[uD.nivel] || "MEMBRO";
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${cargoNome} | XP: ${uD.xp || 0}`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${cargoNome}</p><p>XP: ${uD.xp || 0}</p>`;
+                    document.getElementById('status-bar').innerText = `${uD.nome} | ${CARGOS[uD.nivel] || 'MEMBRO'}`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>${uD.nome}</h2><p>Cargo: ${CARGOS[uD.nivel] || 'MEMBRO'}</p>`;
+                    if(uD.nivel == "15") document.getElementById('btn-liberar-prova').style.display = 'block';
                 });
 
-                // Lista de Membros Realtime
-                onSnapshot(collection(db, "usuarios"), s => {
-                    const lista = document.getElementById('lista-membros');
-                    lista.innerHTML = "";
-                    s.forEach(d => {
-                        const m = d.data();
-                        const isFundador = uD.nivel == "15";
-                        lista.innerHTML += `
-                            <div class="membro-row">
-                                <span><b>${m.nome}</b> (${CARGOS[m.nivel] || 'NV '+m.nivel})</span>
-                                ${isFundador && d.id !== uD.uid ? `
-                                    <div>
-                                        <button class="adm-btn" style="background:blue" onclick="modificarMembro('${d.id}','xp')">+XP</button>
-                                        <button class="adm-btn" style="background:green" onclick="modificarMembro('${d.id}','up')">↑</button>
-                                        <button class="adm-btn" style="background:orange" onclick="modificarMembro('${d.id}','down')">↓</button>
-                                        <button class="adm-btn" style="background:red" onclick="modificarMembro('${d.id}','ban')">X</button>
-                                    </div>
-                                ` : ''}
-                            </div>`;
-                    });
+                // Escutar liberação de prova
+                onSnapshot(doc(db, "sistema", "config"), s => {
+                    if(s.data()?.provaAberta) {
+                        document.getElementById('prova-lock-msg').style.display = 'none';
+                        document.getElementById('prova-container').style.display = 'block';
+                        if(!emProva) gerarQuestoes();
+                        emProva = true;
+                    }
                 });
 
-                // Chat Realtime
+                // Chat e Notícias (Igual aos anteriores mas com Enter)
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const box = document.getElementById('chat-messages'); box.innerHTML = "";
                     s.forEach(d => { box.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
                     box.scrollTop = box.scrollHeight;
                 });
-
-                // Notícias Realtime
-                onSnapshot(doc(db, "sistema", "news"), s => {
-                    if(s.exists()){
-                        document.getElementById('news-text').innerText = s.data().t;
-                        document.getElementById('top-news').style.display = 'block';
-                        setTimeout(() => document.getElementById('top-news').style.display = 'none', 60000);
-                    }
-                });
             }
         });
 
-        // Eventos de teclado (Enter para enviar)
-        document.getElementById('chat-input').addEventListener('keypress', async (e) => {
+        function gerarQuestoes() {
+            const l = document.getElementById('questoes-lista'); l.innerHTML = "";
+            for(let i=1; i<=100; i++) {
+                const n1 = Math.floor(Math.random()*100); const n2 = Math.floor(Math.random()*50);
+                l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #222">${i}. Quanto é ${n1}+${n2}? <input type="number" class="q-ia" data-c="${n1+n2}"></div>`;
+            }
+        }
+
+        window.finalizarProva = async () => {
+            let acertos = 0;
+            document.querySelectorAll('.q-ia').forEach(i => { if(i.value == i.dataset.c) acertos++; });
+            if(acertos >= 69) {
+                alert("APROVADO!"); await updateDoc(doc(db, "usuarios", uD.uid), { nivel: "10" });
+            } else { alert("REPROVADO!"); }
+            location.reload();
+        };
+
+        document.getElementById('btn-liberar-prova').onclick = async () => {
+            await setDoc(doc(db, "sistema", "config"), { provaAberta: true });
+            alert("Prova Liberada!");
+        };
+
+        document.getElementById('chat-input').onkeypress = async (e) => {
             if(e.key === 'Enter' && e.target.value.trim()) {
                 await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
                 e.target.value = "";
             }
-        });
-
-        document.getElementById('news-input').addEventListener('keypress', async (e) => {
-            if(e.key === 'Enter' && e.target.value.trim()) {
-                if(uD.nivel < 10) return alert("Sem permissão!");
-                await setDoc(doc(db, "sistema", "news"), { t: e.target.value });
-                e.target.value = "";
-                alert("Notícia publicada!");
-            }
-        });
+        };
 
         document.getElementById('btn-login').onclick = async () => {
             const e = document.getElementById('auth-email').value;
             const p = document.getElementById('auth-senha').value;
-            try { await signInWithEmailAndPassword(auth, e, p); } catch {
-                const res = await createUserWithEmailAndPassword(auth, e, p);
-                await setDoc(doc(db, "usuarios", res.user.uid), { nome: document.getElementById('reg-nome').value, nivel: "1", xp: 0 });
+            try { 
+                await signInWithEmailAndPassword(auth, e, p); 
+            } catch {
+                const r = await createUserWithEmailAndPassword(auth, e, p);
+                await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value || "Recruta", nivel: "1", xp: 0 });
             }
         };
 
