@@ -2,31 +2,27 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS - SISTEMA HIERÁRQUICO</title>
+    <title>VSS SYSTEM - ÁRVORE EM V</title>
     <style>
-        /* CSS INTEGRADO */
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; }
         
-        /* Auth Screen */
+        /* Auth */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .auth-box { background: #111; padding: 30px; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; width: 300px; }
         
         /* Sidebar */
         .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; }
-        .sidebar button:hover { background: #333; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; }
 
-        /* Content Area */
-        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
-        #chat-messages { height: 65vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
-        .input-group { display: flex; gap: 10px; }
-        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; flex: 1; }
+        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; position: relative; }
+        #chat-messages { height: 60vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
+        input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; }
 
-        /* ÁRVORE GEOGRÁFICA (CSS DAS LINHAS) */
-        .tree-wrapper { display: flex; justify-content: center; padding-top: 20px; }
-        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
-        .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
+        /* --- ESTILO DA ÁRVORE (ORGANOGRAMA REAL) --- */
+        .tree { display: flex; justify-content: center; width: 100%; }
+        .tree ul { padding-top: 20px; position: relative; transition: all 0.5s; display: flex; justify-content: center; padding-left: 0; }
+        .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; transition: all 0.5s; }
         .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
         .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
         .tree li:only-child::after, .tree li:only-child::before { display: none; }
@@ -35,50 +31,49 @@
         .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
         .tree li:first-child::after { border-radius: 5px 0 0 0; }
         .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
-        .tree b { border: 2px solid #444; padding: 10px; display: inline-block; border-radius: 6px; background: #1a1a1a; font-size: 11px; white-space: nowrap; }
+        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; transition: 0.3s; }
+        .tree b:hover { background: #333; border-color: #fff; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="margin:0 0 10px 0; text-align:center">VSS LOGIN</h2>
-            <input type="text" id="user-n" placeholder="Nome">
-            <input type="email" id="user-e" placeholder="E-mail">
-            <input type="password" id="user-p" placeholder="Senha">
-            <button id="login-go" style="background:#5865f2; border:none">ENTRAR</button>
-            <button id="reg-go">CRIAR CONTA</button>
+            <h2 style="text-align:center">VSS LOGIN</h2>
+            <input type="text" id="u-name" placeholder="Nome">
+            <input type="email" id="u-email" placeholder="E-mail">
+            <input type="password" id="u-pass" placeholder="Senha">
+            <button id="do-login" style="background:#5865f2; color:white">ENTRAR</button>
+            <button id="do-reg" style="background:#333; color:white">CRIAR CONTA</button>
         </div>
     </div>
 
-    <div id="main-app" style="display:none; width:100%; height:100%">
+    <div id="app" style="display:none; width:100%;">
         <aside class="sidebar">
-            <div id="status-bar">Carregando...</div>
-            <button id="go-chat">💬 CHAT GLOBAL</button>
-            <button id="go-tree">🌳 ÁRVORE HIERÁRQUICA</button>
-            <button id="go-perfil">👤 MEU PERFIL</button>
-            <button id="logout" style="margin-top:auto; color:#ff4444">SAIR</button>
+            <div id="status-bar"></div>
+            <button onclick="aba('chat')">💬 CHAT</button>
+            <button onclick="aba('tree')">🌳 ÁRVORE (A/B)</button>
+            <button onclick="aba('perfil')">👤 PERFIL</button>
+            <button id="do-out" style="color:red; margin-top:auto">SAIR</button>
         </aside>
 
         <main class="content">
-            <section id="aba-chat">
+            <div id="aba-chat">
                 <div id="chat-messages"></div>
-                <div class="input-group">
-                    <input type="text" id="msg-in" placeholder="Sua mensagem...">
-                    <button id="send-btn" style="background:#5865f2; width:100px">ENVIAR</button>
+                <div style="display:flex; gap:10px">
+                    <input type="text" id="m-in" style="flex:1" placeholder="Mensagem...">
+                    <button id="m-send" style="background:#5865f2; color:white; padding:10px 20px; border-radius:5px; border:none">ENVIAR</button>
                 </div>
-            </section>
+            </div>
 
-            <section id="aba-tree" style="display:none">
-                <h2 style="text-align:center">Organograma VSS (A/B)</h2>
-                <div class="tree-wrapper">
-                    <div class="tree" id="tree-box"></div>
-                </div>
-            </section>
+            <div id="aba-tree" style="display:none">
+                <h3 style="text-align:center">Hieraquia: Divisão após Marechal</h3>
+                <div class="tree" id="tree-content"></div>
+            </div>
 
-            <section id="aba-perfil" style="display:none">
-                <div id="perfil-card" style="background:#111; padding:30px; border-radius:12px; border:1px solid #333"></div>
-            </section>
+            <div id="aba-perfil" style="display:none">
+                <div id="p-info" style="background:#111; padding:20px; border-radius:10px; border:1px solid #333"></div>
+            </div>
         </main>
     </div>
 
@@ -100,87 +95,87 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // CONFIGURAÇÃO DOS CARGOS (Tronco + Caminhos A e B)
         const CARGOS = {
-            "1": {n:"I - INICIANTE", c:"#5865f2"}, "2": {n:"II - SOLDADO", c:"#fff"},
-            "3": {n:"III - CABO", c:"#95a5a6"}, "4": {n:"IV - 3º SARGENTO", c:"#bdc3c7"},
-            "5": {n:"V - 2º SARGENTO", c:"#1abc9c"}, "6": {n:"VI - 1º SARGENTO", c:"#2980b9"},
-            "7": {n:"VII - CAPITÃO", c:"#3498db"}, "8": {n:"IX - MAJOR", c:"#27ae60"},
-            "9": {n:"X - MARECHAL", c:"#2ecc71"},
-            "10a": {n:"3º AUTORIDADE (A)", c:"#daa520"}, "11a": {n:"2º AUTORIDADE (A)", c:"#ffd700"},
-            "12a": {n:"CESAR (A)", c:"#ff8c00"}, "13a": {n:"ANALITY (A)", c:"#ff4500"},
-            "10b": {n:"SÓCIO (B)", c:"#9400d3"}, "11b": {n:"STAFF ESPECIAL (B)", c:"#a29bfe"},
-            "15": {n:"FUNDADOR", c:"#f00"}
+            "1":{n:"RECRUTA (I)", c:"#5865f2"}, "2":{n:"SOLDADO (II)", c:"#fff"}, "3":{n:"CABO (III)", c:"#95a5a6"},
+            "4":{n:"3º SARGENTO (IV)", c:"#bdc3c7"}, "5":{n:"2º SARGENTO (V)", c:"#1abc9c"}, "6":{n:"1º SARGENTO (VI)", c:"#2980b9"},
+            "7":{n:"CAPITÃO (VII)", c:"#3498db"}, "8":{n:"MAJOR (VIII)", c:"#27ae60"}, "9":{n:"MARECHAL (X)", c:"#2ecc71"},
+            "10a":{n:"3º AUTORIDADE (A)", c:"#daa520"}, "11a":{n:"2º AUTORIDADE (A)", c:"#ffd700"}, "12a":{n:"CESAR (A)", c:"#ff8c00"}, "13a":{n:"ANALITY (A)", c:"#ff4500"},
+            "10b":{n:"SÓCIO (B)", c:"#9400d3"}, "11b":{n:"STAFF (B)", c:"#a29bfe"}, "15":{n:"FUNDADOR", c:"#f00"}
         };
 
-        // ESTRUTURA DA ÁRVORE (Marechal é o nó que divide)
-        const ESTRUTURA = [
-            { id: "15", filhos: [
-                { id: "13a", filhos: [{ id: "12a", filhos: [{ id: "11a", filhos: [{ id: "10a", filhos: [{ id: "9", tronco: true }] }] }] }] },
-                { id: "11b", filhos: [{ id: "10b", filhos: [{ id: "9", tronco: true }] }] }
-            ]}
-        ];
+        let userD = null;
 
-        const TRONCO = [
-            { id: "8", filhos: [{ id: "7", filhos: [{ id: "6", filhos: [{ id: "5", filhos: [{ id: "4", filhos: [{ id: "3", filhos: [{ id: "2", filhos: [{ id: "1" }] }] }] }] }] }] }] }
-        ];
+        window.aba = (id) => {
+            ['aba-chat','aba-tree','aba-perfil'].forEach(a => document.getElementById(a).style.display = a.includes(id) ? 'block' : 'none');
+        };
 
-        let dados = null;
-
-        function desenhar(nodos) {
-            let h = "<ul>";
-            nodos.forEach(n => {
-                const info = CARGOS[n.id];
-                h += `<li><b style="color:${info.c}; border-color:${info.c}">${info.n}</b>`;
-                if(n.filhos) h += desenhar(n.filhos);
-                if(n.tronco) h += desenhar(TRONCO);
-                h += "</li>";
-            });
-            return h + "</ul>";
+        // MONTAGEM DA ÁRVORE EM "V" (O Marechal é o ponto de junção)
+        function buildTree() {
+            return `
+                <ul>
+                    <li><b style="color:${CARGOS[15].c}">${CARGOS[15].n}</b>
+                        <ul>
+                            <li><b style="color:${CARGOS["13a"].c}">${CARGOS["13a"].n}</b>
+                                <ul><li><b style="color:${CARGOS["12a"].c}">${CARGOS["12a"].n}</b>
+                                    <ul><li><b style="color:${CARGOS["11a"].c}">${CARGOS["11a"].n}</b>
+                                        <ul><li><b style="color:${CARGOS["10a"].c}">${CARGOS["10a"].n}</b>
+                                            <ul id="hook-a"></ul>
+                                        </li></ul>
+                                    </li></ul>
+                                </li></ul>
+                            </li>
+                            <li><b style="color:${CARGOS["11b"].c}">${CARGOS["11b"].n}</b>
+                                <ul><li><b style="color:${CARGOS["10b"].c}">${CARGOS["10b"].n}</b>
+                                    <ul id="hook-b"></ul>
+                                </li></ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>`;
         }
+
+        const TRONCO_HTML = `<li><b style="color:${CARGOS[9].c}">${CARGOS[9].n}</b><ul><li><b style="color:${CARGOS[8].c}">${CARGOS[8].n}</b><ul><li><b style="color:${CARGOS[7].c}">${CARGOS[7].n}</b><ul><li><b style="color:${CARGOS[6].c}">${CARGOS[6].n}</b><ul><li><b style="color:${CARGOS[5].c}">${CARGOS[5].n}</b><ul><li><b style="color:${CARGOS[4].c}">${CARGOS[4].n}</b><ul><li><b style="color:${CARGOS[3].c}">${CARGOS[3].n}</b><ul><li><b style="color:${CARGOS[2].c}">${CARGOS[2].n}</b><ul><li><b style="color:${CARGOS[1].c}">${CARGOS[1].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li>`;
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    dados = s.data();
+                    userD = s.data();
                     document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[dados.nivel] || CARGOS["1"];
-                    document.getElementById('status-bar').innerHTML = `<b>${dados.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>${dados.nome}</h2><p>E-mail: ${dados.email}</p><p>Nível: ${dados.nivel}</p>`;
-                    document.getElementById('tree-box').innerHTML = desenhar(ESTRUTURA);
+                    document.getElementById('app').style.display = 'flex';
+                    const c = CARGOS[userD.nivel] || CARGOS[1];
+                    document.getElementById('status-bar').innerHTML = `<b>${userD.nome}</b><br><small style="color:${c.c}">${c.n}</small>`;
+                    document.getElementById('p-info').innerHTML = `<h2>${userD.nome}</h2><p>Cargo: ${c.n}</p>`;
+                    
+                    document.getElementById('tree-content').innerHTML = buildTree();
+                    // Pendura o Marechal nos dois caminhos (ele é a conexão)
+                    document.getElementById('hook-a').innerHTML = TRONCO_HTML;
+                    document.getElementById('hook-b').innerHTML = TRONCO_HTML;
                 });
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                    const box = document.getElementById('chat-messages');
-                    box.innerHTML = "";
-                    s.forEach(d => {
-                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS["1"];
+                    const box = document.getElementById('chat-messages'); box.innerHTML = "";
+                    s.forEach(d => { 
+                        const m = d.data(); const c = CARGOS[m.nivel] || CARGOS[1];
                         box.innerHTML += `<p><b style="color:${c.c}">[${c.n}] ${m.u}:</b> ${m.t}</p>`;
                     });
                     box.scrollTop = box.scrollHeight;
                 });
             } else {
                 document.getElementById('auth-screen').style.display = 'flex';
-                document.getElementById('main-app').style.display = 'none';
+                document.getElementById('app').style.display = 'none';
             }
         });
 
-        // BOTÕES
-        document.getElementById('login-go').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('user-e').value, document.getElementById('user-p').value);
-        document.getElementById('reg-go').onclick = async () => {
-            const res = await createUserWithEmailAndPassword(auth, document.getElementById('user-e').value, document.getElementById('user-p').value);
-            await setDoc(doc(db, "usuarios", res.user.uid), { nome: document.getElementById('user-n').value, email: document.getElementById('user-e').value, nivel: "1" });
+        document.getElementById('do-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('u-email').value, document.getElementById('u-pass').value);
+        document.getElementById('do-reg').onclick = async () => {
+            const r = await createUserWithEmailAndPassword(auth, document.getElementById('u-email').value, document.getElementById('u-pass').value);
+            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('u-name').value, email: document.getElementById('u-email').value, nivel: "1" });
         };
-        document.getElementById('send-btn').onclick = async () => {
-            const i = document.getElementById('msg-in');
-            if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: dados.nome, nivel: String(dados.nivel), data: serverTimestamp() });
+        document.getElementById('m-send').onclick = async () => {
+            const i = document.getElementById('m-in'); if(!i.value.trim()) return;
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: userD.nome, nivel: String(userD.nivel), data: serverTimestamp() });
             i.value = "";
         };
-        document.getElementById('go-chat').onclick = () => { document.getElementById('aba-chat').style.display='block'; document.getElementById('aba-tree').style.display='none'; document.getElementById('aba-perfil').style.display='none'; };
-        document.getElementById('go-tree').onclick = () => { document.getElementById('aba-chat').style.display='none'; document.getElementById('aba-tree').style.display='block'; document.getElementById('aba-perfil').style.display='none'; };
-        document.getElementById('go-perfil').onclick = () => { document.getElementById('aba-chat').style.display='none'; document.getElementById('aba-tree').style.display='none'; document.getElementById('aba-perfil').style.display='block'; };
-        document.getElementById('logout').onclick = () => signOut(auth).then(()=>location.reload());
+        document.getElementById('do-out').onclick = () => signOut(auth).then(()=>location.reload());
     </script>
 </body>
 </html>
