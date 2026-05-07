@@ -10,16 +10,17 @@
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .auth-box { background: #111; padding: 30px; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; width: 300px; }
         
-        /* Interface */
+        /* Sidebar */
         .sidebar { width: 260px; background: #151515; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
+        .sidebar button { background: #222; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.2s; }
+        .sidebar button:hover { background: #333; border-color: #5865f2; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
 
         .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; }
         #chat-messages { height: 60vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
         input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; }
 
-        /* Estilo da Árvore */
+        /* Estilo da Árvore (Cargos) */
         .tree-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
         .tree li { list-style-type: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
@@ -33,16 +34,17 @@
         .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
         .tree b { border: 2px solid #444; padding: 8px 15px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 12px; }
 
-        /* Tabelas e Listas */
+        /* Cartões e Listas */
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
-        .membro-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
+        .membro-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #222; align-items: center; }
+        .badge-cargo { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
         <div class="auth-box">
-            <h2 style="text-align:center">VSS SYSTEM</h2>
+            <h2 style="text-align:center; color:#5865f2">VSS SYSTEM</h2>
             <input type="text" id="reg-nome" placeholder="Seu Nome">
             <input type="email" id="auth-email" placeholder="E-mail">
             <input type="password" id="auth-senha" placeholder="Senha">
@@ -55,8 +57,8 @@
         <aside class="sidebar">
             <div id="status-bar"></div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="aba('aba-tree')">🌳 ÁRVORE GEO</button>
-            <button onclick="aba('aba-cargos')">🎖️ LISTA DE CARGOS</button>
+            <button onclick="aba('aba-cargos')">🎖️ CARGOS</button>
+            <button onclick="aba('aba-membros')">👥 MEMBROS</button>
             <button onclick="aba('aba-regras')">📜 REGRAS VSS</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
@@ -70,24 +72,24 @@
                 </div>
             </section>
 
-            <section id="aba-tree" style="display:none">
+            <section id="aba-cargos" style="display:none">
                 <div class="tree-container"><div class="tree" id="tree-root"></div></div>
             </section>
 
-            <section id="aba-cargos" style="display:none">
-                <h2>🎖️ Hierarquia de Membros</h2>
+            <section id="aba-membros" style="display:none">
+                <h2>👥 Membros Registrados</h2>
                 <div id="lista-membros" class="card"></div>
             </section>
 
             <section id="aba-regras" style="display:none">
                 <div class="card">
-                    <h2 style="color:#ff4444">REGRAS DO SISTEMA:</h2>
-                    <ul style="font-size: 18px; line-height: 2;">
-                        <li>❌ NÃO MENTIR.</li>
-                        <li>🙏 CRER EM DEUS.</li>
-                        <li>🫡 RESPEITAR SEU SUPERIOR.</li>
-                        <li>🤬 NÃO XINGAR.</li>
-                        <li>🤝 ACEITAR QUE PERDEU.</li>
+                    <h2 style="color:#ff4444; border-bottom: 1px solid #333; padding-bottom: 10px;">REGRAS DO SISTEMA</h2>
+                    <ul style="font-size: 18px; line-height: 2.5; list-style: none; padding: 0;">
+                        <li>🚫 <b>NÃO MENTIR</b></li>
+                        <li>🙏 <b>CRER EM DEUS</b></li>
+                        <li>🫡 <b>RESPEITAR SEU SUPERIOR</b></li>
+                        <li>🤬 <b>NÃO XINGAR</b></li>
+                        <li>🤝 <b>ACEITAR QUE PERDEU</b></li>
                     </ul>
                 </div>
             </section>
@@ -128,7 +130,7 @@
         }
 
         let userD = null;
-        window.aba = (id) => { ['aba-chat','aba-tree','aba-cargos','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none'); };
+        window.aba = (id) => { ['aba-chat','aba-cargos','aba-membros','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none'); };
 
         onAuthStateChanged(auth, u => {
             if(u) {
@@ -137,16 +139,18 @@
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
                     const c = CARGOS[userD.nivel] || CARGOS[1];
-                    document.getElementById('status-bar').innerHTML = `Olá, <b>${userD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('status-bar').innerHTML = `Logado: <b>${userD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
                     document.getElementById('tree-root').innerHTML = renderTree();
                 });
                 
-                // Monitora Membros para a aba Cargos
                 onSnapshot(collection(db, "usuarios"), s => {
                     const list = document.getElementById('lista-membros'); list.innerHTML = "";
                     s.forEach(d => {
                         const m = d.data(); const c = CARGOS[m.nivel] || CARGOS[1];
-                        list.innerHTML += `<div class="membro-item"><span>${m.nome}</span><span style="color:${c.c}">${c.n}</span></div>`;
+                        list.innerHTML += `<div class="membro-item">
+                            <span><b>${m.nome}</b></span>
+                            <span class="badge-cargo" style="border: 1px solid ${c.c}; color: ${c.c}">${c.n}</span>
+                        </div>`;
                     });
                 });
 
