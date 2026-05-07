@@ -5,103 +5,76 @@
     <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* ALERTA DE NOTÍCIAS NO TOPO */
-        #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-
-        /* SIDEBAR */
+        #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; }
         .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
-        .sidebar button:hover { background: #333; }
+        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; width: 100%; }
+        .sidebar button:hover { background: #333; border-color: #5865f2; }
         #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
-
-        /* CONTEÚDO */
         .content { flex: 1; padding: 80px 30px 30px 30px; overflow-y: auto; background: #0d0d0d; }
         #chat-messages { height: 50vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
-        
-        /* ÁRVORE DE CARGOS */
-        .tree-container { display: flex; justify-content: center; min-width: 1000px; }
-        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
-        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
-        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #444; width: 50%; height: 20px; }
-        .tree li::after { right: auto; left: 50%; border-left: 2px solid #444; }
-        .tree li:only-child::after, .tree li:only-child::before { display: none; }
-        .tree li:only-child { padding-top: 0; }
-        .tree li:first-child::before, .tree li:last-child::after { border: none; }
-        .tree li:last-child::before { border-right: 2px solid #444; border-radius: 0 5px 0 0; }
-        .tree li:first-child::after { border-radius: 5px 0 0 0; }
-        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #444; width: 0; height: 20px; }
-        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; white-space: nowrap; }
-
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
-        
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        /* Estilo da Árvore */
+        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; }
+        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
+        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <div id="top-news-bar">📢 <span id="news-text">Aviso importante para todos!</span></div>
+    <div id="top-news-bar">📢 <span id="news-text">Aviso importante!</span></div>
 
     <div id="auth-screen">
         <div class="auth-box" style="background:#111; padding:30px; border-radius:10px; width:300px">
             <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
-            <input type="text" id="reg-nome" placeholder="Seu Nome" style="margin-bottom:10px">
+            <input type="text" id="reg-nome" placeholder="Nome" style="margin-bottom:10px">
             <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
             <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
-            <button id="btn-login" style="width:100%; background:#5865f2; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer">ENTRAR</button>
-            <button id="btn-cadastrar" style="width:100%; background:transparent; color:#888; border:none; margin-top:10px; cursor:pointer">Criar Conta</button>
+            <button id="btn-login" style="background:#5865f2; color:white; border:none; padding:12px; cursor:pointer; width:100%; border-radius:6px">ENTRAR</button>
+            <button id="btn-cadastrar" style="background:none; color:#888; border:none; margin-top:10px; cursor:pointer; width:100%">CRIAR CONTA</button>
         </div>
     </div>
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
-            <div id="status-bar"></div>
-            <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="aba('aba-cargos')">🎖️ CARGOS (ÁRVORE)</button>
-            <button onclick="aba('aba-membros')">👥 MEMBROS</button>
-            <button onclick="aba('aba-noticias')">📢 NOTÍCIAS (ADM)</button>
-            <button onclick="aba('aba-perfil')">👤 PERFIL</button>
-            <button onclick="aba('aba-regras')">📜 REGRAS</button>
+            <div id="status-bar">Carregando...</div>
+            <button id="btn-aba-chat">💬 CHAT GLOBAL</button>
+            <button id="btn-aba-cargos">🎖️ CARGOS (ÁRVORE)</button>
+            <button id="btn-aba-membros">👥 MEMBROS</button>
+            <button id="btn-aba-noticias">📢 NOTÍCIAS (ADM)</button>
+            <button id="btn-aba-perfil">👤 PERFIL</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
 
         <main class="content">
-            <section id="aba-chat">
+            <section id="aba-chat" class="tab-content">
                 <div id="chat-messages"></div>
                 <div style="display:flex; gap:10px">
-                    <input type="text" id="chat-input" placeholder="Conversar...">
-                    <button id="chat-send" style="background:#5865f2; color:white; border:none; padding:0 20px; border-radius:6px">ENVIAR</button>
+                    <input type="text" id="chat-input" placeholder="Mensagem...">
+                    <button id="chat-send" style="background:#5865f2; color:white; border:none; padding:0 20px; border-radius:6px; cursor:pointer">ENVIAR</button>
                 </div>
             </section>
 
-            <section id="aba-cargos" style="display:none">
-                <div class="tree-container"><div class="tree" id="tree-root"></div></div>
+            <section id="aba-cargos" class="tab-content" style="display:none">
+                <div class="tree" id="tree-root"></div>
             </section>
 
-            <section id="aba-membros" style="display:none">
-                <h2>👥 Membros do Sistema</h2>
+            <section id="aba-membros" class="tab-content" style="display:none">
+                <h2>👥 Membros</h2>
                 <div id="lista-membros" class="card"></div>
             </section>
 
-            <section id="aba-noticias" style="display:none">
-                <h2>📢 Escrever Notícia Global</h2>
+            <section id="aba-noticias" class="tab-content" style="display:none">
+                <h2>📢 Postar Notícia</h2>
                 <div class="card">
-                    <p>Apenas **Fundadores** e cargos superiores ao Marechal podem enviar notícias.</p>
-                    <textarea id="noticia-input" rows="4" placeholder="O que deseja anunciar para todos?"></textarea>
-                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight:bold">ENVIAR AGORA</button>
+                    <textarea id="noticia-input" rows="4" placeholder="Escreva o anúncio..."></textarea>
+                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer">PUBLICAR</button>
                 </div>
             </section>
 
-            <section id="aba-perfil" style="display:none">
+            <section id="aba-perfil" class="tab-content" style="display:none">
                 <div id="perfil-card" class="card"></div>
-            </section>
-
-            <section id="aba-regras" style="display:none">
-                <div class="card">
-                    <h2>📜 Regras VSS</h2>
-                    <p>🚫 NÃO MENTIR | 🙏 CRER EM DEUS | 🫡 RESPEITAR SUPERIOR | 🤬 NÃO XINGAR</p>
-                </div>
             </section>
         </main>
     </div>
@@ -132,28 +105,34 @@
             "10b": {n:"BRAÇO ESQUERDO", c:"#9400d3"}, "11b": {n:"ESPECIAL STAFF", c:"#a29bfe"}, "12b": {n:"SOCIO", c:"#e84118"}, "15": {n:"FUNDADOR", c:"#ff0000"}
         };
 
-        let uD = null;
-        window.aba = (id) => {
-            // VERIFICAÇÃO: Fundador (15) ou qualquer cargo '10+' (Autoridades, Cesar, etc)
-            const nivelNum = uD.nivel;
-            const temPermissao = (nivelNum === "15" || nivelNum.startsWith("10") || nivelNum.startsWith("11") || nivelNum.startsWith("12") || nivelNum.startsWith("13"));
-            
-            if(id === 'aba-noticias' && !temPermissao) {
-                alert("Bloqueado: Apenas a cúpula (depois do Marechal e Fundador) pode postar notícias.");
-                return;
+        let uData = null;
+
+        function mudarAba(id) {
+            if (id === 'aba-noticias') {
+                const n = uData.nivel;
+                const pode = (n === "15" || n.startsWith("10") || n.startsWith("11") || n.startsWith("12") || n.startsWith("13"));
+                if (!pode) { alert("Apenas Fundadores e Autoridades!"); return; }
             }
-            ['aba-chat','aba-cargos','aba-membros','aba-noticias','aba-perfil','aba-regras'].forEach(a => document.getElementById(a).style.display = a === id ? 'block' : 'none');
-        };
+            document.querySelectorAll('.tab-content').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+
+        // Eventos dos botões da sidebar
+        document.getElementById('btn-aba-chat').onclick = () => mudarAba('aba-chat');
+        document.getElementById('btn-aba-cargos').onclick = () => mudarAba('aba-cargos');
+        document.getElementById('btn-aba-membros').onclick = () => mudarAba('aba-membros');
+        document.getElementById('btn-aba-noticias').onclick = () => mudarAba('aba-noticias');
+        document.getElementById('btn-aba-perfil').onclick = () => mudarAba('aba-perfil');
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uD = s.data();
+                    uData = s.data();
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uD.nivel] || CARGOS[1];
-                    document.getElementById('status-bar').innerHTML = `Logado: <b>${uD.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('perfil-card').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: <b style="color:${c.c}">${c.n}</b></p>`;
+                    const c = CARGOS[uData.nivel] || CARGOS[1];
+                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
+                    document.getElementById('perfil-card').innerHTML = `<h3>${uData.nome}</h3><p>Nível: ${c.n}</p>`;
                 });
 
                 onSnapshot(doc(db, "sistema", "news"), s => {
@@ -167,7 +146,7 @@
                     const l = document.getElementById('lista-membros'); l.innerHTML = "";
                     s.forEach(d => { 
                         const m = d.data();
-                        l.innerHTML += `<p><b>${m.nome}</b> - <span style="color:${CARGOS[m.nivel].c}">${CARGOS[m.nivel].n}</span></p>`; 
+                        l.innerHTML += `<p><b>${m.nome}</b> - ${CARGOS[m.nivel].n}</p>`; 
                     });
                 });
 
@@ -175,7 +154,8 @@
                     const b = document.getElementById('chat-messages'); b.innerHTML = "";
                     s.forEach(d => { 
                         const msg = d.data();
-                        b.innerHTML += `<p><b>[${CARGOS[msg.nivel].n}] ${msg.u}:</b> ${msg.t}</p>`; 
+                        const cor = CARGOS[msg.nivel] ? CARGOS[msg.nivel].c : '#fff';
+                        b.innerHTML += `<p><b style="color:${cor}">[${CARGOS[msg.nivel].n}] ${msg.u}:</b> ${msg.t}</p>`; 
                     });
                     b.scrollTop = b.scrollHeight;
                 });
@@ -187,23 +167,25 @@
             if(t.trim()) {
                 await setDoc(doc(db, "sistema", "news"), { t: t });
                 document.getElementById('noticia-input').value = "";
-                alert("Notícia Global Publicada!");
+                alert("Publicado!");
             }
         };
 
-        document.getElementById('tree-root').innerHTML = `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b>${CARGOS[9].n}</b><ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li><li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
+        document.getElementById('chat-send').onclick = async () => {
+            const i = document.getElementById('chat-input');
+            if(!i.value.trim()) return;
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: uData.nome, nivel: String(uData.nivel), data: serverTimestamp() });
+            i.value = "";
+        };
 
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
         document.getElementById('btn-cadastrar').onclick = async () => {
             const r = await createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
             await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value, email: document.getElementById('auth-email').value, nivel: "1" });
         };
-        document.getElementById('chat-send').onclick = async () => {
-            const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: uD.nome, nivel: String(uD.nivel), data: serverTimestamp() });
-            i.value = "";
-        };
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
+        
+        document.getElementById('tree-root').innerHTML = `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b>${CARGOS[9].n}</b><ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li><li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
     </script>
 </body>
 </html>
