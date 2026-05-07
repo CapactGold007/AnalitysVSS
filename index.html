@@ -2,29 +2,28 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - COMPLETO</title>
+    <title>VSS SYSTEM - OFICIAL</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sidebar Organizada */
+        /* Sidebar */
         .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 5px; }
-        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.2s; }
+        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; }
         .sidebar button:hover { background: #333; border-color: #5865f2; }
         .btn-staff { background: #440000 !important; border: 1px solid #ff4444 !important; margin-top: 10px; color: #ffcccc !important; text-align: center !important; }
         
-        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #5865f2; }
-        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; position: relative; }
+        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #5865f2; font-size: 13px; }
+        .content { flex: 1; padding: 30px; overflow-y: auto; background: #0d0d0d; padding-top: 70px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
 
-        /* Árvore de Cargos Visual */
-        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; padding-left: 0; }
-        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
-        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; color: #fff; }
+        /* Membros */
+        .membro-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
+        .adm-btn { padding: 5px 8px; border-radius: 4px; border: none; cursor: pointer; margin-left: 3px; color: white; font-size: 10px; }
 
-        /* Estilo da Prova IA */
+        /* Prova */
         #prova-container { display: none; background: #000; padding: 30px; border: 2px solid #ff4444; border-radius: 12px; }
         .questao { margin-bottom: 15px; padding: 15px; background: #151515; border-radius: 8px; border-left: 4px solid #ff4444; }
-        
+
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
         #top-news { background: #ff4500; color: white; padding: 12px; text-align: center; font-weight: bold; position: fixed; top: 0; left: 260px; right: 0; z-index: 1000; display: none; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
@@ -50,56 +49,59 @@
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
             <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
             <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
-            <button onclick="aba('aba-noticias')">📢 NOTÍCIAS</button>
             <button onclick="aba('aba-membros')">👥 MEMBROS</button>
-            
-            <!-- Botão Staff no Canto/Separado -->
+            <button onclick="aba('aba-noticias')">📢 NOTÍCIAS</button>
+            <button onclick="aba('aba-regras')">📜 REGRAS</button>
             <button onclick="aba('aba-prova')" class="btn-staff">🔒 PROVA STAFF (IA)</button>
-            
-            <button id="btn-sair" style="color:#ff4444; margin-top:auto; border:none; background:none">SAIR</button>
+            <button id="btn-sair" style="color:#ff4444; margin-top:auto; background:none; border:none; cursor:pointer">SAIR</button>
         </aside>
 
-        <main class="content" style="padding-top: 60px;">
-            <!-- ABA PERFIL -->
+        <main class="content">
+            <section id="aba-chat">
+                <div id="chat-messages" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
+                <input type="text" id="chat-input" placeholder="Escreva e aperte Enter para enviar...">
+            </section>
+
             <section id="aba-perfil" style="display:none">
                 <div id="perfil-card" class="card"></div>
             </section>
 
-            <!-- ABA CARGOS -->
             <section id="aba-cargos" style="display:none">
-                <div class="tree" id="tree-root"></div>
-            </section>
-
-            <!-- ABA CHAT -->
-            <section id="aba-chat">
-                <div id="chat-messages" style="height:60vh; overflow-y:auto; background:#050505; padding:15px; border-radius:8px; border:1px solid #222; margin-bottom:10px"></div>
-                <input type="text" id="chat-input" placeholder="Conversar...">
-            </section>
-
-            <!-- ABA PROVA STAFF -->
-            <section id="aba-prova" style="display:none">
-                <div id="prova-lock-msg" class="card">
-                    <h2>Formulário Trancado</h2>
-                    <p>Apenas Soldados+ e quando o Fundador liberar.</p>
-                </div>
-                <div id="prova-container">
-                    <h2 style="color:#ff4444">TESTE STAFF - 100 QUESTÕES IA</h2>
-                    <div id="questoes-lista"></div>
-                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; border:none; cursor:pointer; font-size:18px">FINALIZAR TESTE</button>
-                </div>
-            </section>
-
-            <!-- OUTRAS ABAS -->
-            <section id="aba-noticias" style="display:none">
                 <div class="card">
-                    <h2>📢 Postar Notícia</h2>
-                    <textarea id="news-input" placeholder="Texto da notícia..."></textarea>
-                    <button id="btn-post-news" style="background:#ff4500; color:white; border:none; padding:10px; margin-top:10px; cursor:pointer">PUBLICAR</button>
+                    <h3>Hierarquia VSS</h3>
+                    <p>Fundador > Autoridade > Marechal > Major > Capitão > Sargento > Cabo > Soldado > Iniciante</p>
                 </div>
             </section>
 
             <section id="aba-membros" style="display:none">
+                <h3>👥 Membros Recrutados</h3>
                 <div id="lista-membros" class="card"></div>
+            </section>
+
+            <section id="aba-noticias" style="display:none">
+                <div class="card">
+                    <h2>📢 Mural de Avisos</h2>
+                    <textarea id="news-input" rows="4" placeholder="Escreva o aviso e aperte Enter para postar..."></textarea>
+                </div>
+            </section>
+
+            <section id="aba-regras" style="display:none">
+                <div class="card">
+                    <h2 style="color:red">REGRAS VSS</h2>
+                    <p>1. NÃO MENTIR.</p>
+                    <p>2. RESPEITAR SUPERIORES.</p>
+                    <p>3. CRER EM DEUS.</p>
+                    <p>4. NÃO XINGAR NO CHAT.</p>
+                    <p>5. ACEITAR A DERROTA COM HONRA.</p>
+                </div>
+            </section>
+
+            <section id="aba-prova" style="display:none">
+                <div id="prova-container">
+                    <h2 style="color:red">PROVA IA - ANTI-CHEAT</h2>
+                    <div id="questoes-lista"></div>
+                    <button onclick="corrigirProva()" style="background:#5865f2; color:white; width:100%; padding:20px; border:none; border-radius:8px; cursor:pointer">ENVIAR RESPOSTAS</button>
+                </div>
             </section>
         </main>
     </div>
@@ -107,71 +109,96 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        let uData = null;
-        let emProva = false;
-
-        // Anti-Cheat
-        window.onblur = () => { if(emProva) { alert("Sair da aba cancelou sua prova!"); location.reload(); } };
+        let uD = null;
+        const CARGOS = {"1":"INICIANTE", "2":"SOLDADO", "3":"CABO", "4":"SARGENTO", "10":"STAFF", "15":"FUNDADOR"};
 
         window.aba = (id) => {
-            if(id === 'aba-prova' && uData.nivel < 2) return alert("Precisa ser SOLDADO!");
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
         };
 
-        const CARGOS = {"1":{n:"INICIANTE",c:"#fff"}, "2":{n:"SOLDADO",c:"#2ecc71"}, "15":{n:"FUNDADOR",c:"#ff0000"}};
+        // Funções Administrativas
+        window.modificarMembro = async (uid, acao) => {
+            const ref = doc(db, "usuarios", uid);
+            const snap = await getDoc(ref);
+            if(acao === 'ban') await deleteDoc(ref);
+            if(acao === 'up') await updateDoc(ref, { nivel: String(parseInt(snap.data().nivel)+1) });
+            if(acao === 'down') await updateDoc(ref, { nivel: String(parseInt(snap.data().nivel)-1) });
+            if(acao === 'xp') await updateDoc(ref, { xp: (snap.data().xp || 0) + 50 });
+        };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uData = s.data(); uData.uid = u.uid;
+                    uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const cargoInfo = CARGOS[uData.nivel] || {n:"MEMBRO", c:"#fff"};
-                    
-                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><small>${cargoInfo.n}</small>`;
-                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uData.nome}</p><p>Cargo: <b style="color:${cargoInfo.c}">${cargoInfo.n}</b></p><p>XP: ${uData.xp || 0}</p>`;
-                    
-                    // Render Árvore Simplificada (Y após Marechal)
-                    document.getElementById('tree-root').innerHTML = `<ul><li><b>FUNDADOR</b><ul><li><b>MARECHAL</b><ul><li><b>AUTORIDADE A</b></li><li><b>SÓCIO B</b></li></ul></li></ul></li></ul>`;
+                    const cargoNome = CARGOS[uD.nivel] || "MEMBRO";
+                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${cargoNome} | XP: ${uD.xp || 0}`;
+                    document.getElementById('perfil-card').innerHTML = `<h2>Meu Perfil</h2><p>Nome: ${uD.nome}</p><p>Cargo: ${cargoNome}</p><p>XP: ${uD.xp || 0}</p>`;
                 });
 
-                // Status Prova
-                onSnapshot(doc(db, "sistema", "config"), s => {
-                    if(s.data()?.provaAberta) {
-                        document.getElementById('prova-lock-msg').style.display = 'none';
-                        document.getElementById('prova-container').style.display = 'block';
-                        if(!emProva) gerarProvaIA();
-                        emProva = true;
+                // Lista de Membros Realtime
+                onSnapshot(collection(db, "usuarios"), s => {
+                    const lista = document.getElementById('lista-membros');
+                    lista.innerHTML = "";
+                    s.forEach(d => {
+                        const m = d.data();
+                        const isFundador = uD.nivel == "15";
+                        lista.innerHTML += `
+                            <div class="membro-row">
+                                <span><b>${m.nome}</b> (${CARGOS[m.nivel] || 'NV '+m.nivel})</span>
+                                ${isFundador && d.id !== uD.uid ? `
+                                    <div>
+                                        <button class="adm-btn" style="background:blue" onclick="modificarMembro('${d.id}','xp')">+XP</button>
+                                        <button class="adm-btn" style="background:green" onclick="modificarMembro('${d.id}','up')">↑</button>
+                                        <button class="adm-btn" style="background:orange" onclick="modificarMembro('${d.id}','down')">↓</button>
+                                        <button class="adm-btn" style="background:red" onclick="modificarMembro('${d.id}','ban')">X</button>
+                                    </div>
+                                ` : ''}
+                            </div>`;
+                    });
+                });
+
+                // Chat Realtime
+                onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
+                    const box = document.getElementById('chat-messages'); box.innerHTML = "";
+                    s.forEach(d => { box.innerHTML += `<p><b>${d.data().u}:</b> ${d.data().t}</p>`; });
+                    box.scrollTop = box.scrollHeight;
+                });
+
+                // Notícias Realtime
+                onSnapshot(doc(db, "sistema", "news"), s => {
+                    if(s.exists()){
+                        document.getElementById('news-text').innerText = s.data().t;
+                        document.getElementById('top-news').style.display = 'block';
+                        setTimeout(() => document.getElementById('top-news').style.display = 'none', 60000);
                     }
                 });
             }
         });
 
-        function gerarProvaIA() {
-            const lista = document.getElementById('questoes-lista');
-            lista.innerHTML = "";
-            for(let i=1; i<=100; i++) {
-                const n1 = Math.floor(Math.random()*100);
-                const n2 = Math.floor(Math.random()*50);
-                lista.innerHTML += `<div class="questao"><p>${i}. Quanto é ${n1} + ${n2}?</p><input type="number" class="res-ia" data-certa="${n1+n2}"></div>`;
+        // Eventos de teclado (Enter para enviar)
+        document.getElementById('chat-input').addEventListener('keypress', async (e) => {
+            if(e.key === 'Enter' && e.target.value.trim()) {
+                await addDoc(collection(db, "mensagens"), { t: e.target.value, u: uD.nome, data: serverTimestamp() });
+                e.target.value = "";
             }
-        }
+        });
 
-        window.corrigirProva = async () => {
-            let acertos = 0;
-            document.querySelectorAll('.res-ia').forEach(inp => { if(inp.value == inp.dataset.certa) acertos++; });
-            if(acertos >= 69) {
-                alert("PROMOVIDO A STAFF!");
-                await updateDoc(doc(db, "usuarios", uData.uid), { nivel: "10" });
-                location.reload();
-            } else { alert(`Você acertou ${acertos}. Tente de novo.`); location.reload(); }
-        };
+        document.getElementById('news-input').addEventListener('keypress', async (e) => {
+            if(e.key === 'Enter' && e.target.value.trim()) {
+                if(uD.nivel < 10) return alert("Sem permissão!");
+                await setDoc(doc(db, "sistema", "news"), { t: e.target.value });
+                e.target.value = "";
+                alert("Notícia publicada!");
+            }
+        });
 
         document.getElementById('btn-login').onclick = async () => {
             const e = document.getElementById('auth-email').value;
