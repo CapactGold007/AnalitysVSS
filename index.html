@@ -2,32 +2,31 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - OFICIAL</title>
+    <title>VSS SYSTEM - SUPREMO</title>
     <style>
         body { background: #0a0a0a; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         #top-news-bar { position: fixed; top: 0; left: 260px; right: 0; background: #ff4500; color: white; padding: 15px; text-align: center; font-weight: bold; z-index: 1000; display: none; border-bottom: 2px solid #fff; }
         .sidebar { width: 260px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; }
         .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; text-align: left; font-weight: bold; width: 100%; }
-        .sidebar button:hover { background: #333; border-color: #5865f2; }
-        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 14px; }
+        .sidebar button:hover { background: #333; }
+        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #5865f2; font-size: 13px; }
         .content { flex: 1; padding: 80px 30px 30px 30px; overflow-y: auto; background: #0d0d0d; }
         #chat-messages { height: 50vh; background: #050505; border: 1px solid #222; padding: 15px; overflow-y: auto; border-radius: 8px; margin-bottom: 15px; }
         .card { background: #111; padding: 20px; border-radius: 10px; border: 1px solid #333; margin-bottom: 20px; }
+        .membro-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
+        .adm-tools { display: flex; gap: 5px; }
+        .btn-adm { padding: 5px 8px; border-radius: 4px; border: none; cursor: pointer; font-size: 10px; font-weight: bold; color: white; }
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 6px; width: 100%; box-sizing: border-box; }
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
-        /* Estilo da Árvore */
-        .tree ul { padding-top: 20px; position: relative; display: flex; justify-content: center; }
-        .tree li { list-style: none; position: relative; padding: 20px 5px 0 5px; text-align: center; }
-        .tree b { border: 2px solid #444; padding: 8px 12px; display: inline-block; border-radius: 5px; background: #1a1a1a; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <div id="top-news-bar">📢 <span id="news-text">Aviso importante!</span></div>
+    <div id="top-news-bar">📢 <span id="news-text">...</span></div>
 
     <div id="auth-screen">
         <div class="auth-box" style="background:#111; padding:30px; border-radius:10px; width:300px">
-            <h2 style="text-align:center; color:#5865f2">VSS LOGIN</h2>
+            <h2 style="text-align:center; color:#5865f2">VSS SYSTEM</h2>
             <input type="text" id="reg-nome" placeholder="Nome" style="margin-bottom:10px">
             <input type="email" id="auth-email" placeholder="E-mail" style="margin-bottom:10px">
             <input type="password" id="auth-senha" placeholder="Senha" style="margin-bottom:10px">
@@ -38,12 +37,12 @@
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
-            <div id="status-bar">Carregando...</div>
-            <button id="btn-aba-chat">💬 CHAT GLOBAL</button>
-            <button id="btn-aba-cargos">🎖️ CARGOS (ÁRVORE)</button>
-            <button id="btn-aba-membros">👥 MEMBROS</button>
-            <button id="btn-aba-noticias">📢 NOTÍCIAS (ADM)</button>
-            <button id="btn-aba-perfil">👤 PERFIL</button>
+            <div id="status-bar"></div>
+            <button onclick="mudarAba('aba-chat')">💬 CHAT</button>
+            <button onclick="mudarAba('aba-cargos')">🎖️ CARGOS</button>
+            <button onclick="mudarAba('aba-membros')">👥 MEMBROS</button>
+            <button onclick="mudarAba('aba-noticias')">📢 NOTÍCIAS</button>
+            <button onclick="mudarAba('aba-perfil')">👤 PERFIL</button>
             <button id="btn-sair" style="color:#ff4444; margin-top:auto">SAIR</button>
         </aside>
 
@@ -51,26 +50,26 @@
             <section id="aba-chat" class="tab-content">
                 <div id="chat-messages"></div>
                 <div style="display:flex; gap:10px">
-                    <input type="text" id="chat-input" placeholder="Mensagem...">
+                    <input type="text" id="chat-input" placeholder="Ganhe XP conversando...">
                     <button id="chat-send" style="background:#5865f2; color:white; border:none; padding:0 20px; border-radius:6px; cursor:pointer">ENVIAR</button>
                 </div>
             </section>
 
-            <section id="aba-cargos" class="tab-content" style="display:none">
-                <div class="tree" id="tree-root"></div>
-            </section>
-
             <section id="aba-membros" class="tab-content" style="display:none">
-                <h2>👥 Membros</h2>
+                <h2>👥 Membros & Gestão</h2>
                 <div id="lista-membros" class="card"></div>
             </section>
 
             <section id="aba-noticias" class="tab-content" style="display:none">
-                <h2>📢 Postar Notícia</h2>
                 <div class="card">
-                    <textarea id="noticia-input" rows="4" placeholder="Escreva o anúncio..."></textarea>
-                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer">PUBLICAR</button>
+                    <h2>📢 Postar Notícia Global</h2>
+                    <textarea id="noticia-input" rows="4" placeholder="Escreva aqui..."></textarea>
+                    <button id="btn-postar" style="margin-top:10px; background:#ff4500; color:white; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; font-weight:bold">PUBLICAR AGORA</button>
                 </div>
+            </section>
+
+            <section id="aba-cargos" class="tab-content" style="display:none">
+                <div id="tree-root" style="text-align:center">Árvore de Cargos Ativada</div>
             </section>
 
             <section id="aba-perfil" class="tab-content" style="display:none">
@@ -82,7 +81,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, updateDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I",
@@ -98,43 +97,38 @@
         const db = getFirestore(app);
 
         const CARGOS = {
-            "1": {n:"I - INICIANTE", c:"#5865f2"}, "2": {n:"II - SOLDADO", c:"#fff"}, "3": {n:"III - CABO", c:"#95a5a6"},
-            "4": {n:"IV - 3º SARGENTO", c:"#bdc3c7"}, "5": {n:"V - 2º SARGENTO", c:"#1abc9c"}, "6": {n:"VI - 1º SARGENTO", c:"#2980b9"},
-            "7": {n:"VII - CAPITÃO", c:"#3498db"}, "8": {n:"IX - MAJOR", c:"#27ae60"}, "9": {n:"X - MARECHAL", c:"#2ecc71"},
-            "10a": {n:"3º AUTORIDADE", c:"#daa520"}, "11a": {n:"2º AUTORIDADE MAXIMA", c:"#ffd700"}, "12a": {n:"CESAR", c:"#ff8c00"}, "13a": {n:"ANALITY", c:"#ff4500"},
-            "10b": {n:"BRAÇO ESQUERDO", c:"#9400d3"}, "11b": {n:"ESPECIAL STAFF", c:"#a29bfe"}, "12b": {n:"SOCIO", c:"#e84118"}, "15": {n:"FUNDADOR", c:"#ff0000"}
+            "1":{n:"INICIANTE",c:"#5865f2",xp:100},"2":{n:"SOLDADO",c:"#fff",xp:200},"3":{n:"CABO",c:"#95a5a6",xp:400},"9":{n:"MARECHAL",c:"#2ecc71"},"10a":{n:"AUTORIDADE",c:"#daa520"},"15":{n:"FUNDADOR",c:"#ff0000"}
         };
 
         let uData = null;
 
-        function mudarAba(id) {
-            if (id === 'aba-noticias') {
-                const n = uData.nivel;
-                const pode = (n === "15" || n.startsWith("10") || n.startsWith("11") || n.startsWith("12") || n.startsWith("13"));
-                if (!pode) { alert("Apenas Fundadores e Autoridades!"); return; }
-            }
+        // FUNÇÃO DE ABAS
+        window.mudarAba = (id) => {
+            if(id === 'aba-noticias' && uData.nivel < 10 && uData.nivel != 15) { alert("Sem permissão!"); return; }
             document.querySelectorAll('.tab-content').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-        }
+        };
 
-        // Eventos dos botões da sidebar
-        document.getElementById('btn-aba-chat').onclick = () => mudarAba('aba-chat');
-        document.getElementById('btn-aba-cargos').onclick = () => mudarAba('aba-cargos');
-        document.getElementById('btn-aba-membros').onclick = () => mudarAba('aba-membros');
-        document.getElementById('btn-aba-noticias').onclick = () => mudarAba('aba-noticias');
-        document.getElementById('btn-aba-perfil').onclick = () => mudarAba('aba-perfil');
+        // ADMIN: BANIR E NÍVEL
+        window.admAcao = async (tipo, targetUid, nivelAtual) => {
+            if(tipo === 'ban') { if(confirm("Banir membro?")) await deleteDoc(doc(db, "usuarios", targetUid)); }
+            if(tipo === 'up') { await updateDoc(doc(db, "usuarios", targetUid), { nivel: String(parseInt(nivelAtual) + 1), xp: 0 }); }
+            if(tipo === 'down') { await updateDoc(doc(db, "usuarios", targetUid), { nivel: String(parseInt(nivelAtual) - 1), xp: 0 }); }
+        };
 
         onAuthStateChanged(auth, u => {
             if(u) {
                 onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uData = s.data();
+                    if(!s.exists()) { signOut(auth); return; }
+                    uData = s.data(); uData.uid = u.uid;
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-app').style.display = 'flex';
-                    const c = CARGOS[uData.nivel] || CARGOS[1];
-                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br><span style="color:${c.c}">${c.n}</span>`;
-                    document.getElementById('perfil-card').innerHTML = `<h3>${uData.nome}</h3><p>Nível: ${c.n}</p>`;
+                    const c = CARGOS[uData.nivel] || {n:"MEMBRO", c:"#eee"};
+                    document.getElementById('status-bar').innerHTML = `<b>${uData.nome}</b><br>XP: ${uData.xp || 0} | ${c.n}`;
+                    document.getElementById('perfil-card').innerHTML = `<h3>${uData.nome}</h3><p>Nível: ${c.n}</p><p>XP Acumulado: ${uData.xp || 0}</p>`;
                 });
 
+                // NOTÍCIAS
                 onSnapshot(doc(db, "sistema", "news"), s => {
                     if(s.exists()){
                         document.getElementById('news-text').innerText = s.data().t;
@@ -142,50 +136,63 @@
                     }
                 });
 
+                // LISTA DE MEMBROS COM BOTÕES DE ADM
                 onSnapshot(collection(db, "usuarios"), s => {
                     const l = document.getElementById('lista-membros'); l.innerHTML = "";
-                    s.forEach(d => { 
+                    s.forEach(d => {
                         const m = d.data();
-                        l.innerHTML += `<p><b>${m.nome}</b> - ${CARGOS[m.nivel].n}</p>`; 
+                        const isAdm = (uData.nivel >= 10 || uData.nivel == 15);
+                        l.innerHTML += `
+                        <div class="membro-row">
+                            <span><b>${m.nome}</b> (${CARGOS[m.nivel]?.n || 'Membro'}) - XP: ${m.xp || 0}</span>
+                            ${isAdm && d.id !== uData.uid ? `
+                                <div class="adm-tools">
+                                    <button class="btn-adm" style="background:green" onclick="admAcao('up','${d.id}','${m.nivel}')">+ NV</button>
+                                    <button class="btn-adm" style="background:orange" onclick="admAcao('down','${d.id}','${m.nivel}')">- NV</button>
+                                    <button class="btn-adm" style="background:red" onclick="admAcao('ban','${d.id}')">BAN</button>
+                                </div>
+                            ` : ''}
+                        </div>`;
                     });
                 });
 
+                // CHAT + SISTEMA DE XP
                 onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
                     const b = document.getElementById('chat-messages'); b.innerHTML = "";
-                    s.forEach(d => { 
+                    s.forEach(d => {
                         const msg = d.data();
-                        const cor = CARGOS[msg.nivel] ? CARGOS[msg.nivel].c : '#fff';
-                        b.innerHTML += `<p><b style="color:${cor}">[${CARGOS[msg.nivel].n}] ${msg.u}:</b> ${msg.t}</p>`; 
+                        b.innerHTML += `<p><b>${msg.u}:</b> ${msg.t}</p>`;
                     });
                     b.scrollTop = b.scrollHeight;
                 });
             }
         });
 
+        // ENVIAR MENSAGEM E GANHAR XP
+        document.getElementById('chat-send').onclick = async () => {
+            const i = document.getElementById('chat-input');
+            if(!i.value.trim()) return;
+            await addDoc(collection(db, "mensagens"), { t: i.value, u: uData.nome, nivel: uData.nivel, data: serverTimestamp() });
+            await updateDoc(doc(db, "usuarios", uData.uid), { xp: (uData.xp || 0) + 10 });
+            i.value = "";
+        };
+
+        // POSTAR NOTÍCIA
         document.getElementById('btn-postar').onclick = async () => {
             const t = document.getElementById('noticia-input').value;
             if(t.trim()) {
                 await setDoc(doc(db, "sistema", "news"), { t: t });
                 document.getElementById('noticia-input').value = "";
-                alert("Publicado!");
+                alert("Postado no Topo!");
             }
-        };
-
-        document.getElementById('chat-send').onclick = async () => {
-            const i = document.getElementById('chat-input');
-            if(!i.value.trim()) return;
-            await addDoc(collection(db, "mensagens"), { t: i.value, u: uData.nome, nivel: String(uData.nivel), data: serverTimestamp() });
-            i.value = "";
         };
 
         document.getElementById('btn-login').onclick = () => signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
         document.getElementById('btn-cadastrar').onclick = async () => {
             const r = await createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-senha').value);
-            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value, email: document.getElementById('auth-email').value, nivel: "1" });
+            await setDoc(doc(db, "usuarios", r.user.uid), { nome: document.getElementById('reg-nome').value, email: document.getElementById('auth-email').value, nivel: "1", xp: 0 });
         };
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
-        
-        document.getElementById('tree-root').innerHTML = `<ul><li><b>${CARGOS[1].n}</b><ul><li><b>${CARGOS[2].n}</b><ul><li><b>${CARGOS[3].n}</b><ul><li><b>${CARGOS[4].n}</b><ul><li><b>${CARGOS[5].n}</b><ul><li><b>${CARGOS[6].n}</b><ul><li><b>${CARGOS[7].n}</b><ul><li><b>${CARGOS[8].n}</b><ul><li><b>${CARGOS[9].n}</b><ul><li><b>${CARGOS["10a"].n}</b><ul><li><b>${CARGOS["11a"].n}</b><ul><li><b>${CARGOS["12a"].n}</b><ul><li><b>${CARGOS["13a"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li><li><b>${CARGOS["10b"].n}</b><ul><li><b>${CARGOS["11b"].n}</b><ul><li><b>${CARGOS["12b"].n}</b><ul><li><b style="color:red">${CARGOS[15].n}</b></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>`;
     </script>
 </body>
 </html>
