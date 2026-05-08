@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - VERSÃO FINAL</title>
+    <title>VSS SYSTEM - SUPREMO v3</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #070707; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; overflow: hidden; }
@@ -15,7 +15,7 @@
 
         /* CONTEÚDO */
         .content { flex: 1; padding: 40px; overflow-y: auto; background: #0d0d0d; }
-        .card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid #222; margin-bottom: 20px; }
+        .card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid #222; margin-bottom: 20px; position: relative; }
         
         /* NAVEGAÇÃO INTERNA NOTÍCIAS */
         .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -24,12 +24,11 @@
 
         input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; outline: none; }
         .btn-acao { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
-        .btn-acao:hover { opacity: 0.8; }
 
-        /* LISTAS */
-        #chat-box, #mural-lista, #lista-membros-ui { height: 400px; overflow-y: auto; background: #050505; border-radius: 10px; padding: 15px; border: 1px solid #222; }
-        .comentario-item { background: #181818; padding: 8px; border-radius: 5px; margin-top: 5px; font-size: 13px; border-left: 2px solid #5865f2; }
-        .membro-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
+        /* LISTAS E COMPONENTES */
+        #chat-box, #mural-lista, #lista-membros-ui, #notificacoes-lista { height: 400px; overflow-y: auto; background: #050505; border-radius: 10px; padding: 15px; border: 1px solid #222; }
+        .item-lista { background: #181818; padding: 10px; border-radius: 5px; margin-top: 8px; border-left: 3px solid #5865f2; }
+        .badge { font-size: 10px; padding: 2px 6px; background: #333; border-radius: 4px; color: #5865f2; margin-left: 5px; }
 
         #auth-screen { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
@@ -38,10 +37,10 @@
 
     <div id="auth-screen">
         <div class="card" style="width:360px; text-align:center;">
-            <h2 style="color:#5865f2; margin-bottom: 20px;">VSS LOGIN</h2>
+            <h2 style="color:#5865f2; margin-bottom: 20px;">VSS SYSTEM</h2>
             <input type="email" id="l-email" placeholder="E-mail">
             <input type="password" id="l-senha" placeholder="Senha">
-            <button onclick="fLogin()" class="btn-acao" style="background:#5865f2; width:100%">ACESSAR SISTEMA</button>
+            <button onclick="fLogin()" class="btn-acao" style="background:#5865f2; width:100%">ENTRAR</button>
         </div>
     </div>
 
@@ -50,61 +49,56 @@
             <div id="status-bar">Carregando...</div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
             <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
+            <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
             <button onclick="aba('aba-membros')">👥 MEMBROS</button>
             <button onclick="aba('aba-noticias-master')">📢 NOTÍCIAS & MURAL</button>
-            <button onclick="aba('aba-prova')" style="color:#ff4444">🔥 PROVA STAFF</button>
+            <button onclick="aba('aba-prova')">📝 FAZER PROVA</button>
+            <button id="btn-notificacoes" onclick="aba('aba-notificacoes')" style="display:none; color:#f1c40f;">🔔 NOTIFICAÇÕES (ADM)</button>
             <button id="btn-sair" style="margin-top:auto; background:none; border:none; color:red; cursor:pointer">SAIR</button>
         </aside>
 
         <main class="content">
+            <section id="aba-cargos" style="display:none">
+                <h2>HIERARQUIA VSS</h2>
+                <div id="cargos-lista" class="card" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+            </section>
+
+            <section id="aba-notificacoes" style="display:none">
+                <h2 style="color:#f1c40f">PROVAS RECEBIDAS</h2>
+                <div id="notificacoes-lista"></div>
+            </section>
+
             <section id="aba-noticias-master" style="display:none">
                 <div class="sub-nav">
                     <button onclick="subAba('mural')" id="btn-mural" class="active">MURAL</button>
-                    <button onclick="subAba('lista')" id="btn-lista">NOTÍCIAS</button>
-                    <button onclick="subAba('criar')" id="btn-criar">CRIAR POST</button>
+                    <button onclick="subAba('lista')" id="btn-lista">VER NOTÍCIAS</button>
+                    <button onclick="subAba('criar')" id="btn-criar">CRIAR NOTÍCIA</button>
                 </div>
-                
-                <div id="sub-mural">
-                    <input type="text" id="mural-input" placeholder="Escreva no mural...">
-                    <div id="mural-lista"></div>
-                </div>
-
-                <div id="sub-lista" style="display:none">
-                    <div id="noticias-container"></div>
-                </div>
-
+                <div id="sub-mural"><input type="text" id="mural-input" placeholder="Mural público..."><div id="mural-lista"></div></div>
+                <div id="sub-lista" style="display:none"><div id="noticias-container"></div></div>
                 <div id="sub-criar" style="display:none">
-                    <div class="card">
-                        <input type="text" id="new-title" placeholder="Título da Notícia">
-                        <textarea id="new-desc" rows="5" placeholder="Texto da notícia..."></textarea>
-                        <button onclick="postarNoticia()" class="btn-acao" style="background:#5865f2; width:100%">POSTAR AGORA</button>
-                    </div>
+                    <input type="text" id="new-title" placeholder="Título">
+                    <textarea id="new-desc" rows="5" placeholder="Conteúdo..."></textarea>
+                    <button onclick="postarNoticia()" class="btn-acao" style="background:#5865f2; width:100%">PUBLICAR</button>
                 </div>
             </section>
 
             <section id="aba-chat">
                 <h2>CHAT GLOBAL</h2>
                 <div id="chat-box"></div>
-                <input type="text" id="chat-input" placeholder="Pressione Enter para enviar...">
-            </section>
-
-            <section id="aba-perfil" style="display:none">
-                <h2>MEU PERFIL</h2>
-                <div id="perfil-info" class="card"></div>
-            </section>
-
-            <section id="aba-membros" style="display:none">
-                <h2>MEMBROS DA STAFF</h2>
-                <div id="lista-membros-ui"></div>
+                <input type="text" id="chat-input" placeholder="Mensagem...">
             </section>
 
             <section id="aba-prova" style="display:none">
                 <div class="card">
-                    <h2 style="color:#ff4444">PROVA DE QUALIFICAÇÃO STAFF</h2>
-                    <div id="prova-questoes" style="margin-top:20px"></div>
-                    <button onclick="enviarProva()" class="btn-acao" style="background:green; width:100%; margin-top:20px">ENVIAR RESPOSTAS</button>
+                    <h2 style="color:#ff4444">FORMULÁRIO STAFF</h2>
+                    <div id="prova-questoes"></div>
+                    <button onclick="enviarProva()" class="btn-acao" style="background:green; width:100%; margin-top:20px">ENVIAR PARA O FUNDADOR</button>
                 </div>
             </section>
+
+            <section id="aba-perfil" style="display:none"><h2>MEU PERFIL</h2><div id="perfil-info" class="card"></div></section>
+            <section id="aba-membros" style="display:none"><h2>MEMBROS</h2><div id="lista-membros-ui"></div></section>
         </main>
     </div>
 
@@ -117,15 +111,14 @@
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         let uD = null;
-        const CARGOS = {"1":"Recruta", "5":"Sargento", "20":"FUNDADOR"};
+        const CARGOS = {"1":"Recruta", "2":"Soldado", "3":"Soldado Elite", "4":"Cabo", "5":"Sargento", "6":"Sargento-Mor", "7":"Subtenente", "8":"Tenente", "9":"Capitão", "10":"Major", "11":"Tenente-Coronel", "12":"Coronel", "13":"General de Brigada", "14":"General de Divisão", "15":"Marechal", "16":"Conselheiro VSS", "17":"Braço Direito", "18":"Líder Supremo", "19":"Co-Fundador", "20":"FUNDADOR"};
 
-        // NAVEGAÇÃO
         window.aba = (id) => {
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
+            if(id === 'aba-cargos') renderCargos();
+            if(id === 'aba-notificacoes') ouvirProvas();
             if(id === 'aba-membros') carregarMembros();
-            if(id === 'aba-perfil') carregarPerfil();
-            if(id === 'aba-prova') carregarProva();
         };
 
         window.subAba = (id) => {
@@ -142,129 +135,68 @@
                     uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display='none';
                     document.getElementById('main-app').style.display='flex';
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel] || 'Staff'}`;
+                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel]}`;
+                    if(uD.nivel === "20") document.getElementById('btn-notificacoes').style.display = 'block';
                 });
-                ouvirChat(); ouvirMural(); ouvirNoticias();
+                ouvirChat(); ouvirMural(); ouvirNoticias(); carregarProva();
             }
         });
 
-        // NOTÍCIAS, COMENTÁRIOS E EDIÇÃO
+        // --- NOTÍCIAS (EDITAR E APAGAR) ---
         window.postarNoticia = async () => {
-            const t = document.getElementById('new-title').value;
-            const d = document.getElementById('new-desc').value;
-            if(t && d) {
-                await addDoc(collection(db, "noticias"), { titulo: t, desc: d, u: uD.nome, uUid: uD.uid, data: serverTimestamp() });
-                document.getElementById('new-title').value = ""; document.getElementById('new-desc').value = "";
-                subAba('lista');
-            }
+            const t = document.getElementById('news-title').value; const d = document.getElementById('news-desc').value;
+            if(t && d) { await addDoc(collection(db, "noticias"), { titulo: t, desc: d, u: uD.nome, uUid: uD.uid, data: serverTimestamp() }); subAba('lista'); }
         };
 
         function ouvirNoticias() {
             onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
                 const cont = document.getElementById('noticias-container'); cont.innerHTML = "";
                 s.forEach(d => {
-                    const n = d.data(); const id = d.id;
+                    const n = d.data(); const id = d.id; const souDono = n.uUid === uD.uid || uD.nivel === "20";
                     cont.innerHTML += `
                         <div class="card">
-                            <h3 style="color:#5865f2">${n.titulo}</h3>
-                            <p id="p-txt-${id}" style="margin: 10px 0;">${n.desc}</p>
-                            <small>Postado por: ${n.u}</small>
-                            <div style="margin-top:10px;">
-                                ${n.uUid === uD.uid ? `<button onclick="editarNoticia('${id}')" style="color:orange; background:none; border:none; cursor:pointer; font-weight:bold;">[EDITAR]</button>` : ""}
-                            </div>
-                            <div id="coms-${id}" style="margin-top:10px; padding-top:10px; border-top:1px solid #222;"></div>
-                            <div style="display:flex; gap:5px; margin-top:10px;">
-                                <input type="text" id="in-com-${id}" placeholder="Comentar..." style="margin:0;">
-                                <button onclick="comentar('${id}')" class="btn-acao" style="background:#333;">OK</button>
-                            </div>
+                            <h3 style="color:#5865f2">${n.titulo}</h3><p id="txt-${id}">${n.desc}</p>
+                            ${souDono ? `<button onclick="editN('${id}')" style="color:orange; background:none; border:none; cursor:pointer;">[EDITAR]</button>
+                                         <button onclick="delN('${id}')" style="color:red; background:none; border:none; cursor:pointer; margin-left:10px;">[APAGAR]</button>` : ""}
+                            <div id="coms-${id}" style="margin-top:10px; border-top:1px solid #222;"></div>
+                            <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="in-${id}" placeholder="Comentar..."><button onclick="addC('${id}')" class="btn-acao">OK</button></div>
                         </div>`;
                     ouvirComentarios(id);
                 });
             });
         }
+        window.editN = async (id) => { const v = prompt("Novo texto:", document.getElementById('txt-'+id).innerText); if(v) await updateDoc(doc(db, "noticias", id), { desc: v }); };
+        window.delN = async (id) => { if(confirm("Apagar noticia?")) await deleteDoc(doc(db, "noticias", id)); };
+        window.addC = async (id) => { const t = document.getElementById('in-'+id).value; if(t) await addDoc(collection(db, "noticias", id, "comentarios"), { u: uD.nome, t: t, data: serverTimestamp() }); };
+        function ouvirComentarios(id) { onSnapshot(query(collection(db, "noticias", id, "comentarios"), orderBy("data", "asc")), s => { const box = document.getElementById('coms-'+id); if(box) { box.innerHTML = ""; s.forEach(c => { box.innerHTML += `<div style="font-size:12px; margin-top:4px;"><b>${c.data().u}:</b> ${c.data().t}</div>`; }); } }); }
 
-        window.editarNoticia = async (id) => {
-            const novo = prompt("Novo texto:", document.getElementById('p-txt-'+id).innerText);
-            if(novo) await updateDoc(doc(db, "noticias", id), { desc: novo });
+        // --- PROVA E NOTIFICAÇÕES ---
+        const questoes = ["Qual a grafia: Seção, Sessão ou Cessão?", "Complete: Seguem ________ documentos", "Corrija: Houveram muitos faltosos", "Como se dirigir a Oficial Superior?", "Duas ordens contraditórias, o que faz?", "Civil em área restrita, o que faz?", "Substituto não chegou, você sai ou fica?"];
+        function carregarProva() { const c = document.getElementById('prova-questoes'); c.innerHTML = ""; questoes.forEach((q, i) => { c.innerHTML += `<div style="margin-bottom:10px"><b>${q}</b><textarea id="q-${i}" style="height:50px"></textarea></div>`; }); }
+        
+        window.enviarProva = async () => {
+            let respostas = ""; questoes.forEach((q, i) => { respostas += `${q} -> ${document.getElementById('q-'+i).value}\n\n`; });
+            await addDoc(collection(db, "provas_enviadas"), { nome: uD.nome, uUid: uD.uid, conteudo: respostas, data: serverTimestamp() });
+            alert("Prova enviada ao Fundador!");
         };
 
-        window.comentar = async (id) => {
-            const txt = document.getElementById('in-com-'+id).value;
-            if(txt) {
-                await addDoc(collection(db, "noticias", id, "comentarios"), { u: uD.nome, t: txt, data: serverTimestamp() });
-                document.getElementById('in-com-'+id).value = "";
-            }
-        };
-
-        function ouvirComentarios(id) {
-            onSnapshot(query(collection(db, "noticias", id, "comentarios"), orderBy("data", "asc")), s => {
-                const box = document.getElementById('coms-'+id); if(!box) return;
-                box.innerHTML = "";
-                s.forEach(c => { box.innerHTML += `<div class="comentario-item"><b>${c.data().u}:</b> ${c.data().t}</div>`; });
+        function ouvirProvas() {
+            onSnapshot(query(collection(db, "provas_enviadas"), orderBy("data", "desc")), s => {
+                const l = document.getElementById('notificacoes-lista'); l.innerHTML = "";
+                s.forEach(d => { const p = d.data(); l.innerHTML += `<div class="item-lista"><b>DE: ${p.nome}</b><pre style="white-space:pre-wrap; margin-top:10px; font-size:12px;">${p.conteudo}</pre><button onclick="delP('${d.id}')" style="color:red; background:none; border:none; margin-top:10px; cursor:pointer;">[REMOVER NOTIFICAÇÃO]</button></div>`; });
             });
         }
+        window.delP = async (id) => await deleteDoc(doc(db, "provas_enviadas", id));
 
-        // CHAT E MURAL
-        function ouvirChat() {
-            onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                const b = document.getElementById('chat-box'); b.innerHTML = "";
-                s.forEach(d => {
-                    const m = d.data();
-                    const podeApagar = uD.nivel == "20" || m.uUid === uD.uid;
-                    b.innerHTML += `<div><b>${m.u}:</b> ${m.t} ${podeApagar ? `<span onclick="apagarMsg('${d.id}')" style="color:red; cursor:pointer; font-size:10px;">[X]</span>` : ""}</div>`;
-                });
-                b.scrollTop = b.scrollHeight;
-            });
-        }
-        window.apagarMsg = (id) => deleteDoc(doc(db, "mensagens", id));
-        document.getElementById('chat-input').onkeypress = async (e) => {
-            if(e.key === 'Enter' && e.target.value) {
-                await addDoc(collection(db, "mensagens"), { u: uD.nome, t: e.target.value, uUid: uD.uid, data: serverTimestamp() });
-                e.target.value = "";
-            }
-        };
-
-        function ouvirMural() {
-            onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
-                const l = document.getElementById('mural-lista'); l.innerHTML = "";
-                s.forEach(d => { l.innerHTML += `<div class="comentario-item"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
-            });
-        }
-        document.getElementById('mural-input').onkeypress = async (e) => {
-            if(e.key === 'Enter' && e.target.value) {
-                await addDoc(collection(db, "mural"), { u: uD.nome, t: e.target.value, data: serverTimestamp() });
-                e.target.value = "";
-            }
-        };
-
-        // PERFIL E MEMBROS
-        function carregarPerfil() {
-            document.getElementById('perfil-info').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: ${CARGOS[uD.nivel] || 'Staff'}</p><p style="font-size:10px; color:#555; margin-top:10px;">ID: ${uD.uid}</p>`;
-        }
-        async function carregarMembros() {
-            const div = document.getElementById('lista-membros-ui'); div.innerHTML = "Carregando...";
-            const s = await getDocs(collection(db, "usuarios")); div.innerHTML = "";
-            s.forEach(d => { const m = d.data(); div.innerHTML += `<div class="membro-item"><b>${m.nome}</b> <span>${CARGOS[m.nivel] || 'Membro'}</span></div>`; });
-        }
-
-        // PROVA
-        const provaData = [
-            "Qual a grafia correta: 'Seção', 'Sessão' ou 'Cessão'?",
-            "Complete: 'Seguem ________ os documentos' (Anexo/Anexos/Anexa)",
-            "Corrija: 'Houveram muitos recrutas no treino'",
-            "Como se dirigir formalmente a um Oficial Superior?",
-            "Se você receber duas ordens contraditórias, o que faz?",
-            "Dois subordinados discutindo no pátio. Qual sua atitude?",
-            "Civil tentando entrar em área restrita. Como você barra?"
-        ];
-        function carregarProva() {
-            const cont = document.getElementById('prova-questoes'); cont.innerHTML = "";
-            provaData.forEach((q, i) => {
-                cont.innerHTML += `<div style="margin-bottom:15px"><b>${i+1}. ${q}</b><textarea placeholder="Responda aqui..." style="height:60px; margin-top:5px;"></textarea></div>`;
-            });
-        }
-        window.enviarProva = () => alert("Sua prova foi enviada para o banco de dados. O Fundador irá analisar.");
-
+        // --- OUTROS ---
+        function renderCargos() { const l = document.getElementById('cargos-lista'); l.innerHTML = ""; Object.entries(CARGOS).forEach(([v, n]) => { l.innerHTML += `<div style="padding:5px;"><b>Lv ${v}:</b> ${n}</div>`; }); }
+        function ouvirChat() { onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => { const b = document.getElementById('chat-box'); b.innerHTML = ""; s.forEach(d => { const m = d.data(); b.innerHTML += `<div><b>${m.u}:</b> ${m.t} ${uD.nivel=="20"||m.uUid==uD.uid?`<span onclick="apagarM('${d.id}')" style="color:red; cursor:pointer;">[X]</span>`:""}</div>`; }); b.scrollTop = b.scrollHeight; }); }
+        window.apagarM = (id) => deleteDoc(doc(db, "mensagens", id));
+        document.getElementById('chat-input').onkeypress = async (e) => { if(e.key === 'Enter' && e.target.value) { await addDoc(collection(db, "mensagens"), { u: uD.nome, t: e.target.value, uUid: uD.uid, data: serverTimestamp() }); e.target.value = ""; } };
+        function ouvirMural() { onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => { const l = document.getElementById('mural-lista'); l.innerHTML = ""; s.forEach(d => { l.innerHTML += `<div class="item-lista"><b>${d.data().u}:</b> ${d.data().t}</div>`; }); }); }
+        document.getElementById('mural-input').onkeypress = async (e) => { if(e.key === 'Enter' && e.target.value) { await addDoc(collection(db, "mural"), { u: uD.nome, t: e.target.value, data: serverTimestamp() }); e.target.value = ""; } };
+        async function carregarMembros() { const d = document.getElementById('lista-membros-ui'); d.innerHTML = "Carregando..."; const s = await getDocs(collection(db, "usuarios")); d.innerHTML = ""; s.forEach(doc => { const m = doc.data(); d.innerHTML += `<div style="padding:8px; border-bottom:1px solid #222;"><b>${m.nome}</b> <span class="badge">${CARGOS[m.nivel]}</span></div>`; }); }
+        
         window.fLogin = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
     </script>
