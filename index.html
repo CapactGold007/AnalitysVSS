@@ -2,103 +2,303 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - SUPREMO v3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VSS SYSTEM - COMMAND CENTER</title>
     <style>
+        /* CONFIGURAÇÕES GERAIS E TEMA DARK */
+        :root {
+            --primary: #5865f2;
+            --bg-dark: #070707;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --text-main: #eeeeee;
+            --text-muted: #888888;
+            --accent-red: #ff4444;
+            --accent-gold: #f1c40f;
+            --accent-green: #2ecc71;
+            --border: #222222;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #070707; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* SIDEBAR */
-        .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.3s; }
-        .sidebar button:hover { background: #5865f2; }
-        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #5865f2; font-size: 14px; }
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
 
-        /* CONTEÚDO */
-        .content { flex: 1; padding: 40px; overflow-y: auto; background: #0d0d0d; }
-        .card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid #222; margin-bottom: 20px; position: relative; }
-        
-        /* NAVEGAÇÃO INTERNA NOTÍCIAS */
-        .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; }
-        .sub-nav button { flex: 1; padding: 10px; border: none; border-radius: 6px; background: #222; color: #ccc; cursor: pointer; font-weight: bold; }
-        .sub-nav button.active { background: #5865f2; color: #fff; }
+        /* BARRA LATERAL (SIDEBAR) */
+        .sidebar { 
+            width: 280px; 
+            background: var(--bg-card); 
+            border-right: 1px solid var(--border); 
+            padding: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            z-index: 10;
+        }
 
-        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; outline: none; }
-        .btn-acao { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        #status-bar { 
+            background: var(--bg-input); 
+            padding: 18px; 
+            border-radius: 12px; 
+            margin-bottom: 25px; 
+            border-left: 5px solid var(--primary); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
 
-        /* LISTAS E COMPONENTES */
-        #chat-box, #mural-lista, #lista-membros-ui, #notificacoes-lista { height: 400px; overflow-y: auto; background: #050505; border-radius: 10px; padding: 15px; border: 1px solid #222; }
-        .item-lista { background: #181818; padding: 10px; border-radius: 5px; margin-top: 8px; border-left: 3px solid #5865f2; }
-        .badge { font-size: 10px; padding: 2px 6px; background: #333; border-radius: 4px; color: #5865f2; margin-left: 5px; }
+        .sidebar button { 
+            background: #1a1a1a; 
+            color: var(--text-main); 
+            border: 1px solid #333; 
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-align: left; 
+            font-weight: bold; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        #auth-screen { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .sidebar button:hover { 
+            background: var(--primary); 
+            border-color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar button.btn-adm {
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
+        .sidebar button.btn-adm:hover {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        /* ÁREA DE CONTEÚDO PRINCIPAL */
+        .content { 
+            flex: 1; 
+            padding: 40px; 
+            overflow-y: auto; 
+            background: #0d0d0d; 
+            position: relative;
+        }
+
+        .card { 
+            background: var(--bg-card); 
+            padding: 30px; 
+            border-radius: 15px; 
+            border: 1px solid var(--border); 
+            margin-bottom: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 { margin-bottom: 20px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* NAVEGAÇÃO DE NOTÍCIAS (SUB-ABAS) */
+        .sub-nav { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 25px; 
+            background: #161616;
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        .sub-nav button { 
+            flex: 1; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 8px; 
+            background: transparent; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s;
+        }
+
+        .sub-nav button.active { 
+            background: var(--primary); 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+        }
+
+        /* INPUTS E FORMULÁRIOS */
+        input, textarea { 
+            background: var(--bg-input); 
+            border: 1px solid #333; 
+            color: #fff; 
+            padding: 15px; 
+            border-radius: 10px; 
+            width: 100%; 
+            margin-bottom: 12px; 
+            outline: none; 
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+
+        input:focus, textarea:focus { border-color: var(--primary); }
+
+        .btn-acao { 
+            padding: 12px 25px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: white; 
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-postar { background: var(--primary); width: 100%; }
+        .btn-postar:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* LISTAGENS (CHAT, MURAL, NOTIFICAÇÕES) */
+        #chat-box, #mural-lista, #lista-notificacoes { 
+            height: 450px; 
+            overflow-y: auto; 
+            background: #050505; 
+            border-radius: 12px; 
+            padding: 20px; 
+            border: 1px solid var(--border); 
+            margin-bottom: 15px; 
+        }
+
+        .msg-container { margin-bottom: 12px; padding: 10px; border-radius: 8px; background: #111; }
+        .msg-container b { color: var(--primary); }
+        .del-btn { color: var(--accent-red); cursor: pointer; font-size: 11px; margin-left: 10px; font-weight: bold; }
+
+        .noticia-item { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px; }
+        .noticia-item h3 { color: var(--primary); margin-bottom: 8px; }
+        .noticia-item small { color: var(--text-muted); }
+
+        .comentario-box { 
+            margin-top: 15px; 
+            padding-left: 15px; 
+            border-left: 2px solid var(--primary); 
+            font-size: 13px; 
+        }
+
+        /* PROVA */
+        .pergunta-bloco { 
+            background: #161616; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid #222;
+        }
+
+        /* AUTENTICAÇÃO */
+        #auth-screen { 
+            position: fixed; 
+            inset: 0; 
+            background: #050505; 
+            z-index: 9999; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070707; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #333; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen">
-        <div class="card" style="width:360px; text-align:center;">
-            <h2 style="color:#5865f2; margin-bottom: 20px;">VSS SYSTEM</h2>
-            <input type="email" id="l-email" placeholder="E-mail">
-            <input type="password" id="l-senha" placeholder="Senha">
-            <button onclick="fLogin()" class="btn-acao" style="background:#5865f2; width:100%">ENTRAR</button>
+        <div class="card" style="width:400px; text-align:center;">
+            <h1 style="color:var(--primary); margin-bottom: 30px;">VSS SYSTEM</h1>
+            <input type="email" id="login-email" placeholder="E-mail de Acesso">
+            <input type="password" id="login-senha" placeholder="Senha Segura">
+            <button onclick="realizarLogin()" class="btn-acao" style="background:var(--primary); width:100%; height: 50px; margin-top: 10px;">ACESSAR COMANDO</button>
+            <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted)">Acesso restrito a membros autorizados.</p>
         </div>
     </div>
 
     <div id="main-app" style="display:none; width:100%;">
         <aside class="sidebar">
-            <div id="status-bar">Carregando...</div>
-            <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
-            <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
-            <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
-            <button onclick="aba('aba-membros')">👥 MEMBROS</button>
-            <button onclick="aba('aba-noticias-master')">📢 NOTÍCIAS & MURAL</button>
-            <button onclick="aba('aba-prova')">📝 FAZER PROVA</button>
-            <button id="btn-notificacoes" onclick="aba('aba-notificacoes')" style="display:none; color:#f1c40f;">🔔 NOTIFICAÇÕES (ADM)</button>
-            <button id="btn-sair" style="margin-top:auto; background:none; border:none; color:red; cursor:pointer">SAIR</button>
+            <div id="status-bar">Carregando dados...</div>
+            <button onclick="navegar('aba-chat')">💬 CHAT ESTRATÉGICO</button>
+            <button onclick="navegar('aba-noticias')">📢 NOTÍCIAS & MURAL</button>
+            <button onclick="navegar('aba-cargos')">🎖️ HIERARQUIA VSS</button>
+            <button onclick="navegar('aba-membros')">👥 LISTA DE STAFF</button>
+            <button onclick="navegar('aba-prova')">📝 FORMULÁRIO STAFF</button>
+            
+            <button id="btn-adm-notif" class="btn-adm" onclick="navegar('aba-notificacoes')" style="display:none;">🔔 NOTIFICAÇÕES (ADM)</button>
+            
+            <button onclick="realizarLogout()" style="margin-top:auto; color:var(--accent-red); border-color: #441111;">✖ DESCONECTAR</button>
         </aside>
 
         <main class="content">
-            <section id="aba-cargos" style="display:none">
-                <h2>HIERARQUIA VSS</h2>
-                <div id="cargos-lista" class="card" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
-            </section>
-
-            <section id="aba-notificacoes" style="display:none">
-                <h2 style="color:#f1c40f">PROVAS RECEBIDAS</h2>
-                <div id="notificacoes-lista"></div>
-            </section>
-
-            <section id="aba-noticias-master" style="display:none">
-                <div class="sub-nav">
-                    <button onclick="subAba('mural')" id="btn-mural" class="active">MURAL</button>
-                    <button onclick="subAba('lista')" id="btn-lista">VER NOTÍCIAS</button>
-                    <button onclick="subAba('criar')" id="btn-criar">CRIAR NOTÍCIA</button>
-                </div>
-                <div id="sub-mural"><input type="text" id="mural-input" placeholder="Mural público..."><div id="mural-lista"></div></div>
-                <div id="sub-lista" style="display:none"><div id="noticias-container"></div></div>
-                <div id="sub-criar" style="display:none">
-                    <input type="text" id="new-title" placeholder="Título">
-                    <textarea id="new-desc" rows="5" placeholder="Conteúdo..."></textarea>
-                    <button onclick="postarNoticia()" class="btn-acao" style="background:#5865f2; width:100%">PUBLICAR</button>
-                </div>
-            </section>
-
             <section id="aba-chat">
-                <h2>CHAT GLOBAL</h2>
+                <h2>Chat Global Staff</h2>
                 <div id="chat-box"></div>
-                <input type="text" id="chat-input" placeholder="Mensagem...">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem oficial...">
+                    <button onclick="enviarMensagemChat()" class="btn-acao" style="background: var(--primary)">ENVIAR</button>
+                </div>
+            </section>
+
+            <section id="aba-noticias" style="display:none">
+                <div class="sub-nav">
+                    <button onclick="alternarSubAba('mural')" id="sub-btn-mural" class="active">MURAL RÁPIDO</button>
+                    <button onclick="alternarSubAba('ver')" id="sub-btn-ver">NOTÍCIAS OFICIAIS</button>
+                    <button onclick="alternarSubAba('criar')" id="sub-btn-criar">CRIAR POSTAGEM</button>
+                </div>
+
+                <div id="section-mural">
+                    <input type="text" id="input-mural" placeholder="O que está acontecendo agora? (Enter para postar)">
+                    <div id="mural-lista"></div>
+                </div>
+
+                <div id="section-ver-noticias" style="display:none">
+                    <div id="container-noticias-real"></div>
+                </div>
+
+                <div id="section-criar-noticia" style="display:none">
+                    <div class="card">
+                        <h3>Publicar Nova Diretriz</h3>
+                        <input type="text" id="post-titulo" placeholder="Título da Notícia">
+                        <textarea id="post-corpo" rows="8" placeholder="Escreva o conteúdo detalhado aqui..."></textarea>
+                        <button onclick="publicarNoticia()" class="btn-acao btn-postar">PUBLICAR PARA A STAFF</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="aba-cargos" style="display:none">
+                <h2>Tabela de Hierarquia e Níveis</h2>
+                <div id="cargos-container" class="card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    </div>
+            </section>
+
+            <section id="aba-membros" style="display:none">
+                <h2>Equipe de Operações</h2>
+                <div id="membros-lista-ui" class="card"></div>
             </section>
 
             <section id="aba-prova" style="display:none">
                 <div class="card">
-                    <h2 style="color:#ff4444">FORMULÁRIO STAFF</h2>
-                    <div id="prova-questoes"></div>
-                    <button onclick="enviarProva()" class="btn-acao" style="background:green; width:100%; margin-top:20px">ENVIAR PARA O FUNDADOR</button>
+                    <h2 style="color: var(--accent-red)">Vestibular Staff VSS</h2>
+                    <p style="margin-bottom: 20px; color: var(--text-muted)">Responda com seriedade. Suas respostas serão enviadas diretamente ao Fundador.</p>
+                    <div id="prova-dinamica"></div>
+                    <button onclick="enviarFormularioProva()" class="btn-acao" style="background:var(--accent-green); width:100%; margin-top:20px; font-size: 16px;">FINALIZAR E ENVIAR RESPOSTAS</button>
                 </div>
             </section>
 
-            <section id="aba-perfil" style="display:none"><h2>MEU PERFIL</h2><div id="perfil-info" class="card"></div></section>
-            <section id="aba-membros" style="display:none"><h2>MEMBROS</h2><div id="lista-membros-ui"></div></section>
+            <section id="aba-notificacoes" style="display:none">
+                <h2 style="color: var(--accent-gold)">Central de Provas Recebidas</h2>
+                <div id="lista-notificacoes"></div>
+            </section>
         </main>
     </div>
 
@@ -107,98 +307,342 @@
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
-        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+        // CONFIGURAÇÃO FIREBASE
+        const firebaseConfig = { 
+            apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", 
+            authDomain: "analitysvss.firebaseapp.com", 
+            projectId: "analitysvss", 
+            storageBucket: "analitysvss.firebasestorage.app", 
+            messagingSenderId: "665486639760", 
+            appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" 
+        };
 
-        let uD = null;
-        const CARGOS = {"1":"Recruta", "2":"Soldado", "3":"Soldado Elite", "4":"Cabo", "5":"Sargento", "6":"Sargento-Mor", "7":"Subtenente", "8":"Tenente", "9":"Capitão", "10":"Major", "11":"Tenente-Coronel", "12":"Coronel", "13":"General de Brigada", "14":"General de Divisão", "15":"Marechal", "16":"Conselheiro VSS", "17":"Braço Direito", "18":"Líder Supremo", "19":"Co-Fundador", "20":"FUNDADOR"};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        window.aba = (id) => {
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+        // VARIÁVEIS DE ESTADO LOCAL
+        let usuarioAtual = null;
+        const DICIONARIO_CARGOS = {
+            "1":"Recruta", "2":"Soldado", "3":"Soldado Elite", "4":"Cabo", "5":"Sargento", 
+            "6":"Sargento-Mor", "7":"Subtenente", "8":"Tenente", "9":"Capitão", "10":"Major", 
+            "11":"Tenente-Coronel", "12":"Coronel", "13":"General de Brigada", "14":"General de Divisão", 
+            "15":"Marechal", "16":"Conselheiro VSS", "17":"Braço Direito", "18":"Líder Supremo", 
+            "19":"Co-Fundador", "20":"FUNDADOR"
+        };
+
+        // NAVEGAÇÃO ENTRE ABAS
+        window.navegar = (id) => {
+            const secoes = document.querySelectorAll('section');
+            secoes.forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-            if(id === 'aba-cargos') renderCargos();
-            if(id === 'aba-notificacoes') ouvirProvas();
-            if(id === 'aba-membros') carregarMembros();
+            
+            // Gatilhos de carregamento
+            if(id === 'aba-cargos') carregarTabelaCargos();
+            if(id === 'aba-membros') carregarMembrosStaff();
+            if(id === 'aba-notificacoes') carregarNotificacoesFundador();
         };
 
-        window.subAba = (id) => {
-            document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none';
-            document.getElementById('sub-lista').style.display = id === 'lista' ? 'block' : 'none';
-            document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none';
-            document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-'+id).classList.add('active');
+        window.alternarSubAba = (subId) => {
+            const secoes = ['mural', 'ver', 'criar'];
+            secoes.forEach(s => {
+                document.getElementById('section-' + (s === 'ver' ? 'ver-noticias' : s === 'criar' ? 'criar-noticia' : s)).style.display = (s === subId) ? 'block' : 'none';
+                document.getElementById('sub-btn-' + s).classList.toggle('active', s === subId);
+            });
         };
 
-        onAuthStateChanged(auth, u => {
-            if(u) {
-                onSnapshot(doc(db, "usuarios", u.uid), s => {
-                    uD = s.data(); uD.uid = u.uid;
-                    document.getElementById('auth-screen').style.display='none';
-                    document.getElementById('main-app').style.display='flex';
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel]}`;
-                    if(uD.nivel === "20") document.getElementById('btn-notificacoes').style.display = 'block';
+        // MONITORAMENTO DE AUTENTICAÇÃO
+        onAuthStateChanged(auth, user => {
+            if(user) {
+                onSnapshot(doc(db, "usuarios", user.uid), snapshot => {
+                    if(snapshot.exists()) {
+                        usuarioAtual = snapshot.data();
+                        usuarioAtual.uid = user.uid;
+                        
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('main-app').style.display = 'flex';
+                        
+                        document.getElementById('status-bar').innerHTML = `
+                            <div style="font-size: 16px; font-weight: bold;">${usuarioAtual.nome}</div>
+                            <div style="font-size: 11px; color: var(--primary); margin-top: 4px;">${DICIONARIO_CARGOS[usuarioAtual.nivel] || 'Staff'}</div>
+                        `;
+
+                        // Mostrar aba ADM se for Fundador
+                        if(usuarioAtual.nivel === "20") {
+                            document.getElementById('btn-adm-notif').style.display = 'flex';
+                        }
+                    }
                 });
-                ouvirChat(); ouvirMural(); ouvirNoticias(); carregarProva();
+                
+                // Iniciar escutas em tempo real
+                ouvirChatDinamico();
+                ouvirMuralDinamico();
+                ouvirNoticiasDinamico();
+                inicializarQuestoesProva();
             }
         });
 
-        // --- NOTÍCIAS (EDITAR E APAGAR) ---
-        window.postarNoticia = async () => {
-            const t = document.getElementById('news-title').value; const d = document.getElementById('news-desc').value;
-            if(t && d) { await addDoc(collection(db, "noticias"), { titulo: t, desc: d, u: uD.nome, uUid: uD.uid, data: serverTimestamp() }); subAba('lista'); }
+        // FUNCIONALIDADES: CHAT
+        function ouvirChatDinamico() {
+            const q = query(collection(db, "mensagens"), orderBy("data", "asc"));
+            onSnapshot(q, snapshot => {
+                const box = document.getElementById('chat-box');
+                box.innerHTML = "";
+                snapshot.forEach(docSnap => {
+                    const m = docSnap.data();
+                    const podeApagar = (usuarioAtual.nivel === "20" || m.uUid === usuarioAtual.uid);
+                    box.innerHTML += `
+                        <div class="msg-container">
+                            <b>[${DICIONARIO_CARGOS[m.nivel] || 'ST'}] ${m.u}:</b> <span>${m.t}</span>
+                            ${podeApagar ? `<span class="del-btn" onclick="apagarMsgChat('${docSnap.id}')">APAGAR</span>` : ""}
+                        </div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        window.enviarMensagemChat = async () => {
+            const input = document.getElementById('chat-input');
+            if(input.value.trim() === "") return;
+            await addDoc(collection(db, "mensagens"), {
+                u: usuarioAtual.nome,
+                t: input.value,
+                uUid: usuarioAtual.uid,
+                nivel: usuarioAtual.nivel,
+                data: serverTimestamp()
+            });
+            input.value = "";
         };
 
-        function ouvirNoticias() {
-            onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
-                const cont = document.getElementById('noticias-container'); cont.innerHTML = "";
-                s.forEach(d => {
-                    const n = d.data(); const id = d.id; const souDono = n.uUid === uD.uid || uD.nivel === "20";
-                    cont.innerHTML += `
-                        <div class="card">
-                            <h3 style="color:#5865f2">${n.titulo}</h3><p id="txt-${id}">${n.desc}</p>
-                            ${souDono ? `<button onclick="editN('${id}')" style="color:orange; background:none; border:none; cursor:pointer;">[EDITAR]</button>
-                                         <button onclick="delN('${id}')" style="color:red; background:none; border:none; cursor:pointer; margin-left:10px;">[APAGAR]</button>` : ""}
-                            <div id="coms-${id}" style="margin-top:10px; border-top:1px solid #222;"></div>
-                            <div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="in-${id}" placeholder="Comentar..."><button onclick="addC('${id}')" class="btn-acao">OK</button></div>
+        window.apagarMsgChat = async (id) => {
+            if(confirm("Deseja remover esta mensagem do log oficial?")) {
+                await deleteDoc(doc(db, "mensagens", id));
+            }
+        };
+
+        // FUNCIONALIDADES: NOTÍCIAS E COMENTÁRIOS
+        window.publicarNoticia = async () => {
+            const tit = document.getElementById('post-titulo').value;
+            const corpo = document.getElementById('post-corpo').value;
+            if(!tit || !corpo) return alert("Preencha todos os campos.");
+            
+            await addDoc(collection(db, "noticias"), {
+                titulo: tit,
+                desc: corpo,
+                u: usuarioAtual.nome,
+                uUid: usuarioAtual.uid,
+                data: serverTimestamp()
+            });
+            
+            document.getElementById('post-titulo').value = "";
+            document.getElementById('post-corpo').value = "";
+            alternarSubAba('ver');
+        };
+
+        function ouvirNoticiasDinamico() {
+            const q = query(collection(db, "noticias"), orderBy("data", "desc"));
+            onSnapshot(q, snapshot => {
+                const container = document.getElementById('container-noticias-real');
+                container.innerHTML = "";
+                snapshot.forEach(docSnap => {
+                    const n = docSnap.data();
+                    const id = docSnap.id;
+                    const eDono = (n.uUid === usuarioAtual.uid || usuarioAtual.nivel === "20");
+
+                    container.innerHTML += `
+                        <div class="card noticia-item">
+                            <h3>${n.titulo}</h3>
+                            <p id="corpo-noticia-${id}" style="line-height: 1.6; margin-bottom: 15px;">${n.desc}</p>
+                            <small>Publicado por: ${n.u} em ${n.data?.toDate().toLocaleString() || 'Processando...'}</small>
+                            
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                ${eDono ? `<button onclick="editarNoticiaReal('${id}')" style="background: none; color: orange; border: none; cursor:pointer; font-weight:bold;">[EDITAR]</button>` : ""}
+                                ${eDono ? `<button onclick="deletarNoticiaReal('${id}')" style="background: none; color: red; border: none; cursor:pointer; font-weight:bold;">[EXCLUIR]</button>` : ""}
+                            </div>
+
+                            <div id="comentarios-lista-${id}" style="margin-top: 20px; background: #080808; padding: 10px; border-radius: 8px;"></div>
+                            
+                            <div style="display:flex; gap: 5px; margin-top: 10px;">
+                                <input type="text" id="input-comentario-${id}" placeholder="Adicionar comentário..." style="margin-bottom:0; padding: 10px;">
+                                <button onclick="postarComentario('${id}')" class="btn-acao" style="background:#333; padding: 0 15px;">POSTAR</button>
+                            </div>
                         </div>`;
-                    ouvirComentarios(id);
+                    ouvirComentariosReal(id);
                 });
             });
         }
-        window.editN = async (id) => { const v = prompt("Novo texto:", document.getElementById('txt-'+id).innerText); if(v) await updateDoc(doc(db, "noticias", id), { desc: v }); };
-        window.delN = async (id) => { if(confirm("Apagar noticia?")) await deleteDoc(doc(db, "noticias", id)); };
-        window.addC = async (id) => { const t = document.getElementById('in-'+id).value; if(t) await addDoc(collection(db, "noticias", id, "comentarios"), { u: uD.nome, t: t, data: serverTimestamp() }); };
-        function ouvirComentarios(id) { onSnapshot(query(collection(db, "noticias", id, "comentarios"), orderBy("data", "asc")), s => { const box = document.getElementById('coms-'+id); if(box) { box.innerHTML = ""; s.forEach(c => { box.innerHTML += `<div style="font-size:12px; margin-top:4px;"><b>${c.data().u}:</b> ${c.data().t}</div>`; }); } }); }
 
-        // --- PROVA E NOTIFICAÇÕES ---
-        const questoes = ["Qual a grafia: Seção, Sessão ou Cessão?", "Complete: Seguem ________ documentos", "Corrija: Houveram muitos faltosos", "Como se dirigir a Oficial Superior?", "Duas ordens contraditórias, o que faz?", "Civil em área restrita, o que faz?", "Substituto não chegou, você sai ou fica?"];
-        function carregarProva() { const c = document.getElementById('prova-questoes'); c.innerHTML = ""; questoes.forEach((q, i) => { c.innerHTML += `<div style="margin-bottom:10px"><b>${q}</b><textarea id="q-${i}" style="height:50px"></textarea></div>`; }); }
-        
-        window.enviarProva = async () => {
-            let respostas = ""; questoes.forEach((q, i) => { respostas += `${q} -> ${document.getElementById('q-'+i).value}\n\n`; });
-            await addDoc(collection(db, "provas_enviadas"), { nome: uD.nome, uUid: uD.uid, conteudo: respostas, data: serverTimestamp() });
-            alert("Prova enviada ao Fundador!");
+        window.editarNoticiaReal = async (id) => {
+            const textoAntigo = document.getElementById('corpo-noticia-' + id).innerText;
+            const novoTexto = prompt("Edite o conteúdo da notícia:", textoAntigo);
+            if(novoTexto && novoTexto !== textoAntigo) {
+                await updateDoc(doc(db, "noticias", id), { desc: novoTexto });
+            }
         };
 
-        function ouvirProvas() {
-            onSnapshot(query(collection(db, "provas_enviadas"), orderBy("data", "desc")), s => {
-                const l = document.getElementById('notificacoes-lista'); l.innerHTML = "";
-                s.forEach(d => { const p = d.data(); l.innerHTML += `<div class="item-lista"><b>DE: ${p.nome}</b><pre style="white-space:pre-wrap; margin-top:10px; font-size:12px;">${p.conteudo}</pre><button onclick="delP('${d.id}')" style="color:red; background:none; border:none; margin-top:10px; cursor:pointer;">[REMOVER NOTIFICAÇÃO]</button></div>`; });
+        window.deletarNoticiaReal = async (id) => {
+            if(confirm("Tem certeza que deseja apagar esta notícia permanentemente?")) {
+                await deleteDoc(doc(db, "noticias", id));
+            }
+        };
+
+        window.postarComentario = async (noticiaId) => {
+            const input = document.getElementById('input-comentario-' + noticiaId);
+            if(!input.value) return;
+            await addDoc(collection(db, "noticias", noticiaId, "comentarios"), {
+                u: usuarioAtual.nome,
+                t: input.value,
+                data: serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        function ouvirComentariosReal(id) {
+            const q = query(collection(db, "noticias", id, "comentarios"), orderBy("data", "asc"));
+            onSnapshot(q, snapshot => {
+                const box = document.getElementById('comentarios-lista-' + id);
+                if(!box) return;
+                box.innerHTML = "";
+                snapshot.forEach(cSnap => {
+                    const c = cSnap.data();
+                    box.innerHTML += `<div class="comentario-box"><b>${c.u}:</b> ${c.t}</div>`;
+                });
             });
         }
-        window.delP = async (id) => await deleteDoc(doc(db, "provas_enviadas", id));
 
-        // --- OUTROS ---
-        function renderCargos() { const l = document.getElementById('cargos-lista'); l.innerHTML = ""; Object.entries(CARGOS).forEach(([v, n]) => { l.innerHTML += `<div style="padding:5px;"><b>Lv ${v}:</b> ${n}</div>`; }); }
-        function ouvirChat() { onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => { const b = document.getElementById('chat-box'); b.innerHTML = ""; s.forEach(d => { const m = d.data(); b.innerHTML += `<div><b>${m.u}:</b> ${m.t} ${uD.nivel=="20"||m.uUid==uD.uid?`<span onclick="apagarM('${d.id}')" style="color:red; cursor:pointer;">[X]</span>`:""}</div>`; }); b.scrollTop = b.scrollHeight; }); }
-        window.apagarM = (id) => deleteDoc(doc(db, "mensagens", id));
-        document.getElementById('chat-input').onkeypress = async (e) => { if(e.key === 'Enter' && e.target.value) { await addDoc(collection(db, "mensagens"), { u: uD.nome, t: e.target.value, uUid: uD.uid, data: serverTimestamp() }); e.target.value = ""; } };
-        function ouvirMural() { onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => { const l = document.getElementById('mural-lista'); l.innerHTML = ""; s.forEach(d => { l.innerHTML += `<div class="item-lista"><b>${d.data().u}:</b> ${d.data().t}</div>`; }); }); }
-        document.getElementById('mural-input').onkeypress = async (e) => { if(e.key === 'Enter' && e.target.value) { await addDoc(collection(db, "mural"), { u: uD.nome, t: e.target.value, data: serverTimestamp() }); e.target.value = ""; } };
-        async function carregarMembros() { const d = document.getElementById('lista-membros-ui'); d.innerHTML = "Carregando..."; const s = await getDocs(collection(db, "usuarios")); d.innerHTML = ""; s.forEach(doc => { const m = doc.data(); d.innerHTML += `<div style="padding:8px; border-bottom:1px solid #222;"><b>${m.nome}</b> <span class="badge">${CARGOS[m.nivel]}</span></div>`; }); }
-        
-        window.fLogin = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
-        document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
+        // FUNCIONALIDADES: MURAL
+        function ouvirMuralDinamico() {
+            onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), snapshot => {
+                const l = document.getElementById('mural-lista');
+                l.innerHTML = "";
+                snapshot.forEach(d => {
+                    const m = d.data();
+                    l.innerHTML += `<div class="msg-container"><b>${m.u}:</b> ${m.t} <br> <small style="font-size:9px; color:#444">${m.data?.toDate().toLocaleTimeString() || ''}</small></div>`;
+                });
+            });
+        }
+
+        document.getElementById('input-mural').onkeypress = async (e) => {
+            if(e.key === 'Enter' && e.target.value) {
+                await addDoc(collection(db, "mural"), {
+                    u: usuarioAtual.nome,
+                    t: e.target.value,
+                    data: serverTimestamp()
+                });
+                e.target.value = "";
+            }
+        };
+
+        // FUNCIONALIDADES: CARGOS E MEMBROS
+        function carregarTabelaCargos() {
+            const cont = document.getElementById('cargos-container');
+            cont.innerHTML = "";
+            Object.entries(DICIONARIO_CARGOS).forEach(([lvl, nome]) => {
+                cont.innerHTML += `<div style="padding: 10px; border-bottom: 1px solid #222;">
+                    <span style="color: var(--primary); font-weight: bold;">Nível ${lvl}:</span> ${nome}
+                </div>`;
+            });
+        }
+
+        async function carregarMembrosStaff() {
+            const box = document.getElementById('membros-lista-ui');
+            box.innerHTML = "Acessando banco de dados...";
+            const snapshot = await getDocs(collection(db, "usuarios"));
+            box.innerHTML = "";
+            snapshot.forEach(uDoc => {
+                const m = uDoc.data();
+                box.innerHTML += `
+                    <div style="display:flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222;">
+                        <span><b>${m.nome}</b></span>
+                        <span style="color: var(--primary)">${DICIONARIO_CARGOS[m.nivel] || 'Membro'}</span>
+                    </div>`;
+            });
+        }
+
+        // FUNCIONALIDADES: PROVA E NOTIFICAÇÕES (O SEU FORMULÁRIO)
+        const QUESTOES_BANCO = [
+            "Qual a grafia correta da divisão de setor: Seção, Sessão ou Cessão?",
+            "Concordância: 'Seguem ________ os documentos da operação' (Anexo / Anexos / Anexa).",
+            "Corrija o erro gramatical: 'Houveram muitos recrutas faltosos ontem'.",
+            "Como se dirigir formalmente a um Oficial Superior por escrito?",
+            "Se você receber duas ordens contraditórias de superiores, o que faz?",
+            "Dois subordinados discutem agressivamente. Qual sua primeira atitude?",
+            "Compromisso: Seu substituto não chegou após o fim do seu turno. Você sai?",
+            "Por que você merece fazer parte da equipe de Elite da VSS?"
+        ];
+
+        function inicializarQuestoesProva() {
+            const cont = document.getElementById('prova-dinamica');
+            cont.innerHTML = "";
+            QUESTOES_BANCO.forEach((q, i) => {
+                cont.innerHTML += `
+                    <div class="pergunta-bloco">
+                        <p style="margin-bottom:10px;"><b>${i+1}. ${q}</b></p>
+                        <textarea id="resp-prova-${i}" placeholder="Digite sua resposta fundamentada..." style="margin-bottom:0; height:80px;"></textarea>
+                    </div>`;
+            });
+        }
+
+        window.enviarFormularioProva = async () => {
+            if(!confirm("Deseja enviar suas respostas para a avaliação do Fundador?")) return;
+            
+            let relatorio = "";
+            QUESTOES_BANCO.forEach((q, i) => {
+                const resp = document.getElementById('resp-prova-' + i).value;
+                relatorio += `PERGUNTA: ${q}\nRESPOSTA: ${resp}\n\n`;
+            });
+
+            await addDoc(collection(db, "notificacoes_provas"), {
+                candidato: usuarioAtual.nome,
+                candidatoUid: usuarioAtual.uid,
+                conteudo: relatorio,
+                data: serverTimestamp()
+            });
+
+            alert("Sucesso! Sua prova foi enviada. Aguarde o contato de um superior.");
+            navegar('aba-chat');
+        };
+
+        function carregarNotificacoesFundador() {
+            const q = query(collection(db, "notificacoes_provas"), orderBy("data", "desc"));
+            onSnapshot(q, snapshot => {
+                const lista = document.getElementById('lista-notificacoes');
+                lista.innerHTML = "";
+                if(snapshot.empty) lista.innerHTML = "<p>Nenhuma prova pendente de correção.</p>";
+                
+                snapshot.forEach(docSnap => {
+                    const p = docSnap.data();
+                    lista.innerHTML += `
+                        <div class="card" style="border-left: 5px solid var(--accent-gold)">
+                            <h3>Prova de: ${p.candidato}</h3>
+                            <small>Recebida em: ${p.data?.toDate().toLocaleString() || '...'}</small>
+                            <pre style="white-space: pre-wrap; background: #050505; padding: 15px; border-radius: 8px; margin-top: 15px; font-family: monospace; color: #ccc;">${p.conteudo}</pre>
+                            <button onclick="removerNotificacao('${docSnap.id}')" class="btn-acao" style="background: var(--accent-red); margin-top: 15px;">MARCAR COMO LIDA / EXCLUIR</button>
+                        </div>`;
+                });
+            });
+        }
+
+        window.removerNotificacao = async (id) => {
+            if(confirm("Deseja apagar este registro de prova?")) {
+                await deleteDoc(doc(db, "notificacoes_provas", id));
+            }
+        };
+
+        // LOGIN E LOGOUT
+        window.realizarLogin = () => {
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
+            signInWithEmailAndPassword(auth, email, senha).catch(err => alert("Erro: " + err.message));
+        };
+
+        window.realizarLogout = () => {
+            signOut(auth).then(() => location.reload());
+        };
+
+        // Inicializar com a primeira aba
+        navegar('aba-chat');
+
     </script>
 </body>
 </html>
