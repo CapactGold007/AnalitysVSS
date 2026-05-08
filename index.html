@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>VSS SYSTEM - SUPREMO</title>
+    <title>VSS SYSTEM - VERSÃO FINAL</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #070707; color: #eee; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; overflow: hidden; }
@@ -11,25 +11,26 @@
         .sidebar { width: 280px; background: #111; border-right: 1px solid #222; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
         .sidebar button { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: bold; transition: 0.3s; }
         .sidebar button:hover { background: #5865f2; }
-        
-        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #5865f2; }
+        #status-bar { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #5865f2; font-size: 14px; }
 
         /* CONTEÚDO */
         .content { flex: 1; padding: 40px; overflow-y: auto; background: #0d0d0d; }
-        .card { background: #111; padding: 25px; border-radius: 12px; border: 1px solid #222; margin-bottom: 25px; }
+        .card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid #222; margin-bottom: 20px; }
         
-        /* SUB-NAVEGAÇÃO (Mural/Notícias/Criar) */
-        .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; background: #1a1a1a; padding: 10px; border-radius: 8px; }
+        /* NAVEGAÇÃO INTERNA NOTÍCIAS */
+        .sub-nav { display: flex; gap: 10px; margin-bottom: 20px; }
         .sub-nav button { flex: 1; padding: 10px; border: none; border-radius: 6px; background: #222; color: #ccc; cursor: pointer; font-weight: bold; }
         .sub-nav button.active { background: #5865f2; color: #fff; }
 
-        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; width: 100%; margin-bottom: 10px; outline: none; }
-        .btn-acao { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; color: white; }
-        
+        input, textarea { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; outline: none; }
+        .btn-acao { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-acao:hover { opacity: 0.8; }
+
         /* LISTAS */
-        #chat-box, #mural-lista, #lista-membros-ui { height: 45vh; overflow-y: auto; background: #050505; border-radius: 10px; padding: 15px; border: 1px solid #222; margin-bottom: 10px; }
-        .comment-box { background: #181818; padding: 10px; border-radius: 5px; margin-top: 8px; border-left: 3px solid #5865f2; font-size: 14px; }
-        
+        #chat-box, #mural-lista, #lista-membros-ui { height: 400px; overflow-y: auto; background: #050505; border-radius: 10px; padding: 15px; border: 1px solid #222; }
+        .comentario-item { background: #181818; padding: 8px; border-radius: 5px; margin-top: 5px; font-size: 13px; border-left: 2px solid #5865f2; }
+        .membro-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
+
         #auth-screen { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
@@ -37,12 +38,10 @@
 
     <div id="auth-screen">
         <div class="card" style="width:360px; text-align:center;">
-            <h2 style="color:#5865f2">VSS SYSTEM</h2>
-            <div id="login-fields">
-                <input type="email" id="l-email" placeholder="E-mail">
-                <input type="password" id="l-senha" placeholder="Senha">
-                <button onclick="fLogin()" class="btn-acao" style="background:#5865f2; width:100%">ENTRAR</button>
-            </div>
+            <h2 style="color:#5865f2; margin-bottom: 20px;">VSS LOGIN</h2>
+            <input type="email" id="l-email" placeholder="E-mail">
+            <input type="password" id="l-senha" placeholder="Senha">
+            <button onclick="fLogin()" class="btn-acao" style="background:#5865f2; width:100%">ACESSAR SISTEMA</button>
         </div>
     </div>
 
@@ -51,54 +50,60 @@
             <div id="status-bar">Carregando...</div>
             <button onclick="aba('aba-chat')">💬 CHAT GLOBAL</button>
             <button onclick="aba('aba-perfil')">👤 MEU PERFIL</button>
-            <button onclick="aba('aba-cargos')">🎖️ HIERARQUIA</button>
             <button onclick="aba('aba-membros')">👥 MEMBROS</button>
             <button onclick="aba('aba-noticias-master')">📢 NOTÍCIAS & MURAL</button>
-            <button onclick="aba('aba-prova')" style="color:red">🔥 PROVA STAFF</button>
-            <button id="btn-sair" style="margin-top:auto; color:red; background:none; border:none; cursor:pointer;">SAIR</button>
+            <button onclick="aba('aba-prova')" style="color:#ff4444">🔥 PROVA STAFF</button>
+            <button id="btn-sair" style="margin-top:auto; background:none; border:none; color:red; cursor:pointer">SAIR</button>
         </aside>
 
         <main class="content">
             <section id="aba-noticias-master" style="display:none">
                 <div class="sub-nav">
                     <button onclick="subAba('mural')" id="btn-mural" class="active">MURAL</button>
-                    <button onclick="subAba('noticias')" id="btn-noticias">NOTÍCIAS</button>
-                    <button onclick="subAba('criar')" id="btn-criar">CRIAR NOTÍCIA</button>
+                    <button onclick="subAba('lista')" id="btn-lista">NOTÍCIAS</button>
+                    <button onclick="subAba('criar')" id="btn-criar">CRIAR POST</button>
                 </div>
-
+                
                 <div id="sub-mural">
-                    <input type="text" id="mural-input" placeholder="Diga algo no mural...">
+                    <input type="text" id="mural-input" placeholder="Escreva no mural...">
                     <div id="mural-lista"></div>
                 </div>
 
-                <div id="sub-noticias" style="display:none">
-                    <div id="noticias-lista"></div>
+                <div id="sub-lista" style="display:none">
+                    <div id="noticias-container"></div>
                 </div>
 
                 <div id="sub-criar" style="display:none">
-                    <input type="text" id="news-title" placeholder="Título da Notícia">
-                    <textarea id="news-desc" rows="5" placeholder="Conteúdo da notícia..."></textarea>
-                    <button onclick="postarNoticia()" class="btn-acao" style="background:#5865f2; width:100%">PUBLICAR</button>
+                    <div class="card">
+                        <input type="text" id="new-title" placeholder="Título da Notícia">
+                        <textarea id="new-desc" rows="5" placeholder="Texto da notícia..."></textarea>
+                        <button onclick="postarNoticia()" class="btn-acao" style="background:#5865f2; width:100%">POSTAR AGORA</button>
+                    </div>
                 </div>
             </section>
 
             <section id="aba-chat">
                 <h2>CHAT GLOBAL</h2>
                 <div id="chat-box"></div>
-                <input type="text" id="chat-input" placeholder="Mensagem...">
-            </section>
-
-            <section id="aba-prova" style="display:none">
-                <div class="card">
-                    <h2 style="color:red">VESTIBULAR STAFF VSS</h2>
-                    <div id="prova-container"></div>
-                    <button onclick="finalizarProva()" class="btn-acao" style="background:green; width:100%; margin-top:20px">ENVIAR PROVA</button>
-                </div>
+                <input type="text" id="chat-input" placeholder="Pressione Enter para enviar...">
             </section>
 
             <section id="aba-perfil" style="display:none">
                 <h2>MEU PERFIL</h2>
-                <div id="perfil-card" class="card"></div>
+                <div id="perfil-info" class="card"></div>
+            </section>
+
+            <section id="aba-membros" style="display:none">
+                <h2>MEMBROS DA STAFF</h2>
+                <div id="lista-membros-ui"></div>
+            </section>
+
+            <section id="aba-prova" style="display:none">
+                <div class="card">
+                    <h2 style="color:#ff4444">PROVA DE QUALIFICAÇÃO STAFF</h2>
+                    <div id="prova-questoes" style="margin-top:20px"></div>
+                    <button onclick="enviarProva()" class="btn-acao" style="background:green; width:100%; margin-top:20px">ENVIAR RESPOSTAS</button>
+                </div>
             </section>
         </main>
     </div>
@@ -106,7 +111,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDK-yme2jxzdjvunQqkuB26r3oKH4OOS0I", authDomain: "analitysvss.firebaseapp.com", projectId: "analitysvss", storageBucket: "analitysvss.firebasestorage.app", messagingSenderId: "665486639760", appId: "1:665486639760:web:16dd3ee053cd283f5e4e15" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
@@ -115,16 +120,18 @@
         const CARGOS = {"1":"Recruta", "5":"Sargento", "20":"FUNDADOR"};
 
         // NAVEGAÇÃO
-        window.aba = (id) => { 
-            document.querySelectorAll('section').forEach(s => s.style.display = 'none'); 
+        window.aba = (id) => {
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-            if(id==='aba-perfil') renderPerfil();
+            if(id === 'aba-membros') carregarMembros();
+            if(id === 'aba-perfil') carregarPerfil();
+            if(id === 'aba-prova') carregarProva();
         };
 
         window.subAba = (id) => {
-            document.getElementById('sub-mural').style.display = id==='mural'?'block':'none';
-            document.getElementById('sub-noticias').style.display = id==='noticias'?'block':'none';
-            document.getElementById('sub-criar').style.display = id==='criar'?'block':'none';
+            document.getElementById('sub-mural').style.display = id === 'mural' ? 'block' : 'none';
+            document.getElementById('sub-lista').style.display = id === 'lista' ? 'block' : 'none';
+            document.getElementById('sub-criar').style.display = id === 'criar' ? 'block' : 'none';
             document.querySelectorAll('.sub-nav button').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-'+id).classList.add('active');
         };
@@ -135,71 +142,92 @@
                     uD = s.data(); uD.uid = u.uid;
                     document.getElementById('auth-screen').style.display='none';
                     document.getElementById('main-app').style.display='flex';
-                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b> | ${CARGOS[uD.nivel] || 'Staff'}`;
+                    document.getElementById('status-bar').innerHTML = `<b>${uD.nome}</b><br>${CARGOS[uD.nivel] || 'Staff'}`;
                 });
-                carregarMensagens(); carregarMural(); carregarNoticias();
+                ouvirChat(); ouvirMural(); ouvirNoticias();
             }
         });
 
         // NOTÍCIAS, COMENTÁRIOS E EDIÇÃO
         window.postarNoticia = async () => {
-            const tit = document.getElementById('news-title').value;
-            const desc = document.getElementById('news-desc').value;
-            if(!tit || !desc) return;
-            await addDoc(collection(db, "noticias"), { titulo: tit, desc: desc, u: uD.nome, uUid: uD.uid, data: serverTimestamp() });
-            subAba('noticias');
+            const t = document.getElementById('new-title').value;
+            const d = document.getElementById('new-desc').value;
+            if(t && d) {
+                await addDoc(collection(db, "noticias"), { titulo: t, desc: d, u: uD.nome, uUid: uD.uid, data: serverTimestamp() });
+                document.getElementById('new-title').value = ""; document.getElementById('new-desc').value = "";
+                subAba('lista');
+            }
         };
 
-        function carregarNoticias() {
+        function ouvirNoticias() {
             onSnapshot(query(collection(db, "noticias"), orderBy("data", "desc")), s => {
-                const b = document.getElementById('noticias-lista'); b.innerHTML = "";
+                const cont = document.getElementById('noticias-container'); cont.innerHTML = "";
                 s.forEach(d => {
                     const n = d.data(); const id = d.id;
-                    const podeEditar = n.uUid === uD.uid;
-                    b.innerHTML += `
+                    cont.innerHTML += `
                         <div class="card">
                             <h3 style="color:#5865f2">${n.titulo}</h3>
-                            <p id="txt-${id}" style="margin-top:10px">${n.desc}</p>
-                            <div style="margin-top:10px">
-                                ${podeEditar ? `<button onclick="editarN('${id}')" style="color:orange; background:none; border:none; cursor:pointer">EDITAR</button>` : ""}
-                                <small style="margin-left:10px; color:#555">Por: ${n.u}</small>
+                            <p id="p-txt-${id}" style="margin: 10px 0;">${n.desc}</p>
+                            <small>Postado por: ${n.u}</small>
+                            <div style="margin-top:10px;">
+                                ${n.uUid === uD.uid ? `<button onclick="editarNoticia('${id}')" style="color:orange; background:none; border:none; cursor:pointer; font-weight:bold;">[EDITAR]</button>` : ""}
                             </div>
-                            <div id="coms-${id}" style="margin-top:15px; border-top:1px solid #222"></div>
-                            <div style="display:flex; margin-top:10px gap:5px">
-                                <input type="text" id="in-com-${id}" placeholder="Escreva um comentário..." style="margin-bottom:0">
-                                <button onclick="comentarN('${id}')" class="btn-acao" style="background:#5865f2">OK</button>
+                            <div id="coms-${id}" style="margin-top:10px; padding-top:10px; border-top:1px solid #222;"></div>
+                            <div style="display:flex; gap:5px; margin-top:10px;">
+                                <input type="text" id="in-com-${id}" placeholder="Comentar..." style="margin:0;">
+                                <button onclick="comentar('${id}')" class="btn-acao" style="background:#333;">OK</button>
                             </div>
                         </div>`;
-                    carregarComentarios(id);
+                    ouvirComentarios(id);
                 });
             });
         }
 
-        window.editarN = async (id) => {
-            const novo = prompt("Novo texto da notícia:", document.getElementById('txt-'+id).innerText);
+        window.editarNoticia = async (id) => {
+            const novo = prompt("Novo texto:", document.getElementById('p-txt-'+id).innerText);
             if(novo) await updateDoc(doc(db, "noticias", id), { desc: novo });
         };
 
-        window.comentarN = async (id) => {
-            const val = document.getElementById('in-com-'+id).value;
-            if(!val) return;
-            await addDoc(collection(db, "noticias", id, "comentarios"), { u: uD.nome, t: val, data: serverTimestamp() });
-            document.getElementById('in-com-'+id).value = "";
+        window.comentar = async (id) => {
+            const txt = document.getElementById('in-com-'+id).value;
+            if(txt) {
+                await addDoc(collection(db, "noticias", id, "comentarios"), { u: uD.nome, t: txt, data: serverTimestamp() });
+                document.getElementById('in-com-'+id).value = "";
+            }
         };
 
-        function carregarComentarios(id) {
+        function ouvirComentarios(id) {
             onSnapshot(query(collection(db, "noticias", id, "comentarios"), orderBy("data", "asc")), s => {
-                const div = document.getElementById('coms-'+id); if(!div) return;
-                div.innerHTML = "";
-                s.forEach(c => { div.innerHTML += `<div class="comment-box"><b>${c.data().u}:</b> ${c.data().t}</div>`; });
+                const box = document.getElementById('coms-'+id); if(!box) return;
+                box.innerHTML = "";
+                s.forEach(c => { box.innerHTML += `<div class="comentario-item"><b>${c.data().u}:</b> ${c.data().t}</div>`; });
             });
         }
 
-        // MURAL E CHAT
-        function carregarMural() {
+        // CHAT E MURAL
+        function ouvirChat() {
+            onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
+                const b = document.getElementById('chat-box'); b.innerHTML = "";
+                s.forEach(d => {
+                    const m = d.data();
+                    const podeApagar = uD.nivel == "20" || m.uUid === uD.uid;
+                    b.innerHTML += `<div><b>${m.u}:</b> ${m.t} ${podeApagar ? `<span onclick="apagarMsg('${d.id}')" style="color:red; cursor:pointer; font-size:10px;">[X]</span>` : ""}</div>`;
+                });
+                b.scrollTop = b.scrollHeight;
+            });
+        }
+        window.apagarMsg = (id) => deleteDoc(doc(db, "mensagens", id));
+        document.getElementById('chat-input').onkeypress = async (e) => {
+            if(e.key === 'Enter' && e.target.value) {
+                await addDoc(collection(db, "mensagens"), { u: uD.nome, t: e.target.value, uUid: uD.uid, data: serverTimestamp() });
+                e.target.value = "";
+            }
+        };
+
+        function ouvirMural() {
             onSnapshot(query(collection(db, "mural"), orderBy("data", "desc")), s => {
-                const b = document.getElementById('mural-lista'); b.innerHTML = "";
-                s.forEach(d => { b.innerHTML += `<div class="comment-box"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
+                const l = document.getElementById('mural-lista'); l.innerHTML = "";
+                s.forEach(d => { l.innerHTML += `<div class="comentario-item"><b>${d.data().u}:</b> ${d.data().t}</div>`; });
             });
         }
         document.getElementById('mural-input').onkeypress = async (e) => {
@@ -209,53 +237,36 @@
             }
         };
 
-        function carregarMensagens() {
-            onSnapshot(query(collection(db, "mensagens"), orderBy("data", "asc")), s => {
-                const b = document.getElementById('chat-box'); b.innerHTML = "";
-                s.forEach(d => {
-                    const m = d.data();
-                    const souFundador = uD.nivel === "20";
-                    const minha = m.uUid === uD.uid;
-                    b.innerHTML += `<div>
-                        <b>${m.u}:</b> ${m.t} 
-                        ${(souFundador || minha) ? `<button onclick="apagarM('${d.id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:10px"> [X]</button>` : ""}
-                    </div>`;
-                });
-                b.scrollTop = b.scrollHeight;
-            });
+        // PERFIL E MEMBROS
+        function carregarPerfil() {
+            document.getElementById('perfil-info').innerHTML = `<h3>${uD.nome}</h3><p>Cargo: ${CARGOS[uD.nivel] || 'Staff'}</p><p style="font-size:10px; color:#555; margin-top:10px;">ID: ${uD.uid}</p>`;
         }
-        window.apagarM = (id) => deleteDoc(doc(db, "mensagens", id));
-        document.getElementById('chat-input').onkeypress = async (e) => {
-            if(e.key === 'Enter' && e.target.value) {
-                await addDoc(collection(db, "mensagens"), { u: uD.nome, t: e.target.value, uUid: uD.uid, data: serverTimestamp() });
-                e.target.value = "";
-            }
-        };
+        async function carregarMembros() {
+            const div = document.getElementById('lista-membros-ui'); div.innerHTML = "Carregando...";
+            const s = await getDocs(collection(db, "usuarios")); div.innerHTML = "";
+            s.forEach(d => { const m = d.data(); div.innerHTML += `<div class="membro-item"><b>${m.nome}</b> <span>${CARGOS[m.nivel] || 'Membro'}</span></div>`; });
+        }
 
         // PROVA
-        const questoes = [
-            "Qual a grafia correta: Seção, Sessão ou Cessão?",
-            "Complete: Seguem ________ os documentos (Anexo/Anexos)",
-            "Corrija: 'Houveram muitos recrutas'",
+        const provaData = [
+            "Qual a grafia correta: 'Seção', 'Sessão' ou 'Cessão'?",
+            "Complete: 'Seguem ________ os documentos' (Anexo/Anexos/Anexa)",
+            "Corrija: 'Houveram muitos recrutas no treino'",
             "Como se dirigir formalmente a um Oficial Superior?",
-            "Se receber duas ordens contraditórias, o que faz?",
-            "Um civil tenta entrar em área restrita. O que faz?"
+            "Se você receber duas ordens contraditórias, o que faz?",
+            "Dois subordinados discutindo no pátio. Qual sua atitude?",
+            "Civil tentando entrar em área restrita. Como você barra?"
         ];
         function carregarProva() {
-            const container = document.getElementById('prova-container'); container.innerHTML = "";
-            questoes.forEach((q, i) => {
-                container.innerHTML += `<div style="margin-bottom:15px"><b>${i+1}. ${q}</b><textarea class="res-prova" style="height:60px"></textarea></div>`;
+            const cont = document.getElementById('prova-questoes'); cont.innerHTML = "";
+            provaData.forEach((q, i) => {
+                cont.innerHTML += `<div style="margin-bottom:15px"><b>${i+1}. ${q}</b><textarea placeholder="Responda aqui..." style="height:60px; margin-top:5px;"></textarea></div>`;
             });
         }
-        window.finalizarProva = () => alert("PROVA ENVIADA! Aguarde análise do Fundador.");
-
-        function renderPerfil() {
-            document.getElementById('perfil-card').innerHTML = `<h2>${uD.nome}</h2><p>Cargo: ${CARGOS[uD.nivel]}</p><p>ID: ${uD.uid}</p>`;
-        }
+        window.enviarProva = () => alert("Sua prova foi enviada para o banco de dados. O Fundador irá analisar.");
 
         window.fLogin = () => signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-senha').value);
         document.getElementById('btn-sair').onclick = () => signOut(auth).then(()=>location.reload());
-        carregarProva();
     </script>
 </body>
 </html>
