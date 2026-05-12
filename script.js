@@ -1,43 +1,34 @@
-// Seleção de elementos
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const menu = document.getElementById('menu');
-
 let gameActive = false;
 
-// Configuração dos Poderes (6 tipos de bolas)
-const powerTypes = [
-    { name: "Fogo", color: "#ff4d4d", speed: 10 },
-    { name: "Gelo", color: "#7efff5", speed: 8 },
-    { name: "Raio", color: "#fff200", speed: 15 },
-    { name: "Veneno", color: "#32ff7e", speed: 6 },
-    { name: "Sombra", color: "#7d5fff", speed: 9 },
-    { name: "Luz", color: "#ffffff", speed: 12 }
-];
-
-// Estado do Jogador
+// Configurações do Jogador
 const player = {
-    x: 100, y: 300, w: 50, h: 60,
+    x: 100, y: 300, w: 40, h: 40,
     color: "#3498db",
-    dy: 0, gravity: 0.8, jumpPower: -18,
+    speed: 5,
+    dx: 0, dy: 0,
+    gravity: 0.8, jumpPower: -15,
     grounded: false,
     projectiles: []
 };
 
-const enemy = {
-    x: 800, y: 300, w: 50, h: 60,
-    color: "#e74c3c",
-    health: 100
-};
+const enemy = { x: 700, y: 310, w: 40, h: 40, color: "#e74c3c", health: 100 };
 
-// --- Lógica de Salas ---
+// Cores dos 6 poderes
+const powers = ["#ff4d4d", "#7efff5", "#fff200", "#32ff7e", "#7d5fff", "#ffffff"];
 
+// Sistema de Teclas pressionadas
+const keys = {};
+
+window.addEventListener('keydown', e => keys[e.code] = true);
+window.addEventListener('keyup', e => keys[e.code] = false);
+
+// Funções de Menu
 function showCreateRoom() {
     document.getElementById('main-options').classList.add('hidden');
     document.getElementById('create-area').classList.remove('hidden');
-    // Gera código aleatório de 4 dígitos
-    const code = Math.floor(1000 + Math.random() * 9000);
-    document.getElementById('room-code-display').innerText = code;
+    document.getElementById('room-code-display').innerText = Math.floor(1000 + Math.random() * 9000);
 }
 
 function showJoinRoom() {
@@ -45,121 +36,92 @@ function showJoinRoom() {
     document.getElementById('join-area').classList.remove('hidden');
 }
 
-function backToMenu() {
-    document.getElementById('main-options').classList.remove('hidden');
-    document.getElementById('join-area').classList.add('hidden');
-    document.getElementById('create-area').classList.add('hidden');
-}
-
 function joinRoom() {
-    const input = document.getElementById('room-input').value;
-    if(input.length === 4) {
-        startGame();
-    } else {
-        alert("Digite os 4 dígitos para entrar!");
-    }
+    if(document.getElementById('room-input').value.length === 4) startGame();
 }
-
-// --- Lógica do Jogo ---
 
 function startGame() {
     document.getElementById('ui-container').style.display = 'none';
     canvas.style.display = 'block';
     gameActive = true;
-    requestAnimationFrame(gameLoop);
+    gameLoop();
 }
 
-// Comandos do Teclado
-window.addEventListener('keydown', (e) => {
-    if (!gameActive) return;
+function launchPower(i) {
+    player.projectiles.push({ x: player.x + 20, y: player.y + 20, vx: 10, color: powers[i] });
+}
 
+function update() {
+    // Movimentação Esquerda/Direita
+    if (keys['KeyA'] || keys['ArrowLeft']) player.x -= player.speed;
+    if (keys['KeyD'] || keys['ArrowRight']) player.x += player.speed;
+    
     // Pulo
-    if (e.code === 'Space' && player.grounded) {
+    if ((keys['Space'] || keys['KeyW']) && player.grounded) {
         player.dy = player.jumpPower;
         player.grounded = false;
     }
 
-    // Poderes (Teclas 1 a 6)
-    if (e.key >= 1 && e.key <= 6) {
-        launchPower(e.key - 1);
+    // Ataques (Teclas 1 a 6)
+    for(let i=1; i<=6; i++) {
+        if(keys['Digit'+i]) {
+            launchPower(i-1);
+            keys['Digit'+i] = false; // Evita tiro infinito
+        }
     }
-});
 
-function launchPower(index) {
-    const power = powerTypes[index];
-    player.projectiles.push({
-        x: player.x + player.w,
-        y: player.y + 20,
-        radius: 12,
-        color: power.color,
-        vx: power.speed
-    });
-}
-
-function update() {
-    // Física do Jogador
+    // Física e Gravidade
     player.dy += player.gravity;
     player.y += player.dy;
 
-    // Chão simples em y=400
-    if (player.y + player.h > 400) {
-        player.y = 400 - player.h;
+    if (player.y > 310) {
+        player.y = 310;
         player.dy = 0;
         player.grounded = true;
     }
 
-    // Mover Projéteis
+    // Limites da tela
+    if(player.x < 0) player.x = 0;
+    if(player.x > canvas.width - player.w) player.x = canvas.width - player.w;
+
+    // Balas
     player.projectiles.forEach((p, i) => {
         p.x += p.vx;
-        
-        // Colisão com Inimigo
-        if (p.x > enemy.x && p.x < enemy.x + enemy.w && p.y > enemy.y && p.y < enemy.y + enemy.h) {
-            enemy.health -= 5;
+        if(p.x > enemy.x && p.x < enemy.x + enemy.w && p.y > enemy.y && p.y < enemy.y + enemy.h) {
+            enemy.health -= 2;
             player.projectiles.splice(i, 1);
         }
-
-        // Remover se sair da tela
-        if (p.x > canvas.width) player.projectiles.splice(i, 1);
     });
 }
 
 function draw() {
-    // Limpar Tela
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
     // Chão
-    ctx.fillStyle = "#2c3e50";
-    ctx.fillRect(0, 400, canvas.width, 100);
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 350, canvas.width, 50);
 
-    // Jogador
+    // Jogador e Inimigo
     ctx.fillStyle = player.color;
     ctx.fillRect(player.x, player.y, player.w, player.h);
-
-    // Inimigo
     ctx.fillStyle = enemy.color;
     ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
 
-    // Poderes (Bolas de cores diferentes)
+    // Tiros
     player.projectiles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
         ctx.fill();
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = p.color;
-        ctx.closePath();
     });
-    ctx.shadowBlur = 0; // Reset sombra
 
-    // HUD
+    // Vida
     ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText("Vida Inimigo: " + enemy.health + "%", 800, 50);
-    ctx.fillText("Teclas 1-6: Atirar Poderes | Espaço: Pular", 20, 50);
+    ctx.fillText(`Vida Inimigo: ${enemy.health}`, 700, 30);
 }
 
 function gameLoop() {
-    if (!gameActive) return;
+    if(!gameActive) return;
     update();
     draw();
     requestAnimationFrame(gameLoop);

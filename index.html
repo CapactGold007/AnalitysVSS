@@ -2,39 +2,30 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lendários 2D - X1 Multiplayer</title>
+    <title>X1 Lendário</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="ui-container">
         <div id="menu">
             <h1>LENDÁRIOS 2D</h1>
             <div id="main-options">
                 <button onclick="showCreateRoom()">CRIAR SALA</button>
-                <button onclick="showJoinRoom()">JUNTAR-SE A SALA</button>
+                <button onclick="showJoinRoom()">JUNTAR-SE</button>
             </div>
-
             <div id="create-area" class="hidden">
-                <p>Código da sua sala:</p>
-                <h2 id="room-code-display">----</h2>
-                <p>Envie este código para seu amigo...</p>
-                <button onclick="startGame()" class="btn-start">COMEÇAR PARTIDA</button>
+                <p>Código: <span id="room-code-display">0000</span></p>
+                <button onclick="startGame()">COMEÇAR</button>
             </div>
-
             <div id="join-area" class="hidden">
-                <p>Digite o código de 4 dígitos:</p>
-                <input type="text" id="room-input" maxlength="4" placeholder="Ex: 5502">
-                <br><br>
+                <input type="text" id="room-input" maxlength="4" placeholder="Código">
                 <button onclick="joinRoom()">ENTRAR</button>
-                <button onclick="backToMenu()" class="btn-back">VOLTAR</button>
             </div>
         </div>
     </div>
-
-    <canvas id="gameCanvas" width="1000" height="500"></canvas>
-
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    
+    <!-- O script deve estar aqui no final -->
     <script src="script.js"></script>
 </body>
 </html>
